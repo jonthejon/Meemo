@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Meemo</string>
+
+
+    <!--Fake data only for design purposes-->
+    <string name="fake_memory">This is a fake memory for design purposes.</string>
+    <string name="fake_memory_long">This is a fake memory for design purposes.
+        This is a fake memory for design purposes.
+        This is a fake memory for design purposes.
+        This is a fake memory for design purposes.
+        This is a fake memory for design purposes.
+        This is a fake memory for design purposes.
+        This is a fake memory for design purposes.</string>
+</resources>
