@@ -1,15 +1,13 @@
 package datamanager;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+import android.net.Uri;
 
 import java.util.ArrayList;
 
 import core.Memory;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * This is not a core class!
@@ -35,18 +33,16 @@ public class DataManager implements DataManagerInterface {
     }
 
     @Override
-    public Memory[] getMemoriesWithID(int id) {
+    public Memory[] getMemoriesWithID(ContentResolver resolver, int id) {
+
+//        calling and retrieving the Uri that is corresponds to getting all data from memory table
+        Uri uri = DBContract.MemoryTable.GET_MEMORY_URI;
 
 //        making sure that we have a null cursor so we can populate it
         resetCursor();
 
-//        dummy command to select all the entries inside the memory table
-        final String SQL_FIRST_SELECT = "SELECT * FROM" + " " + DBContract.MemoryTable.TABLE_NAME;
-//        getting a readable instance of the database using the dbhelper class
-        final SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-//        updating the Cursor of this datamanager with the data from the database
-        this.cursor = db.rawQuery(SQL_FIRST_SELECT, null);
+//        calling the query method of the Content Resolver which will call the query method of the Content Provider
+        this.cursor = resolver.query(uri,null,null,null,null);
 
 //        calling the method that will extract the data from the cursor
         return getMemoryListFromCursor(this.cursor);
@@ -89,9 +85,7 @@ public class DataManager implements DataManagerInterface {
         Memory[] memoryList = new Memory[memoryArrayList.size()];
 //        converting all the data from inside the arraylist into the array
         memoryList = memoryArrayList.toArray(memoryList);
-        for(Memory memory: memoryList) {
-            Log.d(TAG, "getMemoryListFromCursor: " + memory.getMemoryText());
-        }
+
 //        returning the array
         return memoryList;
     }

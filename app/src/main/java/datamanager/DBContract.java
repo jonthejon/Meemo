@@ -1,5 +1,6 @@
 package datamanager;
 
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
@@ -13,7 +14,21 @@ public class DBContract {
 //    IV that holds the present database version and must be incremented every time a database scheme changes
     static final int DATABASE_VERSION = 1;
 
+//    The authority, which is how your code knows which Content Provider to access
+    public static final String AUTHORITY = "seasonedblackolives.com.meemo";
+//    The base content URI = "content://" + <authority>
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
+
+//    Define the possible paths for accessing data in this contract
+    public static final String PATH_MEMORY = "memory";
+    public static final String PATH_FAMILY = "family";
+    public static final String PATH_GET = "get";
+
     public static final class MemoryTable implements BaseColumns {
+
+//        variable that will store the URI used by the Content Provider to access this table
+        public static final Uri GET_MEMORY_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_MEMORY).appendPath(PATH_GET).build();
 
 //        inner final IV that holds the memory table name
         public static final String TABLE_NAME = "MEMORY_TABLE";

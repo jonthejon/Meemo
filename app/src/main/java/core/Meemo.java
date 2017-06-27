@@ -33,7 +33,8 @@ public class Meemo {
             fakeMemoryArr[fakeStringArr.length - 1 - i] = new Memory(1, fakeStringArr[i], 1, new int[0]);
         }
         return fakeMemoryArr;*/
-        return dataManager.getMemoriesWithID(id);
+
+        return dataManager.getMemoriesWithID(userInterface.getUIContentResolver(), id);
     }
 
 }

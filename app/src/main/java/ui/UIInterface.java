@@ -1,7 +1,7 @@
 package ui;
 
+import android.content.ContentResolver;
 import android.content.Context;
-import android.content.res.Resources;
 import android.support.v4.app.LoaderManager;
 
 /**
@@ -16,6 +16,6 @@ public interface UIInterface {
 //    returns the LoaderManager of the activity
     LoaderManager getUILoaderManager();
 
-//    returns the resources for the given activity
-    Resources getUIResources();
+//    returns the ContentResolver for the activity for CP handling
+    ContentResolver getUIContentResolver();
 }

@@ -1,5 +1,6 @@
 package datamanager;
 
+import android.content.ContentResolver;
 import core.Memory;
 
 /**
@@ -9,5 +10,5 @@ import core.Memory;
 public interface DataManagerInterface {
 
 //    method responsible for telling the datamanager to load it's cursor using the memory ID sent as parameter
-    Memory[] getMemoriesWithID(int id);
+    Memory[] getMemoriesWithID(ContentResolver resolver, int id);
 }

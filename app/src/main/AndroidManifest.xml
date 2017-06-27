@@ -16,6 +16,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="datamanager.MeemoContentProvider"
+            android:authorities="seasonedblackolives.com.meemo"
+            android:exported="false" />
+
     </application>
 
 </manifest>

@@ -1,7 +1,7 @@
 package ui;
 
+import android.content.ContentResolver;
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -58,15 +58,17 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
         return this;
     }
 
-    @Override
-    public Resources getUIResources() {
-        return getResources();
-    }
-
     /**
      * Method that returns the Parent Textview so the presenter can update it*/
     public TextView getParentTextView() {
 //        returns the textview
         return this.parentTextView;
+    }
+
+    /**
+     * Method that will return the content resolver for this activity when called.*/
+    @Override
+    public ContentResolver getUIContentResolver() {
+        return getContentResolver();
     }
 }
