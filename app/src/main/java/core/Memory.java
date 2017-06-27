@@ -14,12 +14,15 @@ public class Memory {
     private int parentID;
 //    IV that holds the memory's children ID. If null or length 0, no children.
     private int[] childsID;
+//    IV that holds the file path of this memory if it exists
+    private String filePath;
 
-    public Memory(int memoryID, String memoryText, int parentID, int[] childsID) {
+    public Memory(int memoryID, String memoryText, int parentID, int[] childsID, String filePath) {
         this.memoryID = memoryID;
         this.memoryText = memoryText;
         this.parentID = parentID;
         this.childsID = childsID;
+        this.filePath = filePath;
     }
 
     public int getMemoryID() {
@@ -36,5 +39,9 @@ public class Memory {
 
     public int[] getChildsID() {
         return childsID;
+    }
+
+    public String getFilePath() {
+        return filePath;
     }
 }

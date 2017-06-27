@@ -38,17 +38,44 @@ public class DBHelper extends SQLiteOpenHelper {
 //        this String holds the SQL statement for creating the family table using the information from the contract class
         final String SQL_CREATE_FAMILY_TABLE = "CREATE TABLE" + " " + DBContract.FamilyTable.TABLE_NAME + " (" +
 //                creating a unique id field for easy information access
-                DBContract.FamilyTable.COL_UNIQUE_MEMORY_ID + " " + "INTEGER PRIMARY KEY AUTOINCREMENT," + " " +
+                DBContract.FamilyTable.COL_UNIQUE_ROW + " " + "INTEGER PRIMARY KEY AUTOINCREMENT," + " " +
 //                this ID must not be null and will match one specific primary key of the memory table
                 DBContract.FamilyTable.COL_MEMORY_ID + " " + "INTEGER NOT NULL," + " " +
 //                this ID must not be null and will match one specific primary key of the memory table
                 DBContract.FamilyTable.COL_CHILD_MEMORY_ID + " " + "INTEGER NOT NULL" +
                 ");";
 
+        String[] fakeStringArr = {"BRAIN TEST",
+        "Memory number 2",
+        "Memory number 3",
+        "Memory number 4",
+        "Memory number 5",
+        "Memory number 6"};
+
 //        This is the String that holds the SQL statement for inserting the first memory into the DB
         final String SQL_INSERT_FIRST_MEMORY = "INSERT INTO" + " " + DBContract.MemoryTable.TABLE_NAME +  " " +
-                "COLUMN" + "(" + DBContract.MemoryTable.COL_MEMORY_TEXT + ")" + " " +
-                "VALUES('BRAIN');";
+                "(" + DBContract.MemoryTable.COL_MEMORY_TEXT + ")" + " " +
+                "VALUES('" + fakeStringArr[0] + "');";
+
+        final String SQL_INSERT_SECOND_MEMORY = "INSERT INTO" + " " + DBContract.MemoryTable.TABLE_NAME +  " " +
+                "(" + DBContract.MemoryTable.COL_MEMORY_TEXT + ")" + " " +
+                "VALUES('" + fakeStringArr[1] + "');";
+
+        final String SQL_INSERT_THIRD_MEMORY = "INSERT INTO" + " " + DBContract.MemoryTable.TABLE_NAME +  " " +
+                "(" + DBContract.MemoryTable.COL_MEMORY_TEXT + ")" + " " +
+                "VALUES('" + fakeStringArr[2] + "');";
+
+        final String SQL_INSERT_FOURTH_MEMORY = "INSERT INTO" + " " + DBContract.MemoryTable.TABLE_NAME +  " " +
+                "(" + DBContract.MemoryTable.COL_MEMORY_TEXT + ")" + " " +
+                "VALUES('" + fakeStringArr[3] + "');";
+
+        final String SQL_INSERT_FIFTH_MEMORY = "INSERT INTO" + " " + DBContract.MemoryTable.TABLE_NAME +  " " +
+                "(" + DBContract.MemoryTable.COL_MEMORY_TEXT + ")" + " " +
+                "VALUES('" + fakeStringArr[4] + "');";
+
+        final String SQL_INSERT_SIXTH_MEMORY = "INSERT INTO" + " " + DBContract.MemoryTable.TABLE_NAME +  " " +
+                "(" + DBContract.MemoryTable.COL_MEMORY_TEXT + ")" + " " +
+                "VALUES('" + fakeStringArr[5] + "');";
 
 //        executing the creation of the memory table
         db.execSQL(SQL_CREATE_MEMORY_TABLE);
@@ -56,6 +83,11 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_FAMILY_TABLE);
 //        inserting the first memory into the DB. This will be the parent of all other memories.
         db.execSQL(SQL_INSERT_FIRST_MEMORY);
+        db.execSQL(SQL_INSERT_SECOND_MEMORY);
+        db.execSQL(SQL_INSERT_THIRD_MEMORY);
+        db.execSQL(SQL_INSERT_FOURTH_MEMORY);
+        db.execSQL(SQL_INSERT_FIFTH_MEMORY);
+        db.execSQL(SQL_INSERT_SIXTH_MEMORY);
     }
 
     @Override

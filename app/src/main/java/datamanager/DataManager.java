@@ -2,8 +2,14 @@ package datamanager;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
+import java.util.ArrayList;
 
 import core.Memory;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * This is not a core class!
@@ -18,28 +24,32 @@ public class DataManager implements DataManagerInterface {
 //    IV that will hold the cursor with the data retrieved from the database
 //    It can be null, in this case there is no data retrieved from the database
     private Cursor cursor;
-//    IV that will flag is the Cursor variable is loaded or not with data
-    private boolean isLoaded;
-//    IV that will be populated with the Memory objects built with data from the database
-    private Memory[] memoryList;
+//    IV that will hold the instance for the class that extends the database
+    private DBHelper dbHelper;
 
     public DataManager(Context context) {
+//        updating the proper IV with the given context
         this.context = context;
+//        creating a new instance of the db helper class so we can use it to query the db
+        dbHelper = new DBHelper(context);
     }
 
     @Override
-    public void loadManagerWithID(int id) {
+    public Memory[] getMemoriesWithID(int id) {
 
-    }
+//        making sure that we have a null cursor so we can populate it
+        resetCursor();
 
-    @Override
-    public boolean isManagerLoaded() {
-        return false;
-    }
+//        dummy command to select all the entries inside the memory table
+        final String SQL_FIRST_SELECT = "SELECT * FROM" + " " + DBContract.MemoryTable.TABLE_NAME;
+//        getting a readable instance of the database using the dbhelper class
+        final SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-    @Override
-    public Memory[] getMemoryList() {
-        return new Memory[0];
+//        updating the Cursor of this datamanager with the data from the database
+        this.cursor = db.rawQuery(SQL_FIRST_SELECT, null);
+
+//        calling the method that will extract the data from the cursor
+        return getMemoryListFromCursor(this.cursor);
     }
 
     private void resetCursor() {
@@ -47,7 +57,42 @@ public class DataManager implements DataManagerInterface {
         this.cursor = null;
     }
 
-    private Memory[] populateMemoryList(Cursor mCursor) {
-        return new Memory[0];
+    private Memory[] getMemoryListFromCursor(Cursor data) {
+
+//        checking to see if we have a valid Cursor and if not, returning an empty memory list
+        if (data == null || data.getCount() == 0) {
+            return new Memory[0];
+        }
+
+//        creating an Arraylist of Memory type so we can dinamically update it with the memories from the cursor
+        ArrayList<Memory> memoryArrayList = new ArrayList<>();
+
+//        getting the indexes of the columns of the memory table in the database
+        int idColIndex = data.getColumnIndex(DBContract.MemoryTable.COL_MEMORY_ID);
+        int textColIndex = data.getColumnIndex(DBContract.MemoryTable.COL_MEMORY_TEXT);
+        int fileColIndex = data.getColumnIndex(DBContract.MemoryTable.COL_MEMORY_FILE_PATH);
+
+//        we will loop inside the cursor
+//        Cursor always starts at -1, se we can start the first loop already calling moveToNext()
+        while(data.moveToNext()) {
+//            create a new Memory object with data from the cursor
+            Memory memory = new Memory(data.getInt(idColIndex),
+                    data.getString(textColIndex),
+                    0,
+                    new int[0],
+                    data.getString(fileColIndex));
+//            adding the created memory object inside the arraylist
+            memoryArrayList.add(memory);
+        }
+
+//        creating a new Memory array with the size of the arraylist that just got populated
+        Memory[] memoryList = new Memory[memoryArrayList.size()];
+//        converting all the data from inside the arraylist into the array
+        memoryList = memoryArrayList.toArray(memoryList);
+        for(Memory memory: memoryList) {
+            Log.d(TAG, "getMemoryListFromCursor: " + memory.getMemoryText());
+        }
+//        returning the array
+        return memoryList;
     }
 }

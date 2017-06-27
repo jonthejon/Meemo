@@ -33,10 +33,10 @@ public class DBContract {
         public static final String TABLE_NAME = "FAMILY_TABLE";
 //        inner final IV that holds the unique memory ID inside this table
 //        DON'T CONFUSE IT WITH THE ACTUAL MEMORY ID THAT IS STORED IN ANOTHER COLUMN
-        public static final String COL_UNIQUE_MEMORY_ID = "_ID";
+        public static final String COL_UNIQUE_ROW = "_ID";
 //        inner final IV that holds the actual memory ID of the parent memory
-        public static final String COL_MEMORY_ID = "_ID";
+        public static final String COL_MEMORY_ID = "PARENT_ID";
 //        inner final IV that holds the actual memory ID of the child memory
-        public static final String COL_CHILD_MEMORY_ID = "_ID";
+        public static final String COL_CHILD_MEMORY_ID = "CHILD_ID";
     }
 }

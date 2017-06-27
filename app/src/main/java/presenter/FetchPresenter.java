@@ -4,12 +4,9 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 
 import core.Memory;
 import ui.MemoryList_Activity;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Presenter responsible for fetching and displaying data from a database using an adapter
@@ -76,8 +73,6 @@ public class FetchPresenter implements LoaderManager.LoaderCallbacks<Memory[]> {
 
 //        initializing a new loader object (with the proper data type) using the loader manager and the loader ID we created
         Loader<Memory[]> loader = loaderManager.getLoader(this.FETCH_MEMORY_LOADER_ID);
-
-        Log.d(TAG, "setupLoader: " + bundle.getInt(MEMORY_ID));
 
 //        checking to see if the loader we got is a new one or it has already been created before
         if (loader == null) {

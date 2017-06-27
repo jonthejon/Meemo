@@ -9,7 +9,7 @@
    <android.support.v7.widget.RecyclerView
         android:id="@+id/memory_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
 
         android:scrollbars="vertical"
         android:background="@color/colorPrimaryDark"
@@ -29,9 +29,6 @@
         android:paddingEnd="@dimen/parent_right_left_margins"
         android:paddingTop="@dimen/parent_top_bottom_margins"
         android:paddingBottom="@dimen/parent_top_bottom_margins"
-
-
-        android:text="@string/fake_memory"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

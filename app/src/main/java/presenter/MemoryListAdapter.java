@@ -2,12 +2,15 @@ package presenter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import core.Memory;
 import seasonedblackolives.com.meemo.R;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Adapter class that will work to bind and recycle each individual memory inside the recycler view
@@ -68,7 +71,7 @@ public class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
         } else {
 //            this is a dummy command to give a dummy memory in case the parent memory has not yet been created.
 //            later this will change so we can call the mother of all memories from the DB
-            return new Memory(1, "BRAIN", 0, new int[0]);
+            return new Memory(1, "BRAIN", 0, new int[0], "");
         }
     }
 
@@ -94,6 +97,10 @@ public class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
 //            since it does not, make sure that we are setting the child memory array to null
 //            notice that we are defining a memory with no children as a memory with a null array
             this.childMemories = null;
+        }
+
+        for(Memory memory: this.childMemories) {
+            Log.d(TAG, "updateMemories: " + memory.getMemoryText());
         }
 
 //        this method is from the RecyclerView.Adapter class and let's the adapter knows that we have new data to show
