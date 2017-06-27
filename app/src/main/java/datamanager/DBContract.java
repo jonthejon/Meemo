@@ -23,12 +23,24 @@ public class DBContract {
     public static final String PATH_MEMORY = "memory";
     public static final String PATH_FAMILY = "family";
     public static final String PATH_GET = "get";
+    public static final String PATH_INSERT = "insert";
+    public static final String PATH_DELETE = "delete";
+    public static final String PATH_UPDATE = "update";
 
     public static final class MemoryTable implements BaseColumns {
 
-//        variable that will store the URI used by the Content Provider to access this table
+//        variable that will store the URI used by the Content Provider to get memories from this table
         public static final Uri GET_MEMORY_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_MEMORY).appendPath(PATH_GET).build();
+//        variable that will store the URI used by the Content Provider to insert memories into this table
+        public static final Uri INSERT_MEMORY_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_MEMORY).appendPath(PATH_INSERT).build();
+//        variable that will store the URI used by the Content Provider to delete memories from this table
+        public static final Uri DELETE_MEMORY_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_MEMORY).appendPath(PATH_DELETE).build();
+//        variable that will store the URI used by the Content Provider to update memories from this table
+        public static final Uri UPDATE_MEMORY_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_MEMORY).appendPath(PATH_UPDATE).build();
 
 //        inner final IV that holds the memory table name
         public static final String TABLE_NAME = "MEMORY_TABLE";
