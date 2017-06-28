@@ -30,6 +30,10 @@ public class MeemoContentProvider extends ContentProvider {
     public static final int FAMILY_TABLE = 200;
     public static final int GET_MEMORY_CHILDREN = 201;
 
+    /**
+     * Method that returns a new UriMatcher all the time.
+     * This object is used to bind a particular Uri pattern to a specific number.
+     * This helps us identify the type of Uri and act properly upon it.*/
     public static UriMatcher getUriMatcher() {
 
 //        Initialize a UriMatcher with no matches by passing in NO_MATCH to the constructor

@@ -17,15 +17,12 @@ public class FetchPresenter implements LoaderManager.LoaderCallbacks<Memory[]> {
 //    IV that will hold an instance of the underlying activity of this presenter
     private MemoryList_Activity activity;
 
-//    IV that will hold the LayoutManager used to control the recycler view
-    private LinearLayoutManager mLayoutManager;
-
-//    IV that will hold the adapter instance for the recycler view
+    //    IV that will hold the adapter instance for the recycler view
     private MemoryListAdapter mAdapter;
 
 //    IV that holds the loader ID so to ensure that we are not creating a new Loader every time
 //    if a loader already exists, the same loader will be used
-    private final int FETCH_MEMORY_LOADER_ID = 3;
+    private final int FETCH_LOADER_ID = 3;
 
 //    IV that will hold the key associated with the memory ID inside the Bundle to be sent to the loader
     static final String MEMORY_ID = "parentID";
@@ -35,7 +32,7 @@ public class FetchPresenter implements LoaderManager.LoaderCallbacks<Memory[]> {
         this.activity = activity;
 
 //        creating and setting to the IV a LinearLayout for using in the RV
-        this.mLayoutManager = new LinearLayoutManager(activity);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(activity);
 
 //        setting the IV of the adapter with a new instance of your adapter class
         this.mAdapter = new MemoryListAdapter();
@@ -72,17 +69,17 @@ public class FetchPresenter implements LoaderManager.LoaderCallbacks<Memory[]> {
         bundle.putInt(MEMORY_ID, mAdapter.getParentMemory().getMemoryID());
 
 //        initializing a new loader object (with the proper data type) using the loader manager and the loader ID we created
-        Loader<Memory[]> loader = loaderManager.getLoader(this.FETCH_MEMORY_LOADER_ID);
+        Loader<Memory[]> loader = loaderManager.getLoader(this.FETCH_LOADER_ID);
 
 //        checking to see if the loader we got is a new one or it has already been created before
         if (loader == null) {
 //            if the loader is new, we are initializing a new one with the loader ID and sending the Bundle with the memoryID along with it
 //            we are also defining this class as the callback class that has implemented the proper callback methods
-            loaderManager.initLoader(this.FETCH_MEMORY_LOADER_ID, bundle, this).forceLoad();
+            loaderManager.initLoader(this.FETCH_LOADER_ID, bundle, this).forceLoad();
         } else {
 //            if the loader is not new, we are using the same loader to restart it.
 //            this will prevent memory leaks.
-            loaderManager.restartLoader(this.FETCH_MEMORY_LOADER_ID, bundle, this).forceLoad();
+            loaderManager.restartLoader(this.FETCH_LOADER_ID, bundle, this).forceLoad();
         }
     }
 
@@ -100,12 +97,12 @@ public class FetchPresenter implements LoaderManager.LoaderCallbacks<Memory[]> {
             case 3:
 //                since it is we will create a new instance of our TaskLoader class
 //                we are sending the context of the activity, the bundle with the data, the loader id and the activity itself
-                loader = new TaskLoader(activity.getUIContext(), args, id, activity);
+                loader = new TaskLoader(activity.getUIContext(), args, activity);
 //                make sure we break the statement otherwise this will continue to run
                 break;
             default:
 //                just a default case that so far, it is exactly the same as the case '3'
-                loader = new TaskLoader(activity.getUIContext(), args, id, activity);
+                loader = new TaskLoader(activity.getUIContext(), args, activity);
                 break;
         }
 
@@ -122,7 +119,7 @@ public class FetchPresenter implements LoaderManager.LoaderCallbacks<Memory[]> {
 
 //        checking to see if the loader that finished is actually the loader that we started before
 //        also checking to see if the memories array has content (if it's not null)
-        if (loader.getId() == this.FETCH_MEMORY_LOADER_ID && memories != null) {
+        if (loader.getId() == this.FETCH_LOADER_ID && memories != null) {
 //            calling the adapter's method that will retrieve the data from the result array.
             this.mAdapter.updateMemories(memories);
         }

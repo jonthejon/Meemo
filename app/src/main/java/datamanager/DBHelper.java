@@ -8,16 +8,12 @@ import android.database.sqlite.SQLiteOpenHelper;
  * class that will implement the database based on the @DBContract.java class
  */
 
-public class DBHelper extends SQLiteOpenHelper {
+class DBHelper extends SQLiteOpenHelper {
 
-    private Context context;
-
-    public DBHelper(Context context) {
+    DBHelper(Context context) {
 //        calling the SQLiteOpenHelper constructor and sending him the parameters that it needs from the contract class
 //        this call will ensure that the database will be instantiated or created depending on the version number
         super(context, DBContract.DATABASE_NAME, null, DBContract.DATABASE_VERSION);
-//        setting the context IV of this class with the given parameter
-        this.context = context;
     }
 
     @Override

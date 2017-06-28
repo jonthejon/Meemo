@@ -1,7 +1,6 @@
 package datamanager;
 
 import android.content.ContentResolver;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -17,20 +16,9 @@ import core.Memory;
 
 public class DataManager implements DataManagerInterface {
 
-//    IV that holds the context of the activity that initiated this use-case
-    private Context context;
 //    IV that will hold the cursor with the data retrieved from the database
 //    It can be null, in this case there is no data retrieved from the database
     private Cursor cursor;
-//    IV that will hold the instance for the class that extends the database
-    private DBHelper dbHelper;
-
-    public DataManager(Context context) {
-//        updating the proper IV with the given context
-        this.context = context;
-//        creating a new instance of the db helper class so we can use it to query the db
-        dbHelper = new DBHelper(context);
-    }
 
     @Override
     public Memory[] getMemoriesWithID(ContentResolver resolver, int id) {

@@ -13,7 +13,7 @@ import seasonedblackolives.com.meemo.R;
  * Adapter class that will work to bind and recycle each individual memory inside the recycler view
  */
 
-public class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
+class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
 
 //    fake IV that will hold an array to store the memories
     private Memory[] childMemories;

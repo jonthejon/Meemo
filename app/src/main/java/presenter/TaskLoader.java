@@ -17,18 +17,14 @@ public class TaskLoader extends AsyncTaskLoader<Memory[]> {
 
 //    IV that holds the bundle with the data sent by the Presenter to make the proper call to the DB
     private Bundle bundle;
-//    IV that holds the ID of this Loader.
-    private int loaderID;
 //    IV that will hold an instance to the calling activity
     private UIInterface userInterface;
 
-    public TaskLoader(Context context, Bundle bundle, int loaderID, UIInterface userInterface) {
+    public TaskLoader(Context context, Bundle bundle, UIInterface userInterface) {
 //        calling the super method constructor
         super(context);
 //        setting the bundle IV with the given bundle parameter
         this.bundle = bundle;
-//        setting the loaderID IV with the given parameter
-        this.loaderID = loaderID;
 //        setting the activity instance with the given parameter
         this.userInterface = userInterface;
     }

@@ -22,18 +22,13 @@ public class Meemo {
     public Meemo(UIInterface userInterface) {
 //        populating the IV with the user interface so we can access specific values of android framework
         this.userInterface = userInterface;
-//        creating a new instance of the datamanager class using the context retrieved from the UI
-        this.dataManager = new DataManager(userInterface.getUIContext());
+//        creating a new instance of the datamanager class
+        this.dataManager = new DataManager();
     }
 
     public Memory[] getMemoryListWithID(int id) {
-/*        String[] fakeStringArr = userInterface.getUIResources().getStringArray(R.array.fake_string_array);
-        Memory[] fakeMemoryArr = new Memory[fakeStringArr.length];
-        for (int i = fakeStringArr.length - 1; i >= 0; i--) {
-            fakeMemoryArr[fakeStringArr.length - 1 - i] = new Memory(1, fakeStringArr[i], 1, new int[0]);
-        }
-        return fakeMemoryArr;*/
 
+//        returns the call to the method of the data manager that calls the DB and serve back the Memory array
         return dataManager.getMemoriesWithID(userInterface.getUIContentResolver(), id);
     }
 

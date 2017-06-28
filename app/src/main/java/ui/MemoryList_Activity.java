@@ -55,12 +55,6 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
     }
 
     /**
-     * method that will be called whenever any other class needs an instance of the interface for communication*/
-    public UIInterface getUIInterface() {
-        return this;
-    }
-
-    /**
      * Method that returns the Parent Textview so the presenter can update it*/
     public TextView getParentTextView() {
 //        returns the textview
