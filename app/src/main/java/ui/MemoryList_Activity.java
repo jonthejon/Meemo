@@ -9,15 +9,16 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import presenter.FetchPresenter;
+import presenter.LoaderPresenter;
+import presenter.TaskPresenter;
 import seasonedblackolives.com.meemo.R;
 
 public class MemoryList_Activity extends AppCompatActivity implements UIInterface {
 
-//    IV that will hold the instance of the presenter for this activity
-    private FetchPresenter mPresenter;
+//    IV that will hold the instance of the Loader presenter for this activity
+    private LoaderPresenter loaderPresenter;
 
-//    IV that will hold the instance for the RecyclerView
+    //    IV that will hold the instance for the RecyclerView
     private RecyclerView childMemoryRV;
 
 //    IV that holds the instance for the textview that holds the parent memory
@@ -32,8 +33,10 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
         this.childMemoryRV = (RecyclerView) findViewById(R.id.memory_recycler_view);
         this.parentTextView = (TextView) findViewById(R.id.parent_memory_textview);
 
-//        initiates the presenter of this activity sending this activity as a parameter
-        this.mPresenter = new FetchPresenter(this);
+//        initiates the loader presenter of this activity sending this activity as a parameter
+        this.loaderPresenter = new LoaderPresenter(this);
+//        initiates the task presenter of this activity sending this activity as a parameter
+        TaskPresenter taskPresenter = new TaskPresenter(this);
     }
 
     public RecyclerView getRecyclerView() {
@@ -73,5 +76,11 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
      * This method call is defined inside the XML layout file. */
     public void onFABClick(View view) {
         Toast.makeText(this, "FAB clicked!", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * returns the instance of the Loader Presenter of this activity.*/
+    public LoaderPresenter getLoaderPresenter() {
+        return this.loaderPresenter;
     }
 }

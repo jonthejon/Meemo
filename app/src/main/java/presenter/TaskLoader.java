@@ -45,7 +45,7 @@ public class TaskLoader extends AsyncTaskLoader<Memory[]> {
 //        initiating an instance of the Meemo class which is our core class
         Meemo meemo = new Meemo(this.userInterface);
 //        retrieving the memoryID from the bundle we sent to this loader so we can send it to Meemo
-        int memoryID = bundle.getInt(FetchPresenter.MEMORY_ID);
+        int memoryID = bundle.getInt(LoaderPresenter.MEMORY_ID);
 //        calling the method of meemo that fetches the data and sending as a parameter the memoryID
         return meemo.getMemoryListWithID(memoryID);
     }

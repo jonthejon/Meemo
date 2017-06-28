@@ -12,12 +12,9 @@ import ui.MemoryList_Activity;
  * Presenter responsible for fetching and displaying data from a database using an adapter
  */
 
-public class FetchPresenter implements LoaderManager.LoaderCallbacks<Memory[]> {
+public class LoaderPresenter extends MemoryListPresenter implements LoaderManager.LoaderCallbacks<Memory[]> {
 
-//    IV that will hold an instance of the underlying activity of this presenter
-    private MemoryList_Activity activity;
-
-    //    IV that will hold the adapter instance for the recycler view
+//    IV that will hold the adapter instance for the recycler view
     private MemoryListAdapter mAdapter;
 
 //    IV that holds the loader ID so to ensure that we are not creating a new Loader every time
@@ -27,9 +24,9 @@ public class FetchPresenter implements LoaderManager.LoaderCallbacks<Memory[]> {
 //    IV that will hold the key associated with the memory ID inside the Bundle to be sent to the loader
     static final String MEMORY_ID = "parentID";
 
-    public FetchPresenter(MemoryList_Activity activity) {
-//        setting the IV with the activity instance
-        this.activity = activity;
+    public LoaderPresenter(MemoryList_Activity activity) {
+//        setting the Superclass IV to hold the instance to the activity
+        super(activity);
 
 //        creating and setting to the IV a LinearLayout for using in the RV
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(activity);
@@ -41,7 +38,7 @@ public class FetchPresenter implements LoaderManager.LoaderCallbacks<Memory[]> {
         this.bindObjectsToRecycler(mAdapter, mLayoutManager);
 
 //        calling the private method to initiate the creation of the Loader
-        this.setupLoader();
+        this.doInWorkerThread();
     }
 
     private void bindObjectsToRecycler(MemoryListAdapter adapter, LinearLayoutManager layoutManager) {
@@ -50,18 +47,20 @@ public class FetchPresenter implements LoaderManager.LoaderCallbacks<Memory[]> {
         layoutManager.setStackFromEnd(true);
 
 //        setting the activity's RV with the proper layout manager
-        activity.getRecyclerView().setLayoutManager(layoutManager);
+        super.activity.getRecyclerView().setLayoutManager(layoutManager);
 
 //        setting the activity's RV with the proper adapter
-        activity.getRecyclerView().setAdapter(adapter);
+        super.activity.getRecyclerView().setAdapter(adapter);
     }
 
     /**
-     * method responsible for setting up the Loader that will fetch the data from the DB in another thread */
-    private void setupLoader() {
+     * Implemented method of MemoryListPresenter.
+     * Responsible for setting up the Loader that will fetch the data from the DB in another thread */
+    @Override
+    public void doInWorkerThread() {
 //        getting an instance to the underlying activity's loader manager
 //        this loader manager is responsible for operating with the loader's communication
-        LoaderManager loaderManager = this.activity.getUILoaderManager();
+        LoaderManager loaderManager = super.activity.getUILoaderManager();
 
 //        starting a new Bundle object that will be used to send data to the loader (in our case the memoryID)
         Bundle bundle = new Bundle();
@@ -97,12 +96,12 @@ public class FetchPresenter implements LoaderManager.LoaderCallbacks<Memory[]> {
             case 3:
 //                since it is we will create a new instance of our TaskLoader class
 //                we are sending the context of the activity, the bundle with the data, the loader id and the activity itself
-                loader = new TaskLoader(activity.getUIContext(), args, activity);
+                loader = new TaskLoader(super.activity.getUIContext(), args, super.activity);
 //                make sure we break the statement otherwise this will continue to run
                 break;
             default:
 //                just a default case that so far, it is exactly the same as the case '3'
-                loader = new TaskLoader(activity.getUIContext(), args, activity);
+                loader = new TaskLoader(super.activity.getUIContext(), args, super.activity);
                 break;
         }
 
@@ -113,6 +112,7 @@ public class FetchPresenter implements LoaderManager.LoaderCallbacks<Memory[]> {
     /**
      * This method is called after the loader has finished its load.
      * So we are expecting a Memory[] object properly populated.
+     * In it we are updating the Parent Textview and the Adapter
      * */
     @Override
     public void onLoadFinished(Loader<Memory[]> loader, Memory[] memories) {
@@ -127,7 +127,7 @@ public class FetchPresenter implements LoaderManager.LoaderCallbacks<Memory[]> {
 //        after setting the data into the adapter, we are retrieving the parent memory text to we can update the UI
         String parentMemoryText = mAdapter.getParentMemory().getMemoryText();
 //        getting an instance for the Parent Textview and updating the text with the parent memory text
-        activity.getParentTextView().setText(parentMemoryText);
+        super.activity.getParentTextView().setText(parentMemoryText);
     }
 
     @Override
