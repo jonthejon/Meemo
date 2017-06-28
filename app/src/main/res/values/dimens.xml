@@ -3,4 +3,6 @@
     <dimen name="parent_max_height">200dp</dimen>
     <dimen name="parent_right_left_margins">20dp</dimen>
     <dimen name="parent_top_bottom_margins">20dp</dimen>
+
+    <dimen name="FAB_margin">16dp</dimen>
 </resources>

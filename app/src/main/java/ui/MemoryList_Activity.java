@@ -5,7 +5,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import presenter.FetchPresenter;
 import seasonedblackolives.com.meemo.R;
@@ -70,5 +72,12 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
     @Override
     public ContentResolver getUIContentResolver() {
         return getContentResolver();
+    }
+
+    /**
+     * This method will be called everytime the FAB button gets clicked.
+     * This method call is defined inside the XML layout file. */
+    public void onFABClick(View view) {
+        Toast.makeText(this, "FAB clicked!", Toast.LENGTH_SHORT).show();
     }
 }
