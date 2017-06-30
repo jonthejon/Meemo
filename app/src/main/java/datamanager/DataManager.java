@@ -60,12 +60,9 @@ public class DataManager implements DataManagerInterface {
 //        Cursor always starts at -1, se we can start the first loop already calling moveToNext()
         while(data.moveToNext()) {
 //            create a new Memory object with data from the cursor
-            Memory memory = new Memory(data.getInt(idColIndex),
-                    data.getString(textColIndex),
-                    0,
-                    new int[0],
-                    data.getString(fileColIndex));
-//            adding the created memory object inside the arraylist
+            Memory memory = new Memory.MemoryBuilder(data.getInt(idColIndex), data.getString(textColIndex), 0)
+                    .filePath(data.getString(fileColIndex))
+                    .build();
             memoryArrayList.add(memory);
         }
 

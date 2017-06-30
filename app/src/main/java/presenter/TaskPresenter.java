@@ -34,11 +34,10 @@ public class TaskPresenter extends MemoryListPresenter {
         Calendar c = Calendar.getInstance();
         int second = c.get(Calendar.SECOND);
 //        creating a random memory to be inserted inside the database
-        Memory newMemory = new Memory(new Random().nextInt(100),
+        Memory newMemory = new Memory.MemoryBuilder(new Random().nextInt(100),
                 "New random memory " + second,
-                new Random().nextInt(100),
-                new int[]{new Random().nextInt(100)},
-                "Dummy file path");
+                new Random().nextInt(100))
+                .build();
 //        setting the created memory to the IV of this presenter
         this.setMemory(newMemory);
 

@@ -74,7 +74,7 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
         } else {
 //            this is a dummy command to give a dummy memory in case the parent memory has not yet been created.
 //            later this will change so we can call the mother of all memories from the DB
-            return new Memory(1, "BRAIN", 0, new int[0], "");
+            return new Memory.MemoryBuilder(1, "BRAIN", 0).build();
         }
     }
 
