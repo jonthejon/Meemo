@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 
+import java.util.ArrayList;
+
 import core.Meemo;
 import core.Memory;
 import ui.UIInterface;
@@ -13,7 +15,7 @@ import ui.UIInterface;
  * the goal of this particular instance is to fetch data from the DB
  */
 
-public class TaskLoader extends AsyncTaskLoader<Memory[]> {
+public class TaskLoader extends AsyncTaskLoader<ArrayList<Memory>> {
 
 //    IV that holds the bundle with the data sent by the Presenter to make the proper call to the DB
     private Bundle bundle;
@@ -33,14 +35,15 @@ public class TaskLoader extends AsyncTaskLoader<Memory[]> {
     protected void onStartLoading() {
 //        before starting a new thread, check to see if the Bundle is not null. If it is, this does not make sense and must be returned
         if (bundle == null) {
-            return;
+//            here, we will cancel this loader since our bundle is null
+            this.cancelLoad();
         }
     }
 
     /**
      * this is the working method that runs in the background*/
     @Override
-    public Memory[] loadInBackground() {
+    public ArrayList<Memory> loadInBackground() {
 
 //        initiating an instance of the Meemo class which is our core class
         Meemo meemo = new Meemo(this.userInterface);

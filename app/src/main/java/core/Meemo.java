@@ -1,5 +1,7 @@
 package core;
 
+import java.util.ArrayList;
+
 import datamanager.DataManager;
 import datamanager.DataManagerInterface;
 import ui.UIInterface;
@@ -26,8 +28,7 @@ public class Meemo {
         this.dataManager = new DataManager();
     }
 
-    public Memory[] getMemoryListWithID(int id) {
-
+    public ArrayList<Memory> getMemoryListWithID(int id) {
 //        returns the call to the method of the data manager that calls the DB and serve back the Memory array
         return dataManager.getMemoriesWithID(userInterface.getUIContentResolver(), id);
     }

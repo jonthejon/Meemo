@@ -1,6 +1,9 @@
 package datamanager;
 
 import android.content.ContentResolver;
+
+import java.util.ArrayList;
+
 import core.Memory;
 
 /**
@@ -10,5 +13,5 @@ import core.Memory;
 public interface DataManagerInterface {
 
 //    method responsible for telling the datamanager to load it's cursor using the memory ID sent as parameter
-    Memory[] getMemoriesWithID(ContentResolver resolver, int id);
+    ArrayList<Memory> getMemoriesWithID(ContentResolver resolver, int id);
 }

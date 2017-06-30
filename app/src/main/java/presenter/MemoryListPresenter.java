@@ -7,7 +7,7 @@ import ui.MemoryList_Activity;
  * The presenters that will extend it this class will handle different use-cases for the activity
  */
 
-abstract class MemoryListPresenter {
+public abstract class MemoryListPresenter {
 
 //    IV that will hold an instance of the underlying activity of this presenter
     MemoryList_Activity activity;

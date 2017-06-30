@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import presenter.LoaderPresenter;
 import presenter.TaskPresenter;
@@ -35,8 +34,9 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 
 //        initiates the loader presenter of this activity sending this activity as a parameter
         this.loaderPresenter = new LoaderPresenter(this);
-//        initiates the task presenter of this activity sending this activity as a parameter
-        TaskPresenter taskPresenter = new TaskPresenter(this);
+
+//        calling the method of the loader to initiate the creation of the Loader
+        this.loaderPresenter.doInWorkerThread();
     }
 
     public RecyclerView getRecyclerView() {
@@ -75,7 +75,11 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
      * This method will be called everytime the FAB button gets clicked.
      * This method call is defined inside the XML layout file. */
     public void onFABClick(View view) {
-        Toast.makeText(this, "FAB clicked!", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "FAB clicked!", Toast.LENGTH_SHORT).show();
+
+//        initiates the task presenter of this activity sending this activity as a parameter
+//        TaskPresenter taskPresenter = new TaskPresenter(this);
+        new TaskPresenter(this).doInWorkerThread();
     }
 
     /**

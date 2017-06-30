@@ -5,14 +5,15 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 
+import java.util.ArrayList;
+
 import core.Memory;
 import ui.MemoryList_Activity;
 
 /**
  * Presenter responsible for fetching and displaying data from a database using an adapter
  */
-
-public class LoaderPresenter extends MemoryListPresenter implements LoaderManager.LoaderCallbacks<Memory[]> {
+public class LoaderPresenter extends MemoryListPresenter implements LoaderManager.LoaderCallbacks<ArrayList<Memory>> {
 
 //    IV that will hold the adapter instance for the recycler view
     private MemoryListAdapter mAdapter;
@@ -36,9 +37,6 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
 
 //        calling the method to bind the necessary objects to the activity's RV
         this.bindObjectsToRecycler(mAdapter, mLayoutManager);
-
-//        calling the private method to initiate the creation of the Loader
-        this.doInWorkerThread();
     }
 
     private void bindObjectsToRecycler(MemoryListAdapter adapter, LinearLayoutManager layoutManager) {
@@ -68,7 +66,7 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
         bundle.putInt(MEMORY_ID, mAdapter.getParentMemory().getMemoryID());
 
 //        initializing a new loader object (with the proper data type) using the loader manager and the loader ID we created
-        Loader<Memory[]> loader = loaderManager.getLoader(this.FETCH_LOADER_ID);
+        Loader<ArrayList<Memory>> loader = loaderManager.getLoader(this.FETCH_LOADER_ID);
 
 //        checking to see if the loader we got is a new one or it has already been created before
         if (loader == null) {
@@ -85,7 +83,7 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
     /**
      * This method is called whenever a new loader is asked to be created.*/
     @Override
-    public Loader<Memory[]> onCreateLoader(int id, Bundle args) {
+    public Loader<ArrayList<Memory>> onCreateLoader(int id, Bundle args) {
 
 //        creating a new instance of our TaskLoader class that will perform the background work and set it to null
 //        inside the switch statement we will populate it with the proper data
@@ -115,7 +113,7 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
      * In it we are updating the Parent Textview and the Adapter
      * */
     @Override
-    public void onLoadFinished(Loader<Memory[]> loader, Memory[] memories) {
+    public void onLoadFinished(Loader<ArrayList<Memory>> loader, ArrayList<Memory> memories) {
 
 //        checking to see if the loader that finished is actually the loader that we started before
 //        also checking to see if the memories array has content (if it's not null)
@@ -131,7 +129,12 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
     }
 
     @Override
-    public void onLoaderReset(Loader<Memory[]> loader) {
+    public void onLoaderReset(Loader<ArrayList<Memory>> loader) {
 //        doing nothing here since we do not have any link to the loader's data to release
+    }
+
+    public MemoryListAdapter getAdapter() {
+//        returning the adapter that underlies this presenter and the Main activity RV
+        return this.mAdapter;
     }
 }

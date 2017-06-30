@@ -21,7 +21,7 @@ public class DataManager implements DataManagerInterface {
     private Cursor cursor;
 
     @Override
-    public Memory[] getMemoriesWithID(ContentResolver resolver, int id) {
+    public ArrayList<Memory> getMemoriesWithID(ContentResolver resolver, int id) {
 
 //        calling and retrieving the Uri that is corresponds to getting all data from memory table
         Uri uri = DBContract.MemoryTable.GET_MEMORY_URI;
@@ -41,11 +41,11 @@ public class DataManager implements DataManagerInterface {
         this.cursor = null;
     }
 
-    private Memory[] getMemoryListFromCursor(Cursor data) {
+    private ArrayList<Memory> getMemoryListFromCursor(Cursor data) {
 
 //        checking to see if we have a valid Cursor and if not, returning an empty memory list
         if (data == null || data.getCount() == 0) {
-            return new Memory[0];
+            return new ArrayList<>();
         }
 
 //        creating an Arraylist of Memory type so we can dinamically update it with the memories from the cursor
@@ -69,12 +69,7 @@ public class DataManager implements DataManagerInterface {
             memoryArrayList.add(memory);
         }
 
-//        creating a new Memory array with the size of the arraylist that just got populated
-        Memory[] memoryList = new Memory[memoryArrayList.size()];
-//        converting all the data from inside the arraylist into the array
-        memoryList = memoryArrayList.toArray(memoryList);
-
-//        returning the array
-        return memoryList;
+//        returning the Arraylist containing the memories extracted from the db
+        return memoryArrayList;
     }
 }
