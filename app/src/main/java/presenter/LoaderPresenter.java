@@ -120,6 +120,8 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
         if (loader.getId() == this.FETCH_LOADER_ID && memories != null) {
 //            calling the adapter's method that will retrieve the data from the result array.
             this.mAdapter.updateMemories(memories);
+//            calls the activity method to update the state of the RV
+            super.activity.updateRVState();
         }
 
 //        after setting the data into the adapter, we are retrieving the parent memory text to we can update the UI
