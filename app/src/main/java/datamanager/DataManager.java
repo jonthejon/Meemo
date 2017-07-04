@@ -22,9 +22,19 @@ public class DataManager implements DataManagerInterface {
 
     @Override
     public ArrayList<Memory> getMemoriesWithID(ContentResolver resolver, int id) {
+//        initiating an Uri object so we can create the proper Uri
+        Uri uri;
 
-//        calling and retrieving the Uri that is corresponds to getting all data from memory table
-        Uri uri = DBContract.MemoryTable.GET_MEMORY_URI;
+//        checking to see if the ID is bigger than zero. That is, if it has a valid memory id sent to us
+        if (id > 0) {
+//            creating a get memory Uri
+            uri = DBContract.MemoryTable.GET_MEMORY_URI;
+//            appending the Uri with the proper memory ID
+            uri = uri.buildUpon().appendPath(Integer.toString(id)).build();
+        } else {
+//            we did not receive a valid ID, so we'll call the mother memory
+            uri = DBContract.MemoryTable.GET_MOTHER_MEMORY_URI;
+        }
 
 //        making sure that we have a null cursor so we can populate it
         resetCursor();

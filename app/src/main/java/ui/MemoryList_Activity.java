@@ -92,7 +92,6 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
     public void onFABClick(View view) {
 
 //        initiates the task presenter of this activity sending this activity as a parameter
-//        TaskPresenter taskPresenter = new TaskPresenter(this);
         new TaskPresenter(this).doInWorkerThread();
     }
 

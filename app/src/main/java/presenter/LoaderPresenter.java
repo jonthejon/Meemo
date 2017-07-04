@@ -4,11 +4,15 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import core.Memory;
 import ui.MemoryList_Activity;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Presenter responsible for fetching and displaying data from a database using an adapter
@@ -33,7 +37,7 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(activity);
 
 //        setting the IV of the adapter with a new instance of your adapter class
-        this.mAdapter = new MemoryListAdapter();
+        this.mAdapter = new MemoryListAdapter(this);
 
 //        calling the method to bind the necessary objects to the activity's RV
         this.bindObjectsToRecycler(mAdapter, mLayoutManager);
@@ -119,6 +123,9 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
 //        also checking to see if the memories array has content (if it's not null)
         if (loader.getId() == this.FETCH_LOADER_ID && memories != null) {
 //            calling the adapter's method that will retrieve the data from the result array.
+
+            Log.d(TAG, "onLoadFinished: " + memories.size());
+
             this.mAdapter.updateMemories(memories);
 //            calls the activity method to update the state of the RV
             super.activity.updateRVState();
@@ -126,8 +133,10 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
 
 //        after setting the data into the adapter, we are retrieving the parent memory text to we can update the UI
         String parentMemoryText = mAdapter.getParentMemory().getMemoryText();
+//        TO BE DELETED!!
+        int parentID = mAdapter.getParentMemory().getMemoryID();
 //        getting an instance for the Parent Textview and updating the text with the parent memory text
-        super.activity.getParentTextView().setText(parentMemoryText);
+        super.activity.getParentTextView().setText(parentMemoryText + " " + parentID);
     }
 
     @Override
@@ -138,5 +147,13 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
     public MemoryListAdapter getAdapter() {
 //        returning the adapter that underlies this presenter and the Main activity RV
         return this.mAdapter;
+    }
+
+    /**
+     * callback method that handles inside this presenter the clicks in the Recycler View's ViewHolders
+     * @param memory the Memory object that is represented by the viewholder that got clicked.*/
+    public void handleRVClicks(Memory memory) {
+//        so far, this method only creates a Toast so we can know what Viewholder got clicked
+        Toast.makeText(super.activity, memory.getMemoryText(), Toast.LENGTH_SHORT).show();
     }
 }

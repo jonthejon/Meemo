@@ -20,9 +20,15 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
 
 //    IV that will store the children memories of the parent memory
     private ArrayList<Memory> childMemories;
-
 //    IV that will hold the Memory object that is the current parent array
     private Memory parentMemory;
+//    IV that will hold the presenter instance that called this adapter
+    private LoaderPresenter presenter;
+
+    public MemoryListAdapter(LoaderPresenter presenter) {
+//        setting the IV that holds the presenter instance
+        this.presenter = presenter;
+    }
 
     @Override
     public MemoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -35,7 +41,7 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
 //        create a new View using the inflater with the layout id and the ViewGroup as inputs
         View view = inflater.inflate(singleMemoryLayoutID,parent,false);
 //        create and return a new ViewHolder, giving to it's constructor the created View
-        return new MemoryViewHolder(view);
+        return new MemoryViewHolder(view, presenter);
     }
 
     @Override
@@ -73,8 +79,8 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
             return parentMemory;
         } else {
 //            this is a dummy command to give a dummy memory in case the parent memory has not yet been created.
-//            later this will change so we can call the mother of all memories from the DB
-            return new Memory.MemoryBuilder(1, "BRAIN", 0).build();
+//            this code will actually force the db to fetch the 1st memory and it's children
+            return new Memory.MemoryBuilder(-11, "GETTING_MOTHER_MEMORY", 0).build();
         }
     }
 

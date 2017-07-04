@@ -1,6 +1,7 @@
 package datamanager;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -34,44 +35,31 @@ class DBHelper extends SQLiteOpenHelper {
 //        this String holds the SQL statement for creating the family table using the information from the contract class
         final String SQL_CREATE_FAMILY_TABLE = "CREATE TABLE" + " " + DBContract.FamilyTable.TABLE_NAME + " (" +
 //                creating a unique id field for easy information access
-                DBContract.FamilyTable.COL_UNIQUE_ROW + " " + "INTEGER PRIMARY KEY AUTOINCREMENT," + " " +
+                DBContract.FamilyTable.COL_UNIQUE_ROW + " " + "INTEGER PRIMARY KEY," + " " +
 //                this ID must not be null and will match one specific primary key of the memory table
-                DBContract.FamilyTable.COL_MEMORY_ID + " " + "INTEGER NOT NULL," + " " +
+                DBContract.FamilyTable.COL_PARENT_MEMORY_ID + " " + "INTEGER NOT NULL," + " " +
 //                this ID must not be null and will match one specific primary key of the memory table
                 DBContract.FamilyTable.COL_CHILD_MEMORY_ID + " " + "INTEGER NOT NULL" +
                 ");";
-
+//        fake array containing the first memories to be inserted inside the DB for testing purposes
         String[] fakeStringArr = {"BRAIN TEST",
-        "Memory number 2",
-        "Memory number 3",
-        "Memory number 4",
-        "Memory number 5",
-        "Memory number 6"};
+        "Child Memory 1",
+        "Child Memory 2",
+        "Child Memory 3",
+        "Child Memory 4",
+        "Child Memory 5"};
 
 //        This is the String that holds the SQL statement for inserting the first memory into the DB
         final String SQL_INSERT_FIRST_MEMORY = "INSERT INTO" + " " + DBContract.MemoryTable.TABLE_NAME +  " " +
                 "(" + DBContract.MemoryTable.COL_MEMORY_TEXT + ")" + " " +
                 "VALUES('" + fakeStringArr[0] + "');";
-
+//        This is the String that holds the SQL statement for inserting the second memory into the DB
         final String SQL_INSERT_SECOND_MEMORY = "INSERT INTO" + " " + DBContract.MemoryTable.TABLE_NAME +  " " +
                 "(" + DBContract.MemoryTable.COL_MEMORY_TEXT + ")" + " " +
                 "VALUES('" + fakeStringArr[1] + "');";
-
-        final String SQL_INSERT_THIRD_MEMORY = "INSERT INTO" + " " + DBContract.MemoryTable.TABLE_NAME +  " " +
-                "(" + DBContract.MemoryTable.COL_MEMORY_TEXT + ")" + " " +
-                "VALUES('" + fakeStringArr[2] + "');";
-
-        final String SQL_INSERT_FOURTH_MEMORY = "INSERT INTO" + " " + DBContract.MemoryTable.TABLE_NAME +  " " +
-                "(" + DBContract.MemoryTable.COL_MEMORY_TEXT + ")" + " " +
-                "VALUES('" + fakeStringArr[3] + "');";
-
-        final String SQL_INSERT_FIFTH_MEMORY = "INSERT INTO" + " " + DBContract.MemoryTable.TABLE_NAME +  " " +
-                "(" + DBContract.MemoryTable.COL_MEMORY_TEXT + ")" + " " +
-                "VALUES('" + fakeStringArr[4] + "');";
-
-        final String SQL_INSERT_SIXTH_MEMORY = "INSERT INTO" + " " + DBContract.MemoryTable.TABLE_NAME +  " " +
-                "(" + DBContract.MemoryTable.COL_MEMORY_TEXT + ")" + " " +
-                "VALUES('" + fakeStringArr[5] + "');";
+//        This SQL is the query for retrieving the first 2 memories from the DB that just got created
+        final String SQL_GET_FIRSTS_MEMORY_IDS = "SELECT" + " " + DBContract.MemoryTable.COL_MEMORY_ID + " " +
+                "FROM" + " " + DBContract.MemoryTable.TABLE_NAME;
 
 //        executing the creation of the memory table
         db.execSQL(SQL_CREATE_MEMORY_TABLE);
@@ -79,11 +67,32 @@ class DBHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_FAMILY_TABLE);
 //        inserting the first memory into the DB. This will be the parent of all other memories.
         db.execSQL(SQL_INSERT_FIRST_MEMORY);
+//        inserting the second memory into the DB.
         db.execSQL(SQL_INSERT_SECOND_MEMORY);
-        db.execSQL(SQL_INSERT_THIRD_MEMORY);
-        db.execSQL(SQL_INSERT_FOURTH_MEMORY);
-        db.execSQL(SQL_INSERT_FIFTH_MEMORY);
-        db.execSQL(SQL_INSERT_SIXTH_MEMORY);
+
+//        this code block here is just getting the information from the first table so we can populate properly the second table
+//        getting a Cursor with the result after getting from the memory table the first 2 memories
+        Cursor cursor = db.rawQuery(SQL_GET_FIRSTS_MEMORY_IDS, null);
+//        getting the index of the column _ID from the cursor
+        int id_Col_index = cursor.getColumnIndex(DBContract.MemoryTable.COL_MEMORY_ID);
+//        jumping the cursor to the first position so we can start reading
+        cursor.moveToNext();
+//        reading the ID of the first memory (the mother memory)
+        int first_id = cursor.getInt(id_Col_index);
+//        moving the cursor to the next position for reading
+        cursor.moveToNext();
+//        reading the ID of the second memory
+        int second_id = cursor.getInt(id_Col_index);
+//        closing the cursor so we don't have a memory leak
+        cursor.close();
+
+//        SQL command to insert the proper relationship between the mother and the second memory into the family table
+        final String SQL_INSERT_FIRST_FAMILY_RELATION = "INSERT INTO" + " " + DBContract.FamilyTable.TABLE_NAME +  " " +
+                "(" + DBContract.FamilyTable.COL_PARENT_MEMORY_ID + ", " +
+                DBContract.FamilyTable.COL_CHILD_MEMORY_ID + ")" + " " +
+                "VALUES(" + "'" + first_id + "'" + ", " + "'" + second_id + "'" + ");";
+//        executing the SQL so we can proper populate the family table
+        db.execSQL(SQL_INSERT_FIRST_FAMILY_RELATION);
     }
 
     @Override

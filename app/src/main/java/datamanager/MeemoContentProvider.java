@@ -22,12 +22,13 @@ public class MeemoContentProvider extends ContentProvider {
     private DBHelper dbHelper;
 
     //    These are integer values that will uniquely identify each possible Uri used by my CP
-    public static final int MEMORY_TABLE = 100;
-    public static final int GET_SINGLE_MEMORY = 101;
+//    public static final int MEMORY_TABLE = 100;
+    public static final int GET_MEMORIES_BY_PARENT_ID = 101;
     public static final int INSERT_SINGLE_MEMORY = 102;
     public static final int DELETE_SINGLE_MEMORY = 103;
     public static final int UPDATE_SINGLE_MEMORY = 104;
-    public static final int FAMILY_TABLE = 200;
+    public static final int GET_MEMORIES_BY_MOTHER = 105;
+//    public static final int FAMILY_TABLE = 200;
     public static final int GET_MEMORY_CHILDREN = 201;
 
     /**
@@ -40,10 +41,10 @@ public class MeemoContentProvider extends ContentProvider {
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
 //        adds to the UriMatcher the URI that we want to register
-//        Uri for getting all memories from memory table
-        uriMatcher.addURI(DBContract.AUTHORITY, DBContract.PATH_MEMORY + "/" + DBContract.PATH_GET, MEMORY_TABLE);
+//        Uri for getting memories based only on the mother memory from memory table
+        uriMatcher.addURI(DBContract.AUTHORITY, DBContract.PATH_MEMORY + "/" + DBContract.PATH_GET + "/" + DBContract.PATH_MOTHER, GET_MEMORIES_BY_MOTHER);
 //        Uri for getting a single memory from memory table
-        uriMatcher.addURI(DBContract.AUTHORITY, DBContract.PATH_MEMORY + "/" + DBContract.PATH_GET + "/#", GET_SINGLE_MEMORY);
+        uriMatcher.addURI(DBContract.AUTHORITY, DBContract.PATH_MEMORY + "/" + DBContract.PATH_GET + "/#", GET_MEMORIES_BY_PARENT_ID);
 //        Uri for inserting a new memory inside the memory table
         uriMatcher.addURI(DBContract.AUTHORITY, DBContract.PATH_MEMORY + "/" + DBContract.PATH_INSERT, INSERT_SINGLE_MEMORY);
 //        Uri for deleting a memory from the memory table
@@ -74,23 +75,47 @@ public class MeemoContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-
 //        getting a final readable instance for the database using our dbhelper class
         final SQLiteDatabase db = dbHelper.getReadableDatabase();
 //        SQLiteQueryBuilder is a helper class that helps us create SQL queries
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 //        initializing a new Cursor object that will be returned after populated
+//        setting the table to be queried to be the memory table
+        queryBuilder.setTables(DBContract.MemoryTable.TABLE_NAME);
         Cursor cursor;
 //        using the UriMatcher object to tell us which Uri the client sent us
         switch (getUriMatcher().match(uri)) {
-//            we'll use the query entire memory table as a default case
-//            probably not a good idea if this is a public Content Provider
-            default:
-//                setting the table to be queried to be the memory table
-                queryBuilder.setTables(DBContract.MemoryTable.TABLE_NAME);
+//            checking to see if the uri is the case of fetching memories using the parent ID
+            case GET_MEMORIES_BY_PARENT_ID:
 //                performing the actual query and populating the cursor
-                cursor = queryBuilder.query(db, null, null, null, null, null, "'_ID' ASC");
+                cursor = queryBuilder.query(db, this.getQueryMemoryTableColumns(),
+                        this.getQueryWhereFetcher(),
+                        this.getQueryWhereFetchersArgs(uri),
+                        null,
+                        null,
+                        this.getQueryOrder());
                 break;
+            case GET_MEMORIES_BY_MOTHER:
+//                SQL that queries and populates the cursor with the first memory and it's children
+                String query = "SELECT " + DBContract.MemoryTable.COL_MEMORY_ID +
+                        ", " + DBContract.MemoryTable.COL_MEMORY_TEXT +
+                        ", " + DBContract.MemoryTable.COL_MEMORY_FILE_PATH +
+                        " FROM " + DBContract.MemoryTable.TABLE_NAME +
+                        " WHERE " + DBContract.MemoryTable.COL_MEMORY_ID +
+                        " = (SELECT " + DBContract.MemoryTable.COL_MEMORY_ID +
+                        " FROM " + DBContract.MemoryTable.TABLE_NAME +
+                        " LIMIT 1) OR " + DBContract.MemoryTable.COL_MEMORY_ID +
+                        " = (SELECT " + DBContract.FamilyTable.COL_CHILD_MEMORY_ID +
+                        " FROM " + DBContract.FamilyTable.TABLE_NAME +
+                        " WHERE " + DBContract.FamilyTable.COL_PARENT_MEMORY_ID +
+                        " = (SELECT " + DBContract.MemoryTable.COL_MEMORY_ID +
+                        " FROM " + DBContract.MemoryTable.TABLE_NAME + " LIMIT 1))";
+//                executing the SQL statement to populate the cursor
+                cursor = db.rawQuery(query,null);
+                break;
+            default:
+//                the uri is not a valid one, so we'll return a null cursor
+                return null;
         }
 //        Register to watch a content URI for changes
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -108,7 +133,7 @@ public class MeemoContentProvider extends ContentProvider {
     public String getType(@NonNull Uri uri) {
 //        checks to see if we are receiving an URI for getting memories from the memory table
         switch (getUriMatcher().match(uri)) {
-            case MEMORY_TABLE:
+            case GET_MEMORIES_BY_PARENT_ID:
 //            returning the proper data type for this type of request
 //            'vnd.android.cursor.dir' says that we are returning more then one line of data
 //            'vnd.com.meemo.provider.memory_table' uniquely identifies this data type
@@ -174,5 +199,51 @@ public class MeemoContentProvider extends ContentProvider {
                 return db.update(DBContract.MemoryTable.TABLE_NAME, values, "_ID = ?", new String[]{id});
         }
         return 0;
+    }
+
+    private String[] getQueryMemoryTableColumns() {
+//        returns the name of the tables to be queried from the memory table
+        return new String[] {
+                DBContract.MemoryTable.COL_MEMORY_ID,
+                DBContract.MemoryTable.COL_MEMORY_TEXT,
+                DBContract.MemoryTable.COL_MEMORY_FILE_PATH
+        };
+    }
+
+    private String getQueryWhereFetcher() {
+//        returns part of the WHERE clause to be used to query data from the DB
+        return DBContract.MemoryTable.COL_MEMORY_ID + " " + "=" + " " + "? OR ?";
+    }
+
+    /**
+     * Method that returns the arguments of the WHERE clause for fetching Memories and children from the DB*/
+    private String[] getQueryWhereFetchersArgs(Uri uri) {
+        String firstArg;
+        String secondArg;
+        String path = uri.getLastPathSegment();
+//        if the TRY is successful, that means that we have a valid ID and we must make a normal fetch for memory and children
+        try {
+            int parentID = Integer.parseInt(path);
+            firstArg = uri.getLastPathSegment();
+            secondArg = "(SELECT" + " " + DBContract.FamilyTable.COL_CHILD_MEMORY_ID + " " +
+                    "FROM" + " " + DBContract.FamilyTable.TABLE_NAME + " " +
+                    "WHERE" + " " + DBContract.FamilyTable.COL_PARENT_MEMORY_ID + " " +
+                    "=" + " " + parentID + ")";
+        } catch (NumberFormatException nfe) {
+//            if the TRY is failed, that means that we do not have a valid ID and must fetch the mother memory and it's children
+            firstArg = "(SELECT" + " " + DBContract.MemoryTable.COL_MEMORY_ID + " " +
+                    "FROM" + " " + DBContract.MemoryTable.TABLE_NAME + " LIMIT 1)";
+            secondArg = "(SELECT" + " " + DBContract.FamilyTable.COL_CHILD_MEMORY_ID + " " +
+                    "FROM" + " " + DBContract.FamilyTable.TABLE_NAME + " " +
+                    "WHERE" + " " + DBContract.FamilyTable.COL_PARENT_MEMORY_ID + " " +
+                    "=" + " " + "(" + firstArg + ")" + ")";
+        }
+
+        return new String[]{firstArg,secondArg};
+    }
+
+    private String getQueryOrder() {
+//        returns the sorting order of the memories retrieved from the DB
+        return DBContract.MemoryTable.COL_CREATION_TIME + " " + "ASC";
     }
 }

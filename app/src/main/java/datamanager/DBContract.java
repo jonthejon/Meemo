@@ -12,7 +12,7 @@ public class DBContract {
 //    IV that holds the database name
     static final String DATABASE_NAME = "MeemoDatabase.db";
 //    IV that holds the present database version and must be incremented every time a database scheme changes
-    static final int DATABASE_VERSION = 1;
+    static final int DATABASE_VERSION = 2;
 
 //    The authority, which is how your code knows which Content Provider to access
     static final String AUTHORITY = "seasonedblackolives.com.meemo";
@@ -23,15 +23,18 @@ public class DBContract {
     static final String PATH_MEMORY = "memory";
     public static final String PATH_FAMILY = "family";
     static final String PATH_GET = "get";
+    static final String PATH_MOTHER = "mother";
     static final String PATH_INSERT = "insert";
     static final String PATH_DELETE = "delete";
     static final String PATH_UPDATE = "update";
 
     public static final class MemoryTable implements BaseColumns {
-
 //        variable that will store the URI used by the Content Provider to get memories from this table
         public static final Uri GET_MEMORY_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_MEMORY).appendPath(PATH_GET).build();
+        //        variable that will store the URI used by the Content Provider to get memories from this table
+        public static final Uri GET_MOTHER_MEMORY_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_MEMORY).appendPath(PATH_GET).appendPath(PATH_MOTHER).build();
 //        variable that will store the URI used by the Content Provider to insert memories into this table
         public static final Uri INSERT_MEMORY_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_MEMORY).appendPath(PATH_INSERT).build();
@@ -62,7 +65,7 @@ public class DBContract {
 //        DON'T CONFUSE IT WITH THE ACTUAL MEMORY ID THAT IS STORED IN ANOTHER COLUMN
         public static final String COL_UNIQUE_ROW = "_ID";
 //        inner final IV that holds the actual memory ID of the parent memory
-        public static final String COL_MEMORY_ID = "PARENT_ID";
+        public static final String COL_PARENT_MEMORY_ID = "PARENT_ID";
 //        inner final IV that holds the actual memory ID of the child memory
         public static final String COL_CHILD_MEMORY_ID = "CHILD_ID";
     }
