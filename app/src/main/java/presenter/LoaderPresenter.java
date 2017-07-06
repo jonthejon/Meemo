@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -150,8 +149,12 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
      * callback method that handles inside this presenter the clicks in the Recycler View's ViewHolders
      * @param memory the Memory object that is represented by the viewholder that got clicked.*/
     public void handleRVClicks(Memory memory) {
+
+        mAdapter.setCallerMemory(memory);
+        this.doInWorkerThread();
+
 //        so far, this method only creates a Toast so we can know what Viewholder got clicked
-        Toast.makeText(super.activity, memory.getMemoryText() + " " + memory.getConnection(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(super.activity, memory.getMemoryText() + " " + memory.getConnection(), Toast.LENGTH_SHORT).show();
     }
 
     public void updateCallerMemoryUI(Memory memory) {

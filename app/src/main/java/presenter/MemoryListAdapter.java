@@ -110,5 +110,7 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
     public void setCallerMemory(Memory callerMemory) {
 //        setting the IV that holds the instance to the caller memory
         this.callerMemory = callerMemory;
+//        updates the UI so the caller memory get's updated
+        presenter.updateCallerMemoryUI(callerMemory);
     }
 }

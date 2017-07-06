@@ -91,6 +91,8 @@ public class MeemoContentProvider extends ContentProvider {
                 String getMemoriesQuery = "SELECT " +
                         DBContract.MemoryTable.TABLE_NAME + "." + DBContract.MemoryTable.COL_MEMORY_ID +
                         ", " +
+                        DBContract.ConnectionTable.TABLE_NAME + "." + DBContract.ConnectionTable.COL_MEMORY_A +
+                        " AS link_id, " +
                         DBContract.MemoryTable.TABLE_NAME + "." + DBContract.MemoryTable.COL_MEMORY_TEXT +
                         ", " +
                         DBContract.MemoryTable.TABLE_NAME + "." + DBContract.MemoryTable.COL_MEMORY_FILE_PATH +
@@ -113,8 +115,12 @@ public class MeemoContentProvider extends ContentProvider {
                         " WHERE " +
                         DBContract.ConnectionTable.TABLE_NAME + "." + DBContract.ConnectionTable.COL_MEMORY_A +
                         " = " +
-                        id
-                        + ");";
+                        id +
+                        ") AND link_id = " +
+                        id +
+                        ";";
+
+                String que = "connection_table.memory_a = 2) AND link_id = 2;";
 
 //                executing the SQL statement to populate the cursor
                 cursor = db.rawQuery(getMemoriesQuery,null);
