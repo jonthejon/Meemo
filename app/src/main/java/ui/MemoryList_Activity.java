@@ -2,6 +2,7 @@ package ui;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,10 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 
 //    IV that will hold the instance of the Loader presenter for this activity
     private LoaderPresenter loaderPresenter;
+
+    // TODO: 06/07/17
+//    IV that will hold the instance of the Task presenter for this activity
+    private TaskPresenter taskPresenter;
 
     //    IV that will hold the instance for the RecyclerView
     private RecyclerView childMemoryRV;
@@ -91,8 +96,29 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
      * This method call is defined inside the XML layout file. */
     public void onFABClick(View view) {
 
+//        if the IV that holds the task presenter is null, initialize it
+        if (this.taskPresenter == null) this.taskPresenter = new TaskPresenter(this);
+
+//        calling the presenter's method that will create a new Intent and initiate a new activity
+        this.taskPresenter.startAddActivity();
+
 //        initiates the task presenter of this activity sending this activity as a parameter
-        new TaskPresenter(this).doInWorkerThread();
+//        new TaskPresenter(this).doInWorkerThread();
+    }
+
+    // TODO: 06/07/17
+    /**
+     * Method that gets called after the called activity returns with data and a result*/
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        checking to see if the request code is the same of the add activity and if the result code is OK
+        if (requestCode == taskPresenter.CREATE_MEMORY_REQUEST && resultCode == RESULT_OK) {
+//            checking to see if the intent sent by the activity is not null
+            if (data != null) {
+//                calling the presenter's method that will handle the result for this activity
+                taskPresenter.handleActivityResult(data);
+            }
+        }
     }
 
     /**

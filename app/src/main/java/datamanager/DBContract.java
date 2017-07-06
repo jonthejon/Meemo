@@ -12,7 +12,7 @@ public class DBContract {
 //    IV that holds the database name
     static final String DATABASE_NAME = "MeemoDatabase.db";
 //    IV that holds the present database version and must be incremented every time a database scheme changes
-    static final int DATABASE_VERSION = 6;
+    static final int DATABASE_VERSION = 7;
 
 //    The authority, which is how your code knows which Content Provider to access
     static final String AUTHORITY = "seasonedblackolives.com.meemo";

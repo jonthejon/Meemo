@@ -35,7 +35,7 @@ public class Task extends AsyncTask<Uri, Void, Integer> {
 //        retrieving the column name of the memory table to be inserted
         String textColumn = DBContract.MemoryTable.COL_MEMORY_TEXT;
 //        getting the memory text from the Memory of the TaskPresenter
-        String textMemory = presenter.getMemory().getMemoryText();
+        String textMemory = presenter.getMemoryText();
 //        initiating a new ContentValues object to store the data to be inserted in the db
         ContentValues cv = new ContentValues();
 //        inserting the memory with the proper column name inside the ContentValues

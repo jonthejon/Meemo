@@ -22,6 +22,8 @@
             android:authorities="seasonedblackolives.com.meemo"
             android:exported="false" />
 
+        <activity android:name="ui.AddMemory_Activity"
+            android:parentActivityName="ui.MemoryList_Activity"/>
     </application>
 
 </manifest>

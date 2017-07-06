@@ -1,13 +1,11 @@
 package presenter;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.widget.Toast;
 
-import java.util.Calendar;
-import java.util.Random;
-
-import core.Memory;
 import datamanager.DBContract;
+import ui.AddMemory_Activity;
 import ui.MemoryList_Activity;
 
 /**
@@ -17,8 +15,13 @@ import ui.MemoryList_Activity;
 
 public class TaskPresenter extends MemoryListPresenter {
 
+    // TODO: 06/07/17
 //    IV that will hold the Memory object to related to this particular task
-    private Memory memory;
+    private String memory_text;
+
+    // TODO: 06/07/17
+//    IV that holds the request number for the add_activity to callback this activity
+    public final int CREATE_MEMORY_REQUEST = 7;
 
     public TaskPresenter(MemoryList_Activity activity) {
 //        setting the super class IV with the instance of the underlying activity
@@ -31,28 +34,30 @@ public class TaskPresenter extends MemoryListPresenter {
     @Override
     public void doInWorkerThread() {
 //        retrieving the seconds in the current time for our dummy memory
-        Calendar c = Calendar.getInstance();
-        int second = c.get(Calendar.SECOND);
+//        Calendar c = Calendar.getInstance();
+//        int second = c.get(Calendar.SECOND);
 //        creating a random memory to be inserted inside the database
-        Memory newMemory = new Memory.MemoryBuilder(new Random().nextInt(100),
-                "New random memory " + second)
-                .build();
+//        Memory newMemory = new Memory.MemoryBuilder(new Random().nextInt(100),
+//                "New random memory " + second)
+//                .build();
 //        setting the created memory to the IV of this presenter
-        this.setMemory(newMemory);
+//        this.setMemory(newMemory);
 
 //        initiating a new Task class that will be responsible for the worker Thread
 //        we're sending the proper insert Uri to the method of the Task class
         new Task(super.activity, this).execute(this.createUri());
     }
 
-    public void setMemory(Memory memory) {
+    // TODO: 06/07/17
+    public void setMemoryText(String memory) {
 //        setting the IV of this class with the memory sent as a parameter
-        this.memory = memory;
+        this.memory_text = memory;
     }
 
-    public Memory getMemory() {
+    // TODO: 06/07/17
+    public String getMemoryText() {
 //        returning the memory object stored as an IV of this class
-        return this.memory;
+        return this.memory_text;
     }
 
     void taskCallback(int result) {
@@ -74,5 +79,20 @@ public class TaskPresenter extends MemoryListPresenter {
 //        building the Uri with the memory caller ID appended to the path
         return DBContract.MemoryTable.INSERT_MEMORY_URI.buildUpon()
                 .appendPath(Integer.toString(callerID)).build();
+    }
+    // TODO: 06/07/17
+    public void startAddActivity() {
+
+//        creating a new intent for calling the add_activity
+        Intent new_memo_intent = new Intent(super.activity, AddMemory_Activity.class);
+//        calling the activity for result. This will ensure that the activity will return with data
+        super.activity.startActivityForResult(new_memo_intent, this.CREATE_MEMORY_REQUEST);
+    }
+
+    // TODO: 06/07/17
+    public void handleActivityResult(Intent data) {
+        String memory_text = data.getStringExtra(DBContract.MemoryTable.COL_MEMORY_TEXT);
+        this.setMemoryText(memory_text);
+        this.doInWorkerThread();
     }
 }

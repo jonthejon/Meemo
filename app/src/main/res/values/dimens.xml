@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="parent_max_height">200dp</dimen>
-    <dimen name="parent_right_left_margins">20dp</dimen>
-    <dimen name="parent_top_bottom_margins">20dp</dimen>
-
+    <dimen name="card_content_margins">10dp</dimen>
+    <dimen name="card_right_left_margins">7dp</dimen>
+    <dimen name="card_top_bottom_margins">7dp</dimen>
+    <dimen name="main_memory_right_left_margins">20dp</dimen>
+    <dimen name="main_memory_top_bottom_margins">20dp</dimen>
+    
     <dimen name="FAB_margin">16dp</dimen>
+    <dimen name="memory_text_size">20sp</dimen>
 </resources>

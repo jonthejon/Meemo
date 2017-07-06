@@ -12,5 +12,8 @@
         This is a fake memory for design purposes.
         This is a fake memory for design purposes.</string>
 
-    <string name="dummy_init_memory">BRAIN</string>
+    <string name="dummy_init_memory">The Mind of Jonathan</string>
+    <string name="enter_new_memory">Enter new memory…</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
 </resources>

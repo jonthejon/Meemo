@@ -1,7 +1,6 @@
 package datamanager;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -44,15 +43,19 @@ class DBHelper extends SQLiteOpenHelper {
                 DBContract.ConnectionTable.COL_MEMORY_B + " INTEGER NOT NULL, " +
                 DBContract.ConnectionTable.COL_CONNECTION_TYPE + " INTEGER DEFAULT " + DBContract.ConnectionTable.COMPOSITION_TYPE + ");";
 
-//        fake array containing the first memories to be inserted inside the DB for testing purposes
+/*//        fake array containing the first memories to be inserted inside the DB for testing purposes
         String[] fakeStringArr = {"BRAIN TEST", "Child Memory 1", "Child Memory 2"};
 
 //        This is the String that holds the SQL statement for inserting the first memory into the DB
         final String SQL_INSERT_FIRST_MEMORY = "INSERT INTO " + DBContract.MemoryTable.TABLE_NAME +
                 " (" + DBContract.MemoryTable.COL_MEMORY_TEXT + ") " +
-                "VALUES('" + fakeStringArr[0] + "');";
+                "VALUES('" + fakeStringArr[0] + "');";*/
 
-//        This is the String that holds the SQL statement for inserting the second memory into the DB
+        final String SQL_INSERT_FIRST_MEMORY = "INSERT INTO " + DBContract.MemoryTable.TABLE_NAME +
+                " (" + DBContract.MemoryTable.COL_MEMORY_TEXT + ") " +
+                "VALUES('The Mind of Jonathan');";
+
+/*//        This is the String that holds the SQL statement for inserting the second memory into the DB
         final String SQL_INSERT_SECOND_MEMORY = "INSERT INTO " + DBContract.MemoryTable.TABLE_NAME +
                 " (" + DBContract.MemoryTable.COL_MEMORY_TEXT + ") " +
                 "VALUES('" + fakeStringArr[1] + "');";
@@ -60,11 +63,11 @@ class DBHelper extends SQLiteOpenHelper {
 //        This is the String that holds the SQL statement for inserting the third memory into the DB
         final String SQL_INSERT_THIRD_MEMORY = "INSERT INTO " + DBContract.MemoryTable.TABLE_NAME +
                 " (" + DBContract.MemoryTable.COL_MEMORY_TEXT + ") " +
-                "VALUES('" + fakeStringArr[2] + "');";
+                "VALUES('" + fakeStringArr[2] + "');";*/
 
 //        This SQL is the query for retrieving the first 3 memories from the DB that just got created
-        final String SQL_GET_FIRST_MEMORY_IDS = "SELECT " + DBContract.MemoryTable.COL_MEMORY_ID +
-                " FROM " + DBContract.MemoryTable.TABLE_NAME + ";";
+//        final String SQL_GET_FIRST_MEMORY_IDS = "SELECT " + DBContract.MemoryTable.COL_MEMORY_ID +
+//                " FROM " + DBContract.MemoryTable.TABLE_NAME + ";";
 
 //        executing the creation of the memory table
         db.execSQL(SQL_CREATE_MEMORY_TABLE);
@@ -73,11 +76,11 @@ class DBHelper extends SQLiteOpenHelper {
 //        inserting the first memory into the DB. This will be the parent of all other memories.
         db.execSQL(SQL_INSERT_FIRST_MEMORY);
 //        inserting the second memory into the DB.
-        db.execSQL(SQL_INSERT_SECOND_MEMORY);
+//        db.execSQL(SQL_INSERT_SECOND_MEMORY);
 //        inserting the third memory into the DB.
-        db.execSQL(SQL_INSERT_THIRD_MEMORY);
+//        db.execSQL(SQL_INSERT_THIRD_MEMORY);
 
-//        this code block here is just getting the information from the first table so we can populate properly the second table
+/*//        this code block here is just getting the information from the first table so we can populate properly the second table
 //        getting a Cursor with the result after getting from the memory table the first 3 memories
         Cursor cursor = db.rawQuery(SQL_GET_FIRST_MEMORY_IDS, null);
 //        getting the index of the column _ID from the cursor
@@ -127,7 +130,7 @@ class DBHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_INSERT_FIRST_CONNECTION_2);
 //        executing the SQL for the second connections in the connection table
         db.execSQL(SQL_INSERT_SECOND_CONNECTION);
-        db.execSQL(SQL_INSERT_SECOND_CONNECTION_2);
+        db.execSQL(SQL_INSERT_SECOND_CONNECTION_2);*/
     }
 
     @Override
@@ -137,7 +140,6 @@ class DBHelper extends SQLiteOpenHelper {
         // In a production app, this method might be modified to ALTER the table
         // instead of dropping it, so that existing data is not deleted.
         db.execSQL("DROP TABLE IF EXISTS " + DBContract.MemoryTable.TABLE_NAME + ";");
-        db.execSQL("DROP TABLE IF EXISTS FAMILY_TABLE;");
         db.execSQL("DROP TABLE IF EXISTS " + DBContract.ConnectionTable.TABLE_NAME+ ";");
         onCreate(db);
     }

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
 
    <android.support.v7.widget.RecyclerView
@@ -25,10 +26,11 @@
 
         android:background="@color/colorPrimary"
         android:textColor="@color/white"
-        android:paddingStart="@dimen/parent_right_left_margins"
-        android:paddingEnd="@dimen/parent_right_left_margins"
-        android:paddingTop="@dimen/parent_top_bottom_margins"
-        android:paddingBottom="@dimen/parent_top_bottom_margins"
+        android:paddingStart="@dimen/card_content_margins"
+        android:paddingEnd="@dimen/card_content_margins"
+        android:paddingTop="@dimen/main_memory_top_bottom_margins"
+        android:paddingBottom="@dimen/main_memory_right_left_margins"
+        android:textSize="@dimen/memory_text_size"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

@@ -1,20 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+
+        android:layout_marginBottom="@dimen/card_top_bottom_margins"
+        android:layout_marginTop="@dimen/card_top_bottom_margins"
+        android:layout_marginStart="@dimen/card_right_left_margins"
+        android:layout_marginEnd="@dimen/card_right_left_margins"
+        card_view:contentPadding="@dimen/card_content_margins"
+
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        card_view:cardCornerRadius="4dp"
+        card_view:cardBackgroundColor="@color/white"
+        card_view:cardElevation="@dimen/cardview_default_elevation">
+    
     <TextView
         android:id="@+id/single_memory_text"
-        android:layout_width="368dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textSize="@dimen/memory_text_size"
+        />
 
-        android:background="@color/white"
-        android:paddingStart="@dimen/parent_right_left_margins"
-        android:paddingEnd="@dimen/parent_right_left_margins"
-        android:paddingTop="@dimen/parent_top_bottom_margins"
-        android:paddingBottom="@dimen/parent_top_bottom_margins"
-        app:layout_constraintLeft_toLeftOf="parent"/>
+    </android.support.v7.widget.CardView>
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
