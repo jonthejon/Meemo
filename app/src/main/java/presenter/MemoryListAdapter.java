@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import core.Memory;
 import seasonedblackolives.com.meemo.R;
@@ -18,16 +17,21 @@ import seasonedblackolives.com.meemo.R;
 
 class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
 
-//    IV that will store the children memories of the parent memory
-    private ArrayList<Memory> childMemories;
-//    IV that will hold the Memory object that is the current parent array
-    private Memory parentMemory;
+//    IV that will store the fetched memories given the caller memory
+    private ArrayList<Memory> memoriesArr;
+//    IV that will hold the Memory object that is the current caller memory of the memory array
+    private Memory callerMemory;
 //    IV that will hold the presenter instance that called this adapter
     private LoaderPresenter presenter;
 
     public MemoryListAdapter(LoaderPresenter presenter) {
 //        setting the IV that holds the presenter instance
         this.presenter = presenter;
+//        checking to see if the caller memory is not null. If it is, this is the first time this adapter is being called so we will initialize it with a new Memory with the first memory ID
+        if (this.getCallerMemory() == null) {
+//            initializing a new memory with the same ID of the Mother memory and a random dummy String
+            this.callerMemory = new Memory.MemoryBuilder(1, presenter.activity.getString(R.string.dummy_init_memory)).build();
+        }
     }
 
     @Override
@@ -48,8 +52,8 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
     public void onBindViewHolder(MemoryViewHolder holder, int position) {
 
 //        retrieving the memory object of the proper position given as a parameter
-//        Memory memory = this.childMemories[position];
-        Memory memory = this.childMemories.get(position);
+//        Memory memory = this.memoriesArr[position];
+        Memory memory = this.memoriesArr.get(position);
 //        calling the ViewHolder's method to bind and update the child UI with the proper memory
         holder.bindMemoryToView(memory);
     }
@@ -57,31 +61,23 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
     @Override
     public int getItemCount() {
 //        first check to see if the ArrayList is null and if it, returns 0 as the size of the dataset for the RV
-        if (this.childMemories == null) {
+        if (this.memoriesArr == null) {
             return 0;
         }
 //        returns the size of the arraylist (the dataset of the RV)
-        return childMemories.size();
+        return memoriesArr.size();
     }
 
     /**
      * method that returns the child memory array when called.*/
-    public ArrayList<Memory> getChildsArray() {
+    public ArrayList<Memory> getMemoriesArray() {
 //        returns the child memories array
-        return this.childMemories;
+        return this.memoriesArr;
     }
 
     /** method that return the current parent memory when called.*/
-    public Memory getParentMemory() {
-
-        if (this.parentMemory != null) {
-//            returns the current parent memory
-            return parentMemory;
-        } else {
-//            this is a dummy command to give a dummy memory in case the parent memory has not yet been created.
-//            this code will actually force the db to fetch the 1st memory and it's children
-            return new Memory.MemoryBuilder(-11, "GETTING_MOTHER_MEMORY", 0).build();
-        }
+    public Memory getCallerMemory() {
+        return this.callerMemory;
     }
 
     /**
@@ -90,21 +86,15 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
      * */
     public void updateMemories(ArrayList<Memory> memories) {
 
-//        stores the parent memory into the proper IV and remove it from the arraylist
-//          (remember that it is the first memory)
-        this.parentMemory = memories.remove(0);
-
-//        reversing the order of the children arraylist. Remember that this arrayList can still have a size 0
-        Collections.reverse(memories);
 //        setting the IV arraylist (dataset for the RV) with the resulting memory array
-        this.childMemories = memories;
+        this.memoriesArr = memories;
 //        this method is from the RecyclerView.Adapter class and let's the adapter knows that we have new data to show
         notifyDataSetChanged();
     }
 
     public void addChild(Memory memory) {
 //        adding the memory to the first position. Remember that the order of the children is reversed
-        childMemories.add(0, memory);
+        memoriesArr.add(0, memory);
 //        notifying the adapter that the dataset has changed
         notifyDataSetChanged();
     }
@@ -112,8 +102,13 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
     /**
      * Method that returns the child Memory given a specific position.
      * */
-    public Memory getChildByPosition(int position) {
+    public Memory getMemoryByPosition(int position) {
 //        returns the child memory in the given position
-        return this.childMemories.get(position);
+        return this.memoriesArr.get(position);
+    }
+
+    public void setCallerMemory(Memory callerMemory) {
+//        setting the IV that holds the instance to the caller memory
+        this.callerMemory = callerMemory;
     }
 }

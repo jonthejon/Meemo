@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import core.Memory;
 
@@ -16,7 +17,7 @@ import core.Memory;
 
 public class DataManager implements DataManagerInterface {
 
-//    IV that will hold the cursor with the data retrieved from the database
+    //    IV that will hold the cursor with the data retrieved from the database
 //    It can be null, in this case there is no data retrieved from the database
     private Cursor cursor;
 
@@ -25,22 +26,16 @@ public class DataManager implements DataManagerInterface {
 //        initiating an Uri object so we can create the proper Uri
         Uri uri;
 
-//        checking to see if the ID is bigger than zero. That is, if it has a valid memory id sent to us
-        if (id > 0) {
-//            creating a get memory Uri
-            uri = DBContract.MemoryTable.GET_MEMORY_URI;
-//            appending the Uri with the proper memory ID
-            uri = uri.buildUpon().appendPath(Integer.toString(id)).build();
-        } else {
-//            we did not receive a valid ID, so we'll call the mother memory
-            uri = DBContract.MemoryTable.GET_MOTHER_MEMORY_URI;
-        }
+//        creating a get memory Uri
+        uri = DBContract.MemoryTable.GET_MEMORY_URI;
+//        appending the Uri with the memory ID
+        uri = uri.buildUpon().appendPath(Integer.toString(id)).build();
 
 //        making sure that we have a null cursor so we can populate it
         resetCursor();
 
 //        calling the query method of the Content Resolver which will call the query method of the Content Provider
-        this.cursor = resolver.query(uri,null,null,null,null);
+        this.cursor = resolver.query(uri, null, null, null, null);
 
 //        calling the method that will extract the data from the cursor
         return getMemoryListFromCursor(this.cursor);
@@ -65,18 +60,22 @@ public class DataManager implements DataManagerInterface {
         int idColIndex = data.getColumnIndex(DBContract.MemoryTable.COL_MEMORY_ID);
         int textColIndex = data.getColumnIndex(DBContract.MemoryTable.COL_MEMORY_TEXT);
         int fileColIndex = data.getColumnIndex(DBContract.MemoryTable.COL_MEMORY_FILE_PATH);
+        int connTypeIndex = data.getColumnIndex(DBContract.ConnectionTable.COL_CONNECTION_TYPE);
 
 //        we will loop inside the cursor
 //        Cursor always starts at -1, se we can start the first loop already calling moveToNext()
-        while(data.moveToNext()) {
+        while (data.moveToNext()) {
 //            create a new Memory object with data from the cursor
-            Memory memory = new Memory.MemoryBuilder(data.getInt(idColIndex), data.getString(textColIndex), 0)
+            Memory memory = new Memory.MemoryBuilder(data.getInt(idColIndex), data.getString(textColIndex))
                     .filePath(data.getString(fileColIndex))
+                    .connection(data.getInt(connTypeIndex))
                     .build();
             memoryArrayList.add(memory);
         }
 
-//        returning the Arraylist containing the memories extracted from the db
+//        reversing the array before sending it back to the caller
+        Collections.reverse(memoryArrayList);
+//        returning the reversed Arraylist containing the memories extracted from the db
         return memoryArrayList;
     }
 }

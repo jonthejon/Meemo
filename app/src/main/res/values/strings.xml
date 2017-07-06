@@ -11,4 +11,6 @@
         This is a fake memory for design purposes.
         This is a fake memory for design purposes.
         This is a fake memory for design purposes.</string>
+
+    <string name="dummy_init_memory">BRAIN</string>
 </resources>

@@ -4,15 +4,12 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import core.Memory;
 import ui.MemoryList_Activity;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Presenter responsible for fetching and displaying data from a database using an adapter
@@ -67,7 +64,7 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
 //        starting a new Bundle object that will be used to send data to the loader (in our case the memoryID)
         Bundle bundle = new Bundle();
 //      putting inside the Bundle the memoryID with a key that will be used for later retrieval
-        bundle.putInt(MEMORY_ID, mAdapter.getParentMemory().getMemoryID());
+        bundle.putInt(MEMORY_ID, mAdapter.getCallerMemory().getMemoryID());
 
 //        initializing a new loader object (with the proper data type) using the loader manager and the loader ID we created
         Loader<ArrayList<Memory>> loader = loaderManager.getLoader(this.FETCH_LOADER_ID);
@@ -123,20 +120,20 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
 //        also checking to see if the memories array has content (if it's not null)
         if (loader.getId() == this.FETCH_LOADER_ID && memories != null) {
 //            calling the adapter's method that will retrieve the data from the result array.
-
-            Log.d(TAG, "onLoadFinished: " + memories.size());
-
             this.mAdapter.updateMemories(memories);
 //            calls the activity method to update the state of the RV
             super.activity.updateRVState();
         }
 
+//        calling the method of this presenter that updates the UI with a new caller memory that we retrieve from the adapter
+        this.updateCallerMemoryUI(this.mAdapter.getCallerMemory());
+
 //        after setting the data into the adapter, we are retrieving the parent memory text to we can update the UI
-        String parentMemoryText = mAdapter.getParentMemory().getMemoryText();
+//        String parentMemoryText = mAdapter.getCallerMemory().getMemoryText();
 //        TO BE DELETED!!
-        int parentID = mAdapter.getParentMemory().getMemoryID();
+//        int parentID = mAdapter.getCallerMemory().getMemoryID();
 //        getting an instance for the Parent Textview and updating the text with the parent memory text
-        super.activity.getParentTextView().setText(parentMemoryText + " " + parentID);
+//        super.activity.getParentTextView().setText(parentMemoryText);
     }
 
     @Override
@@ -154,6 +151,11 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
      * @param memory the Memory object that is represented by the viewholder that got clicked.*/
     public void handleRVClicks(Memory memory) {
 //        so far, this method only creates a Toast so we can know what Viewholder got clicked
-        Toast.makeText(super.activity, memory.getMemoryText(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(super.activity, memory.getMemoryText() + " " + memory.getConnection(), Toast.LENGTH_SHORT).show();
+    }
+
+    public void updateCallerMemoryUI(Memory memory) {
+//        setting the TextView of the activity with the proper data from the caller memory
+        super.activity.getParentTextView().setText(memory.getMemoryText());
     }
 }

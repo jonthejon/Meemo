@@ -35,8 +35,7 @@ public class TaskPresenter extends MemoryListPresenter {
         int second = c.get(Calendar.SECOND);
 //        creating a random memory to be inserted inside the database
         Memory newMemory = new Memory.MemoryBuilder(new Random().nextInt(100),
-                "New random memory " + second,
-                new Random().nextInt(100))
+                "New random memory " + second)
                 .build();
 //        setting the created memory to the IV of this presenter
         this.setMemory(newMemory);
@@ -61,14 +60,8 @@ public class TaskPresenter extends MemoryListPresenter {
         if (result > 0) {
 //            getting a new instance to the Loader Presenter that underlies the activity
 //            this is because is an child class of the loader that has access to the RV dataset
-            LoaderPresenter loaderPresenter = super.activity.getLoaderPresenter();
-//            getting the instance to the adapter of the Loader Presenter class
-            MemoryListAdapter adapter = loaderPresenter.getAdapter();
-//            adding the newly created memory into the RV dataset from here
-//            we're doing this instead of fetching data again from the DB because this is more memory efficient and in this stage we are sure that the memory has been successfully inserted
-            adapter.addChild(this.getMemory());
-//            letting the user know that we created a new memory
-            Toast.makeText(super.activity, "Memory created with ID: " + result, Toast.LENGTH_SHORT).show();
+//            and calling the method to call the DB again since we inserted new information inside it
+            super.activity.getLoaderPresenter().doInWorkerThread();
         } else {
 //            something went wrong... let the user know
             Toast.makeText(super.activity, "Something went wrong...", Toast.LENGTH_SHORT).show();
@@ -76,7 +69,10 @@ public class TaskPresenter extends MemoryListPresenter {
     }
     
     private Uri createUri() {
-//        creating the proper insert Uri using the DBContract class
-        return DBContract.MemoryTable.INSERT_MEMORY_URI;
+//        getting the memory ID of the memory that is trying to create a new memory
+        int callerID = super.activity.getLoaderPresenter().getAdapter().getCallerMemory().getMemoryID();
+//        building the Uri with the memory caller ID appended to the path
+        return DBContract.MemoryTable.INSERT_MEMORY_URI.buildUpon()
+                .appendPath(Integer.toString(callerID)).build();
     }
 }
