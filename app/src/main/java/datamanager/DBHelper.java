@@ -51,6 +51,7 @@ class DBHelper extends SQLiteOpenHelper {
                 " (" + DBContract.MemoryTable.COL_MEMORY_TEXT + ") " +
                 "VALUES('" + fakeStringArr[0] + "');";*/
 
+//        This is the String that holds the SQL statement for inserting the first memory into the DB
         final String SQL_INSERT_FIRST_MEMORY = "INSERT INTO " + DBContract.MemoryTable.TABLE_NAME +
                 " (" + DBContract.MemoryTable.COL_MEMORY_TEXT + ") " +
                 "VALUES('The Mind of Jonathan');";

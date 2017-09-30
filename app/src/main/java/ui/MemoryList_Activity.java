@@ -19,7 +19,6 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 //    IV that will hold the instance of the Loader presenter for this activity
     private LoaderPresenter loaderPresenter;
 
-    // TODO: 06/07/17
 //    IV that will hold the instance of the Task presenter for this activity
     private TaskPresenter taskPresenter;
 
@@ -57,6 +56,11 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
                 this.mRVState = savedInstanceState.getParcelable(RV_STATE_KEY);
             }
         }
+        //        checking to see if we have any state saved to be recreated
+        if (mRVState != null) {
+            //            updating the RV with the saved state.
+            this.childMemoryRV.getLayoutManager().onRestoreInstanceState(mRVState);
+        }
     }
 
     public RecyclerView getRecyclerView() {
@@ -85,7 +89,9 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
     }
 
     /**
-     * Method that will return the content resolver for this activity when called.*/
+     * Method that will return the content resolver for this activity when called.
+     * @return returns the ContentResolver for the activity in which it was deployed.
+     * */
     @Override
     public ContentResolver getUIContentResolver() {
         return getContentResolver();
@@ -93,7 +99,8 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 
     /**
      * This method will be called everytime the FAB button gets clicked.
-     * This method call is defined inside the XML layout file. */
+     * This method call is defined inside the XML layout file.
+     * @param view the view object, in this case the FAB button, that is calling this method.*/
     public void onFABClick(View view) {
 
 //        if the IV that holds the task presenter is null, initialize it
@@ -106,9 +113,12 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 //        new TaskPresenter(this).doInWorkerThread();
     }
 
-    // TODO: 06/07/17
     /**
-     * Method that gets called after the called activity returns with data and a result*/
+     * Overriden method of the Activity that gets called after the called activity returns with data and a result
+     * @param requestCode the request code that you created when calling the ActivityForResult
+     * @param resultCode a constant defined in the Activity superclass that tells us how is the result came back
+     * @param data the intent object that contains the data that the called activity sent us.
+     * */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        checking to see if the request code is the same of the add activity and if the result code is OK
@@ -127,7 +137,7 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
         return this.loaderPresenter;
     }
 
-    /**
+    /*
      * This method will automatically be called every time the activity is about to be destroyed.
      * So in it we'll save all the information that we need to properly recreated it later. */
     @Override
@@ -150,4 +160,5 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
             this.childMemoryRV.getLayoutManager().onRestoreInstanceState(mRVState);
         }
     }
+
 }

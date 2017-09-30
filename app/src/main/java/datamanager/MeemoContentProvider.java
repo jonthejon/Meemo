@@ -130,7 +130,7 @@ public class MeemoContentProvider extends ContentProvider {
 //                the uri is not a valid one, so we'll return a null cursor
                 return null;
         }
-//        Register to watch a content URI for changes
+//        Register to watch a content URI for changes. This is cool in case your dataset changed and you have a cursor pointing at it.
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
 //        return the created and populated cursor object
         return cursor;

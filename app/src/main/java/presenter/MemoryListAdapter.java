@@ -48,6 +48,7 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
         return new MemoryViewHolder(view, presenter);
     }
 
+// If you need the position of an item later on (e.g. in a click listener), use RecyclerView.ViewHolder.getAdapterPosition() which will have the updated adapter position.
     @Override
     public void onBindViewHolder(MemoryViewHolder holder, int position) {
 
@@ -82,7 +83,7 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
 
     /**
      * Method that will receive the complete memory array from the DB.
-     * It then will separate the first memory (the parent memory) from the children.
+     * @param memories this is the collection that will be the new dataset for the Adapter
      * */
     public void updateMemories(ArrayList<Memory> memories) {
 
@@ -92,6 +93,10 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
         notifyDataSetChanged();
     }
 
+    /**
+     * Method that will add one single Memory into the Collection of this adapter and notify it of the change
+     * @param memory the Memory object that will be inserted inside the collection
+     */
     public void addChild(Memory memory) {
 //        adding the memory to the first position. Remember that the order of the children is reversed
         memoriesArr.add(0, memory);
@@ -101,6 +106,8 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
 
     /**
      * Method that returns the child Memory given a specific position.
+     * @param position the position of the element that you want to read from the collection
+     * @return returns the Memory that is in the position requested by the caller
      * */
     public Memory getMemoryByPosition(int position) {
 //        returns the child memory in the given position

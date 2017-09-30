@@ -15,11 +15,9 @@ import ui.MemoryList_Activity;
 
 public class TaskPresenter extends MemoryListPresenter {
 
-    // TODO: 06/07/17
 //    IV that will hold the Memory object to related to this particular task
     private String memory_text;
 
-    // TODO: 06/07/17
 //    IV that holds the request number for the add_activity to callback this activity
     public final int CREATE_MEMORY_REQUEST = 7;
 
@@ -81,8 +79,11 @@ public class TaskPresenter extends MemoryListPresenter {
                 .appendPath(Integer.toString(callerID)).build();
     }
     // TODO: 06/07/17
-    public void startAddActivity() {
 
+    /**
+     * This method will call a new ActivityForResult. This means that the called activity will perform a task and return a value as a result for the calling activity.
+     */
+    public void startAddActivity() {
 //        creating a new intent for calling the add_activity
         Intent new_memo_intent = new Intent(super.activity, AddMemory_Activity.class);
 //        calling the activity for result. This will ensure that the activity will return with data

@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 
 import java.util.ArrayList;
 
@@ -37,6 +39,42 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
 
 //        calling the method to bind the necessary objects to the activity's RV
         this.bindObjectsToRecycler(mAdapter, mLayoutManager);
+//        calling the method that will register and define the handling for swipe and drag motion of the items
+//        this.registerAndHandleGestures();
+    }
+
+    /**
+     * ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder, and uses callbacks to signal when a user is performing these actions.
+     * sending to the constructor of the ItemTouchHandler a new SimpleCallback class that will handle the proper gestures
+     *      ItemTouchHelper.SimpleCallback(int dragDirs, int swipeDirs)
+     *          dragDirs - Binary OR of direction flags in which the Views can be dragged. Must be composed of LEFT, RIGHT, START, END, UP and DOWN.
+     *          swipeDirs - Binary OR of direction flags in which the Views can be swiped. Must be composed of LEFT, RIGHT, START, END, UP and DOWN.
+     */
+    private void registerAndHandleGestures() {
+//        creating a new ItemTouchHelper.
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            //            on this method you can handle drag and drop
+//            in our case, we are not handling drag and drop, so the SimpleCallback sets the dragDirs to 0 and this method returns false
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            //            on this method you'll handle swipe functionality
+//            on our case we are using the left swipe for deletion and the right swipe for other functionalities like archiving
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+//                getting the position of the item that is being swiped. With this you can access the Memory object later by asking for it to the adapter
+                int viewPos = viewHolder.getAdapterPosition();
+                if (direction == ItemTouchHelper.LEFT) {
+//                    handle delete functionality
+                } else if (direction == ItemTouchHelper.RIGHT) {
+//                    handle other functionality besides deletion, like archiving
+                }
+            }
+//            finally, attaching this ItemTouchHandler to the RecyclerView so it can use it whenever necessary
+        }).attachToRecyclerView(super.activity.getRecyclerView());
     }
 
     private void bindObjectsToRecycler(MemoryListAdapter adapter, LinearLayoutManager layoutManager) {

@@ -15,8 +15,15 @@ public class DBContract {
     static final int DATABASE_VERSION = 7;
 
 //    The authority, which is how your code knows which Content Provider to access
+//    this is defined inside the AndroidManifest file and probably is your package name
     static final String AUTHORITY = "seasonedblackolives.com.meemo";
+
+//    this is the initial piece of every Uri that points to your Content Provider
+    static final String INIT_CONTENT = "content://";
+
 //    The base content URI = "content://" + <authority>
+//    The base Uri that will be used to connect to the ContentProvider of this app
+//    private static final Uri BASE_CONTENT_URI = Uri.parse(dummy.Database.INIT_CONTENT + dummy.Database.AUTHORITY);
     private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
 //    Define the possible paths for accessing data in this contract
@@ -25,6 +32,7 @@ public class DBContract {
     static final String PATH_INSERT = "insert";
     static final String PATH_DELETE = "delete";
     static final String PATH_UPDATE = "update";
+
 
     public static final class MemoryTable implements BaseColumns {
 //        variable that will store the URI used by the Content Provider to get memories from this table
@@ -68,4 +76,5 @@ public class DBContract {
 //        inner final IV that holds the type of connection that exists between the 2 memories represented in a row
         public static final String COL_CONNECTION_TYPE = "type";
     }
+
 }

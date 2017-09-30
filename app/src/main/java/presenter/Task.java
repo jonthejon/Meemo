@@ -51,6 +51,26 @@ public class Task extends AsyncTask<Uri, Void, Integer> {
         } else return 0;
     }
 
+    public Integer insertDataCP (Uri insertUri) {
+//        retrieving the column name of the memory table to be inserted
+        String textColumn = DBContract.MemoryTable.COL_MEMORY_TEXT;
+//        getting the memory text from the Memory of the TaskPresenter
+        String textMemory = presenter.getMemoryText();
+//        initiating a new ContentValues object to store the data to be inserted in the db
+        ContentValues cv = new ContentValues();
+//        inserting the memory with the proper column name inside the ContentValues
+        cv.put(textColumn, textMemory);
+//        calling the insert method of the ContentResolver and receiving back the Uri of the inserted memory
+//        this will be null if the insertion had failed
+        Uri resultUri = userInterface.getUIContentResolver().insert(insertUri, cv);
+//        checking to see if the insertion happened well
+        if (resultUri != null) {
+//            retrieving and returning the ID of the memory just created from the Uri sent to us from the ContentResolver
+            return Integer.parseInt(resultUri.getLastPathSegment());
+//            something went wrong so we will return 0
+        } else return 0;
+    }
+
     @Override
     protected void onPostExecute(Integer integer) {
 //        calling the presenter callback method with the flag telling that the insertion happened well or not

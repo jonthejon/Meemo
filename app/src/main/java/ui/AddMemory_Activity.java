@@ -30,7 +30,8 @@ public class AddMemory_Activity extends AppCompatActivity {
 //        Toast.makeText(this, "Cancel button clicked.", Toast.LENGTH_SHORT).show();
     }
 
-    // TODO: 06/07/17  
+    // TODO: 06/07/17
+
     public void onSaveClick(View view) {
         String memory_text = editText.getText().toString();
         if (memory_text.length() == 0) {
