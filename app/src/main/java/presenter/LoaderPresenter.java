@@ -25,7 +25,7 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
     private final int FETCH_LOADER_ID = 3;
 
 //    IV that will hold the key associated with the memory ID inside the Bundle to be sent to the loader
-    static final String MEMORY_ID = "parentID";
+    static final String MEMORY_ID = "callerID";
 
     public LoaderPresenter(MemoryList_Activity activity) {
 //        setting the Superclass IV to hold the instance to the activity
@@ -164,13 +164,6 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
 
 //        calling the method of this presenter that updates the UI with a new caller memory that we retrieve from the adapter
         this.updateCallerMemoryUI(this.mAdapter.getCallerMemory());
-
-//        after setting the data into the adapter, we are retrieving the parent memory text to we can update the UI
-//        String parentMemoryText = mAdapter.getCallerMemory().getMemoryText();
-//        TO BE DELETED!!
-//        int parentID = mAdapter.getCallerMemory().getMemoryID();
-//        getting an instance for the Parent Textview and updating the text with the parent memory text
-//        super.activity.getParentTextView().setText(parentMemoryText);
     }
 
     @Override

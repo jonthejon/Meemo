@@ -22,7 +22,6 @@ class DBHelper extends SQLiteOpenHelper {
         /*
         this String holds the SQL statement for creating the memory table using the information from the contract class
         a) setting the ID as the primary key. Therefore it will autoincrement and must not be set by the user
-        b) setting the ID as the primary key. Therefore it will autoincrement and must not be set by the user
         c) the file path of a memory can be true if it does not have a file attached to it. Setting the default value to 'void' in that case
         d) the user should also not set the memory creation time. This will be done automatically by the database
         */
@@ -35,13 +34,10 @@ class DBHelper extends SQLiteOpenHelper {
         /*
         this String holds the SQL statement for creating the connection table using the information from the contract class
         a) this IDs must not be null and will match one specific primary key of the memory table
-        c) the type of connection that exists between the two memories here represented inside a row
-        c.1) '11' represents the composition relationship between two memories
         */
         final String SQL_CREATE_CONNECTION_TABLE = "CREATE TABLE " + DBContract.ConnectionTable.TABLE_NAME +
                 " (" + DBContract.ConnectionTable.COL_MEMORY_A + " INTEGER NOT NULL, " +
-                DBContract.ConnectionTable.COL_MEMORY_B + " INTEGER NOT NULL, " +
-                DBContract.ConnectionTable.COL_CONNECTION_TYPE + " INTEGER DEFAULT " + DBContract.ConnectionTable.COMPOSITION_TYPE + ");";
+                DBContract.ConnectionTable.COL_MEMORY_B + " INTEGER NOT NULL);";
 
 /*//        fake array containing the first memories to be inserted inside the DB for testing purposes
         String[] fakeStringArr = {"BRAIN TEST", "Child Memory 1", "Child Memory 2"};

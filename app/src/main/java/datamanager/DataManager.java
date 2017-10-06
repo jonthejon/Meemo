@@ -27,7 +27,7 @@ public class DataManager implements DataManagerInterface {
         Uri uri;
 
 //        creating a get memory Uri
-        uri = DBContract.MemoryTable.GET_MEMORY_URI;
+        uri = DBContract.MemoryTable.GET_MEMORIES_URI;
 //        appending the Uri with the memory ID
         uri = uri.buildUpon().appendPath(Integer.toString(id)).build();
 
@@ -59,16 +59,16 @@ public class DataManager implements DataManagerInterface {
 //        getting the indexes of the columns of the memory table in the database
         int idColIndex = data.getColumnIndex(DBContract.MemoryTable.COL_MEMORY_ID);
         int textColIndex = data.getColumnIndex(DBContract.MemoryTable.COL_MEMORY_TEXT);
-        int fileColIndex = data.getColumnIndex(DBContract.MemoryTable.COL_MEMORY_FILE_PATH);
-        int connTypeIndex = data.getColumnIndex(DBContract.ConnectionTable.COL_CONNECTION_TYPE);
+//        int fileColIndex = data.getColumnIndex(DBContract.MemoryTable.COL_MEMORY_FILE_PATH);
+        //int connTypeIndex = data.getColumnIndex(DBContract.ConnectionTable.COL_CONNECTION_TYPE);
 
 //        we will loop inside the cursor
 //        Cursor always starts at -1, se we can start the first loop already calling moveToNext()
         while (data.moveToNext()) {
 //            create a new Memory object with data from the cursor
             Memory memory = new Memory.MemoryBuilder(data.getInt(idColIndex), data.getString(textColIndex))
-                    .filePath(data.getString(fileColIndex))
-                    .connection(data.getInt(connTypeIndex))
+//                    .filePath(data.getString(fileColIndex))
+                    //.connection(data.getInt(connTypeIndex))
                     .build();
             memoryArrayList.add(memory);
         }

@@ -52,5 +52,4 @@ public class TaskLoader extends AsyncTaskLoader<ArrayList<Memory>> {
 //        calling the method of meemo that fetches the data and sending as a parameter the memoryID
         return meemo.getMemoryListWithID(memoryID);
     }
-
 }

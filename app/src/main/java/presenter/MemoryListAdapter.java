@@ -27,11 +27,9 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
     public MemoryListAdapter(LoaderPresenter presenter) {
 //        setting the IV that holds the presenter instance
         this.presenter = presenter;
-//        checking to see if the caller memory is not null. If it is, this is the first time this adapter is being called so we will initialize it with a new Memory with the first memory ID
-        if (this.getCallerMemory() == null) {
-//            initializing a new memory with the same ID of the Mother memory and a random dummy String
-            this.callerMemory = new Memory.MemoryBuilder(1, presenter.activity.getString(R.string.dummy_init_memory)).build();
-        }
+//        creating a dummy initial memory that has an ID of 1 (the same of the BRAIN memory)
+//        the memory per se doesn't matter... all we need for the DB call to work is the proper ID of the caller memory set to 1
+        this.callerMemory = new Memory.MemoryBuilder(1, presenter.activity.getString(R.string.dummy_init_memory)).build();
     }
 
     @Override

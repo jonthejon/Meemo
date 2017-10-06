@@ -13,10 +13,10 @@ public class Memory {
 //    IV that holds the file path of this memory if it exists
     private String filePath;
 //    IV that holds the type of connection this memory has with the memory that called it
-    private int connection;
+    //private int connection;
 
     /**
-     * Private constructor of the Memory class.
+    * Private constructor of the Memory class.
      * This constructor can only be called from the Builder inner class.
      * This will ensure that all Memory objects are created using the Builder Pattern.*/
     private Memory(MemoryBuilder builder) {
@@ -24,7 +24,7 @@ public class Memory {
         this.memoryID = builder.memoryID;
         this.memoryText = builder.memoryText;
         this.filePath = builder.filePath;
-        this.connection = builder.connection;
+        //this.connection = builder.connection;
     }
 
     /**
@@ -34,7 +34,7 @@ public class Memory {
         private int memoryID;
         private String memoryText;
         private String filePath;
-        private int connection;
+        //private int connection;
 
         /**
          * This is the constructor of the Builder inner class.
@@ -55,22 +55,24 @@ public class Memory {
             return this;
         }
 
+	/*
         public MemoryBuilder connection(int connection) {
 //            setting the optional String IV with the given parameter
             this.connection = connection;
 //            returning this same builder object for later usage in the construction process of Memory objects
             return this;
         }
+	*/
 
         /**
          * This is the actually build method of the Builder Pattern.
          * This method will use the private constructor of the Memory class to build and return a new memory object.*/
         public Memory build() {
 //            creating the default value of the connection IV if it is not set before the memory creation
-            int defaultConnection = 1;
+            //int defaultConnection = 1;
 //            checking to see if the Builder object does not have the optional IV set and if not, set them with the blank options
             if (this.filePath == null) this.filePath = null;
-            if (this.connection == 0) this.connection = defaultConnection;
+            //if (this.connection == 0) this.connection = defaultConnection;
 //            calling the private constructor of the Memory object sending this Builder object as parameter and returning the result to the client
             return new Memory(this);
         }
@@ -88,7 +90,10 @@ public class Memory {
         return filePath;
     }
 
+    /*
     public int getConnection() {
         return connection;
     }
+    */
+
 }

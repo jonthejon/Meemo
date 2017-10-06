@@ -31,28 +31,16 @@ public class TaskPresenter extends MemoryListPresenter {
      * This implementation will initiate a new AsyncTask to perform simple tasks.*/
     @Override
     public void doInWorkerThread() {
-//        retrieving the seconds in the current time for our dummy memory
-//        Calendar c = Calendar.getInstance();
-//        int second = c.get(Calendar.SECOND);
-//        creating a random memory to be inserted inside the database
-//        Memory newMemory = new Memory.MemoryBuilder(new Random().nextInt(100),
-//                "New random memory " + second)
-//                .build();
-//        setting the created memory to the IV of this presenter
-//        this.setMemory(newMemory);
-
 //        initiating a new Task class that will be responsible for the worker Thread
 //        we're sending the proper insert Uri to the method of the Task class
         new Task(super.activity, this).execute(this.createUri());
     }
 
-    // TODO: 06/07/17
     public void setMemoryText(String memory) {
 //        setting the IV of this class with the memory sent as a parameter
         this.memory_text = memory;
     }
 
-    // TODO: 06/07/17
     public String getMemoryText() {
 //        returning the memory object stored as an IV of this class
         return this.memory_text;
@@ -78,7 +66,6 @@ public class TaskPresenter extends MemoryListPresenter {
         return DBContract.MemoryTable.INSERT_MEMORY_URI.buildUpon()
                 .appendPath(Integer.toString(callerID)).build();
     }
-    // TODO: 06/07/17
 
     /**
      * This method will call a new ActivityForResult. This means that the called activity will perform a task and return a value as a result for the calling activity.
@@ -90,8 +77,8 @@ public class TaskPresenter extends MemoryListPresenter {
         super.activity.startActivityForResult(new_memo_intent, this.CREATE_MEMORY_REQUEST);
     }
 
-    // TODO: 06/07/17
     public void handleActivityResult(Intent data) {
+	// getting the memory information from the intent
         String memory_text = data.getStringExtra(DBContract.MemoryTable.COL_MEMORY_TEXT);
         this.setMemoryText(memory_text);
         this.doInWorkerThread();

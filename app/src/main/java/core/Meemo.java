@@ -23,7 +23,7 @@ public class Meemo {
 
     public Meemo(UIInterface userInterface) {
 //        populating the IV with the user interface so we can access specific values of android framework
-        this.userInterface = userInterface;
+    this.userInterface = userInterface;
 //        creating a new instance of the datamanager class
         this.dataManager = new DataManager();
     }
@@ -32,5 +32,4 @@ public class Meemo {
 //        returns the call to the method of the data manager that calls the DB and serve back the Memory array
         return dataManager.getMemoriesWithID(userInterface.getUIContentResolver(), id);
     }
-
 }
