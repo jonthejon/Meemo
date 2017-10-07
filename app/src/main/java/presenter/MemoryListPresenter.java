@@ -9,13 +9,15 @@ import ui.MemoryList_Activity;
 
 public abstract class MemoryListPresenter {
 
-//    IV that will hold an instance of the underlying activity of this presenter
+    //    IV that will hold an instance of the underlying activity of this presenter
     MemoryList_Activity activity;
 
     MemoryListPresenter(MemoryList_Activity activity) {
         this.activity = activity;
     }
 
-//    Method responsible for initiating a new worker thread and do some work with it
+    /**
+     * Responsible for setting up the Loader that will fetch the data from the DB in another thread
+     */
     abstract void doInWorkerThread();
 }

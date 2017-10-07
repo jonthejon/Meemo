@@ -14,16 +14,17 @@ import seasonedblackolives.com.meemo.R;
 
 class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-//    This IV is the textview that is inside the single memory layout file
+    //    This IV is the textview that is inside the single memory layout file
     private TextView mTextView;
-//    IV that holds the memory object of this particular child inside the RV
+    //    IV that holds the memory object of this particular child inside the RV
     private Memory memory;
-//    IV that will hold the presenter instance that called this VieHolder
+    //    IV that will hold the presenter instance that called this VieHolder
     private LoaderPresenter presenter;
 
     /**
      * Constructor necessary override some functionalities for this ViewHolder to properly function
-     * @param itemView this is the View (XML hole view) that was inflated in the Adapter class
+     *
+     * @param itemView  this is the View (XML hole view) that was inflated in the Adapter class
      * @param presenter this is the presenter instance that created the adapter and consequently this VIewHOlder
      */
     MemoryViewHolder(View itemView, LoaderPresenter presenter) {
@@ -40,6 +41,7 @@ class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
     /**
      * this is not an overriden method from the RecyclerView.ViewHolder superclass.
      * but you must design a method like this to bind an object that holds data for your adapter to the particular Views defined in this class
+     *
      * @param memory this is the data type object that holds in it's IVs all the necessary data for the Views in this class
      */
     void bindMemoryToView(Memory memory) {
@@ -49,7 +51,7 @@ class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
         this.mTextView.setText(memory.getMemoryText());
     }
 
-//    this method is overriden from the View.OnClickListener interface for handling click functionality
+    //    this method is overriden from the View.OnClickListener interface for handling click functionality
 //    don't forget to set the underlying view of this class to have this class as a clicklistener inside your constructor
     @Override
     public void onClick(View v) {

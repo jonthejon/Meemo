@@ -15,14 +15,14 @@ import ui.UIInterface;
  * the goal of this particular instance is to fetch data from the DB
  */
 
-public class TaskLoader extends AsyncTaskLoader<ArrayList<Memory>> {
+class TaskLoader extends AsyncTaskLoader<ArrayList<Memory>> {
 
-//    IV that holds the bundle with the data sent by the Presenter to make the proper call to the DB
+    //    IV that holds the bundle with the data sent by the Presenter to make the proper call to the DB
     private Bundle bundle;
-//    IV that will hold an instance to the calling activity
+    //    IV that will hold an instance to the calling activity
     private UIInterface userInterface;
 
-    public TaskLoader(Context context, Bundle bundle, UIInterface userInterface) {
+    TaskLoader(Context context, Bundle bundle, UIInterface userInterface) {
 //        calling the super method constructor
         super(context);
 //        setting the bundle IV with the given bundle parameter
@@ -31,6 +31,7 @@ public class TaskLoader extends AsyncTaskLoader<ArrayList<Memory>> {
         this.userInterface = userInterface;
     }
 
+    // this method is called once BEFORE the loadInBackground method runs
     @Override
     protected void onStartLoading() {
 //        before starting a new thread, check to see if the Bundle is not null. If it is, this does not make sense and must be returned
@@ -40,11 +41,9 @@ public class TaskLoader extends AsyncTaskLoader<ArrayList<Memory>> {
         }
     }
 
-    /**
-     * this is the working method that runs in the background*/
+    // this is the working method that runs in the background
     @Override
     public ArrayList<Memory> loadInBackground() {
-
 //        initiating an instance of the Meemo class which is our core class
         Meemo meemo = new Meemo(this.userInterface);
 //        retrieving the memoryID from the bundle we sent to this loader so we can send it to Meemo

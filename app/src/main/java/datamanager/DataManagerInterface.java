@@ -12,6 +12,12 @@ import core.Memory;
 
 public interface DataManagerInterface {
 
-//    method responsible for telling the datamanager to load it's cursor using the memory ID sent as parameter
+    /**
+     * Responsible for getting the data from the ContentProvider and returning the data in an ArrayList format back to Core class
+     *
+     * @param resolver the Content Resolver sent by the Core class
+     * @param id       the Memory ID of the memory we want to get the connected memmories
+     * @return the Arraylist containing all connected memories to the memory defined by the ID
+     */
     ArrayList<Memory> getMemoriesWithID(ContentResolver resolver, int id);
 }

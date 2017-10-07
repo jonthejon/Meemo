@@ -17,21 +17,22 @@ import seasonedblackolives.com.meemo.R;
 
 class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
 
-//    IV that will store the fetched memories given the caller memory
+    //    IV that will store the fetched memories given the caller memory
     private ArrayList<Memory> memoriesArr;
-//    IV that will hold the Memory object that is the current caller memory of the memory array
+    //    IV that will hold the Memory object that is the current caller memory of the memory array
     private Memory callerMemory;
-//    IV that will hold the presenter instance that called this adapter
+    //    IV that will hold the presenter instance that called this adapter
     private LoaderPresenter presenter;
 
-    public MemoryListAdapter(LoaderPresenter presenter) {
+    MemoryListAdapter(LoaderPresenter presenter) {
 //        setting the IV that holds the presenter instance
         this.presenter = presenter;
-//        creating a dummy initial memory that has an ID of 1 (the same of the BRAIN memory)
+//        creating a DBUtils initial memory that has an ID of 1 (the same of the BRAIN memory)
 //        the memory per se doesn't matter... all we need for the DB call to work is the proper ID of the caller memory set to 1
         this.callerMemory = new Memory.MemoryBuilder(1, presenter.activity.getString(R.string.dummy_init_memory)).build();
     }
 
+    // This method is called everytime we need to create a new ViewHolder to hold memories inside the RV
     @Override
     public MemoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 //        getting the context of the ViewGroup to be able to inflate the layout
@@ -41,22 +42,21 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
 //        get an instance of LayoutInflater using the context you got
         LayoutInflater inflater = LayoutInflater.from(context);
 //        create a new View using the inflater with the layout id and the ViewGroup as inputs
-        View view = inflater.inflate(singleMemoryLayoutID,parent,false);
+        View view = inflater.inflate(singleMemoryLayoutID, parent, false);
 //        create and return a new ViewHolder, giving to it's constructor the created View
         return new MemoryViewHolder(view, presenter);
     }
 
-// If you need the position of an item later on (e.g. in a click listener), use RecyclerView.ViewHolder.getAdapterPosition() which will have the updated adapter position.
+    // This method will bind an existing ViewHolder with a memory that is inside the memory ArrayList of this adapter
     @Override
     public void onBindViewHolder(MemoryViewHolder holder, int position) {
-
 //        retrieving the memory object of the proper position given as a parameter
-//        Memory memory = this.memoriesArr[position];
         Memory memory = this.memoriesArr.get(position);
 //        calling the ViewHolder's method to bind and update the child UI with the proper memory
         holder.bindMemoryToView(memory);
     }
 
+    // This method must return the number of memories that we have to display in this RV
     @Override
     public int getItemCount() {
 //        first check to see if the ArrayList is null and if it, returns 0 as the size of the dataset for the RV
@@ -68,23 +68,29 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
     }
 
     /**
-     * method that returns the child memory array when called.*/
+     * method that returns the child memory array when called.
+     *
+     * @return the Arraylist that contains all the memories
+     */
     public ArrayList<Memory> getMemoriesArray() {
-//        returns the child memories array
         return this.memoriesArr;
     }
 
-    /** method that return the current parent memory when called.*/
-    public Memory getCallerMemory() {
+    /**
+     * method that return the current parent memory when called.
+     *
+     * @return the instance of the parent memory (the caller memory)
+     */
+    Memory getCallerMemory() {
         return this.callerMemory;
     }
 
     /**
      * Method that will receive the complete memory array from the DB.
+     *
      * @param memories this is the collection that will be the new dataset for the Adapter
-     * */
-    public void updateMemories(ArrayList<Memory> memories) {
-
+     */
+    void updateMemories(ArrayList<Memory> memories) {
 //        setting the IV arraylist (dataset for the RV) with the resulting memory array
         this.memoriesArr = memories;
 //        this method is from the RecyclerView.Adapter class and let's the adapter knows that we have new data to show
@@ -92,27 +98,21 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
     }
 
     /**
-     * Method that will add one single Memory into the Collection of this adapter and notify it of the change
-     * @param memory the Memory object that will be inserted inside the collection
-     */
-    public void addChild(Memory memory) {
-//        adding the memory to the first position. Remember that the order of the children is reversed
-        memoriesArr.add(0, memory);
-//        notifying the adapter that the dataset has changed
-        notifyDataSetChanged();
-    }
-
-    /**
      * Method that returns the child Memory given a specific position.
+     *
      * @param position the position of the element that you want to read from the collection
      * @return returns the Memory that is in the position requested by the caller
-     * */
+     */
     public Memory getMemoryByPosition(int position) {
-//        returns the child memory in the given position
         return this.memoriesArr.get(position);
     }
 
-    public void setCallerMemory(Memory callerMemory) {
+    /**
+     * Method that changes the current caller memory for the one sent as a paramenter
+     *
+     * @param callerMemory the new caller memory
+     */
+    void setCallerMemory(Memory callerMemory) {
 //        setting the IV that holds the instance to the caller memory
         this.callerMemory = callerMemory;
 //        updates the UI so the caller memory get's updated

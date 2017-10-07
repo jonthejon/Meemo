@@ -10,12 +10,21 @@ import android.support.v4.app.LoaderManager;
 
 public interface UIInterface {
 
-//    returns the context of the activity
+    /**
+     * returns the context of this activity
+     * @return the Context of this activity
+     */
     Context getUIContext();
 
-//    returns the LoaderManager of the activity
+    /**
+     * returns the LoaderManager of this activity for usage inside the loader of the presenter
+     * @return the supportLoaderManager of this activity
+     */
     LoaderManager getUILoaderManager();
 
-//    returns the ContentResolver for the activity for CP handling
+    /**
+     * Method that will return the content resolver for this activity when called.
+     * @return returns the ContentResolver for the activity in which it was deployed.
+     */
     ContentResolver getUIContentResolver();
 }

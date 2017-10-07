@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import core.DBUtils;
+
 /**
  * This will be the Content Provider of Meemo.
  * All database queries should now be processed by this class.
@@ -31,7 +33,8 @@ public class MeemoContentProvider extends ContentProvider {
     /**
      * Method that returns a new UriMatcher all the time.
      * This object is used to bind a particular Uri pattern to a specific number.
-     * This helps us identify the type of Uri and act properly upon it.*/
+     * This helps us identify the type of Uri and act properly upon it.
+     */
     public static UriMatcher getUriMatcher() {
 
 //        Initialize a UriMatcher with no matches by passing in NO_MATCH to the constructor
@@ -74,11 +77,6 @@ public class MeemoContentProvider extends ContentProvider {
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
 //        getting a final readable instance for the database using our dbhelper class
         final SQLiteDatabase db = dbHelper.getReadableDatabase();
-	// COMPLETED:: check to see if you can delete this querybuilder since I believe I'm not using it right now
-//        SQLiteQueryBuilder is a helper class that helps us create SQL queries
-        //SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-//        setting the table to be queried to be the memory table
-        //queryBuilder.setTables(DBContract.MemoryTable.TABLE_NAME);
 //        initializing a new Cursor object that will be returned after populated
         Cursor cursor;
 //        using the UriMatcher object to tell us which Uri the client sent us
@@ -87,44 +85,7 @@ public class MeemoContentProvider extends ContentProvider {
             case GET_MEMORIES_BY_PARENT_ID:
 //                retrieving the ID of the caller memory from the Uri
                 String id = uri.getLastPathSegment();
-		// COMPLETED: put this SQL into a static method of the DBContract
-//                this is the SQL statement that returns all the connected memories given a particular caller memory ID with their respective connection types
-		/*
-                String getMemoriesQuery = "SELECT " +
-                        DBContract.MemoryTable.TABLE_NAME + "." + DBContract.MemoryTable.COL_MEMORY_ID +
-                        ", " +
-                        DBContract.ConnectionTable.TABLE_NAME + "." + DBContract.ConnectionTable.COL_MEMORY_A +
-                        " AS link_id, " +
-                        DBContract.MemoryTable.TABLE_NAME + "." + DBContract.MemoryTable.COL_MEMORY_TEXT +
-                        ", " +
-                        DBContract.MemoryTable.TABLE_NAME + "." + DBContract.MemoryTable.COL_MEMORY_FILE_PATH +
-                        ", " +
-                        DBContract.ConnectionTable.TABLE_NAME + "." + DBContract.ConnectionTable.COL_CONNECTION_TYPE +
-                        " FROM (" +
-                        DBContract.MemoryTable.TABLE_NAME +
-                        " INNER JOIN " +
-                        DBContract.ConnectionTable.TABLE_NAME +
-                        " ON " +
-                        DBContract.MemoryTable.TABLE_NAME + "." + DBContract.MemoryTable.COL_MEMORY_ID +
-                        " = " +
-                        DBContract.ConnectionTable.TABLE_NAME + "." + DBContract.ConnectionTable.COL_MEMORY_B +
-                        ") WHERE " +
-                        DBContract.MemoryTable.TABLE_NAME + "." + DBContract.MemoryTable.COL_MEMORY_ID +
-                        " IN(SELECT " +
-                        DBContract.ConnectionTable.TABLE_NAME + "." + DBContract.ConnectionTable.COL_MEMORY_B +
-                        " FROM " +
-                        DBContract.ConnectionTable.TABLE_NAME +
-                        " WHERE " +
-                        DBContract.ConnectionTable.TABLE_NAME + "." + DBContract.ConnectionTable.COL_MEMORY_A +
-                        " = " +
-                        id +
-                        ") AND link_id = " +
-                        id +
-                        ";";
-			*/
-                cursor = db.rawQuery(DBContract.getConnMemoriesSQL(id),null);
-                //cursor = db.rawQuery(getMemoriesQuery,null);
-
+                cursor = db.rawQuery(DBUtils.sqlConnectedMemories(id), null);
                 break;
             default:
 //                the uri is not a valid one, so we'll return a null cursor
@@ -169,56 +130,22 @@ public class MeemoContentProvider extends ContentProvider {
         switch (getUriMatcher().match(uri)) {
             case INSERT_SINGLE_MEMORY:
 //                  inserts the content values inside the memory_table
-                long id_b = db.insert(DBContract.MemoryTable.TABLE_NAME, null, values);
-
+                long id_b = db.insert(DBContract.MemoryTable.getTableName(), null, values);
 //                retrieves the father memory ID from the Uri
                 String id_a = uri.getLastPathSegment();
-		// COMPLETED: put this SQL into a static method of the DBContract
-//                SQL command that creates the connection between father and child inside connection_table
-		/*
-                String connectSQL_1 = "INSERT INTO " +
-                        DBContract.ConnectionTable.TABLE_NAME +
-                        " (" +
-                        DBContract.ConnectionTable.COL_MEMORY_A +
-                        ", " +
-                        DBContract.ConnectionTable.COL_MEMORY_B +
-                        ") VALUES (" +
-                        fatherID +
-                        ", " +
-                        childID +
-                        ");";
-//                SQL command that creates the connection between child and father inside connection_table
-                String connectSQL_2 = "INSERT INTO " +
-                        DBContract.ConnectionTable.TABLE_NAME +
-                        " (" +
-                        DBContract.ConnectionTable.COL_MEMORY_A +
-                        ", " +
-                        DBContract.ConnectionTable.COL_MEMORY_B +
-                        ") VALUES (" +
-                        childID +
-                        ", " +
-                        fatherID +
-                        ");";
-			*/
-
-//                commands that execute the SQL into the connection_table
-                //db.execSQL(connectSQL_1);
-		// getting the SQL from DBContract and executing the command into the connection_table
-                db.execSQL(DBContract.getInsertSQL(id_a, Long.toString(id_b)));
-                //db.execSQL(connectSQL_2);
-
+                // getting the SQL from DBContract and executing the command into the connection_table
+                db.execSQL(DBUtils.sqlInsertConnection(id_a, Long.toString(id_b)));
 //                  returns the new Uri that points to the specific memory inside the memory table
-		// COMPLETED: this is broken! We are sending the Insert Uri back to the caller class. Even worst, we are sending an Uri with both the father ID and the created memory ID attached to it. We should send a get Uri with only the created memory ID.
-		return DBContract.MemoryTable.GET_MEMORY_URI.buildUpon().appendPath(Long.toString(id_b)).build();
-                //return uri.buildUpon().appendPath(Long.toString(childID)).build();
+                return DBContract.MemoryTable.uriGetMemory().buildUpon().appendPath(Long.toString(id_b)).build();
         }
-	// if we got here, then the Uri sent to us did not match the insertion Uri so we'll return null
+        // if we got here, then the Uri sent to us did not match the insertion Uri so we'll return null
         return null;
     }
 
     /**
      * This method is called when any client wants to delete a particular memory from the database.
-     * note that we are checking if the used Uri is in the correct format before doing any operations.*/
+     * note that we are checking if the used Uri is in the correct format before doing any operations.
+     */
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
 //        creates a new writable instance of the database for data insertion
@@ -230,14 +157,15 @@ public class MeemoContentProvider extends ContentProvider {
 //                get the last path segment that in the case of this Uri is the memory ID to be deleted
                 String id = uri.getLastPathSegment();
 //                deletes the memory from the DB and returns the number of rows deleted (hopefully 1)
-                return db.delete(DBContract.MemoryTable.TABLE_NAME, "_ID = ?", new String[]{id});
+                return db.delete(DBContract.MemoryTable.getTableName(), "_ID = ?", new String[]{id});
         }
         return 0;
     }
 
     /**
      * This method is called when any client wants to update a particular memory from the database.
-     * note that we are checking if the used Uri is in the correct format before doing any operations.*/
+     * note that we are checking if the used Uri is in the correct format before doing any operations.
+     */
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
 //        creates a new writable instance of the database for data insertion
@@ -249,7 +177,7 @@ public class MeemoContentProvider extends ContentProvider {
 //                get the last path segment that in the case of this Uri is the memory ID to be updated
                 String id = uri.getLastPathSegment();
 //                updates the memory in the DB and returns the number of rows updated (hopefully 1, since we are giving a specific ID)
-                return db.update(DBContract.MemoryTable.TABLE_NAME, values, "_ID = ?", new String[]{id});
+                return db.update(DBContract.MemoryTable.getTableName(), values, "_ID = ?", new String[]{id});
         }
         return 0;
     }

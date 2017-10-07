@@ -27,7 +27,7 @@ public class DataManager implements DataManagerInterface {
         Uri uri;
 
 //        creating a get memory Uri
-        uri = DBContract.MemoryTable.GET_MEMORIES_URI;
+        uri = DBContract.MemoryTable.uriGetMemories();
 //        appending the Uri with the memory ID
         uri = uri.buildUpon().appendPath(Integer.toString(id)).build();
 
@@ -41,34 +41,36 @@ public class DataManager implements DataManagerInterface {
         return getMemoryListFromCursor(this.cursor);
     }
 
+    /**
+     * resets the cursor for it to be used in another db query
+     */
     private void resetCursor() {
-//        resets the cursor for it to be used in another db query
         this.cursor = null;
     }
 
+    /**
+     * Converts a Cursor datatype full of Memory objects into an ArrayList<Memory>
+     *
+     * @param data the cursor containing all the Memory objects retrieved from the DB
+     * @return ArrayList<Memory> containing all the memories that were inside the cursor
+     */
     private ArrayList<Memory> getMemoryListFromCursor(Cursor data) {
-
 //        checking to see if we have a valid Cursor and if not, returning an empty memory list
         if (data == null || data.getCount() == 0) {
             return new ArrayList<>();
         }
-
 //        creating an Arraylist of Memory type so we can dinamically update it with the memories from the cursor
         ArrayList<Memory> memoryArrayList = new ArrayList<>();
 
 //        getting the indexes of the columns of the memory table in the database
-        int idColIndex = data.getColumnIndex(DBContract.MemoryTable.COL_MEMORY_ID);
-        int textColIndex = data.getColumnIndex(DBContract.MemoryTable.COL_MEMORY_TEXT);
-//        int fileColIndex = data.getColumnIndex(DBContract.MemoryTable.COL_MEMORY_FILE_PATH);
-        //int connTypeIndex = data.getColumnIndex(DBContract.ConnectionTable.COL_CONNECTION_TYPE);
+        int idColIndex = data.getColumnIndex(DBContract.MemoryTable.getColId());
+        int textColIndex = data.getColumnIndex(DBContract.MemoryTable.getColMemoryText());
 
 //        we will loop inside the cursor
 //        Cursor always starts at -1, se we can start the first loop already calling moveToNext()
         while (data.moveToNext()) {
 //            create a new Memory object with data from the cursor
             Memory memory = new Memory.MemoryBuilder(data.getInt(idColIndex), data.getString(textColIndex))
-//                    .filePath(data.getString(fileColIndex))
-                    //.connection(data.getInt(connTypeIndex))
                     .build();
             memoryArrayList.add(memory);
         }

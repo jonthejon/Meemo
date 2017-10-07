@@ -16,21 +16,21 @@ import seasonedblackolives.com.meemo.R;
 
 public class MemoryList_Activity extends AppCompatActivity implements UIInterface {
 
-//    IV that will hold the instance of the Loader presenter for this activity
+    //    IV that will hold the instance of the Loader presenter for this activity
     private LoaderPresenter loaderPresenter;
 
-//    IV that will hold the instance of the Task presenter for this activity
+    //    IV that will hold the instance of the Task presenter for this activity
     private TaskPresenter taskPresenter;
 
     //    IV that will hold the instance for the RecyclerView
     private RecyclerView childMemoryRV;
 
-//    IV that holds the instance for the textview that holds the parent memory
+    //    IV that holds the instance for the textview that holds the parent memory
     private TextView parentTextView;
 
-//    IV that contains the String that will be the Key to store the RV's state during activity destruction
+    //    IV that contains the String that will be the Key to store the RV's state during activity destruction
     private final String RV_STATE_KEY = "RV_STATE_KEY";
-//    IV of Parcelable type that will actually store the RV's state
+    //    IV of Parcelable type that will actually store the RV's state
     private Parcelable mRVState = null;
 
     @Override
@@ -63,35 +63,33 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
         }
     }
 
+    /**
+     * returns the RecyclerView instance that shows all memories in this activity
+     * @return the RecyclerView that holds all memories
+     */
     public RecyclerView getRecyclerView() {
         return childMemoryRV;
     }
 
-    /**
-     * returns the context of this activity*/
     @Override
     public Context getUIContext() {
         return this;
     }
 
-    /**
-     * returns the LoaderManager of this activity for usage inside the loader of the presenter*/
     @Override
     public android.support.v4.app.LoaderManager getUILoaderManager() {
         return getSupportLoaderManager();
     }
 
     /**
-     * Method that returns the Parent Textview so the presenter can update it*/
+     * Method that returns the Parent Textview so the presenter can update it
+     * @return the Textview that holds the current memory
+     */
     public TextView getParentTextView() {
 //        returns the textview
         return this.parentTextView;
     }
 
-    /**
-     * Method that will return the content resolver for this activity when called.
-     * @return returns the ContentResolver for the activity in which it was deployed.
-     * */
     @Override
     public ContentResolver getUIContentResolver() {
         return getContentResolver();
@@ -100,7 +98,8 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
     /**
      * This method will be called everytime the FAB button gets clicked.
      * This method call is defined inside the XML layout file.
-     * @param view the view object, in this case the FAB button, that is calling this method.*/
+     * @param view the view object, in this case the FAB button, that is calling this method.
+     */
     public void onFABClick(View view) {
 
 //        if the IV that holds the task presenter is null, initialize it
@@ -108,17 +107,14 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 
 //        calling the presenter's method that will create a new Intent and initiate a new activity
         this.taskPresenter.startAddActivity();
-
-//        initiates the task presenter of this activity sending this activity as a parameter
-//        new TaskPresenter(this).doInWorkerThread();
     }
 
     /**
      * Overriden method of the Activity that gets called after the called activity returns with data and a result
      * @param requestCode the request code that you created when calling the ActivityForResult
-     * @param resultCode a constant defined in the Activity superclass that tells us how is the result came back
-     * @param data the intent object that contains the data that the called activity sent us.
-     * */
+     * @param resultCode  a constant defined in the Activity superclass that tells us how is the result came back
+     * @param data        the intent object that contains the data that the called activity sent us.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        checking to see if the request code is the same of the add activity and if the result code is OK
@@ -132,14 +128,16 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
     }
 
     /**
-     * returns the instance of the Loader Presenter of this activity.*/
+     * returns the instance of the Loader Presenter of this activity.
+     * @return the instance of the LoaderPresenter class of this activity
+     */
     public LoaderPresenter getLoaderPresenter() {
         return this.loaderPresenter;
     }
 
-    /*
-     * This method will automatically be called every time the activity is about to be destroyed.
-     * So in it we'll save all the information that we need to properly recreated it later. */
+
+     //This method will automatically be called every time the activity is about to be destroyed.
+     //So in it we'll save all the information that we need to properly recreated it later. */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
 //        calling the method of the super class of this activity
@@ -152,7 +150,8 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 
     /**
      * This method will be called by the proper presenter everytime the underlying RV updates its dataset.
-     * This will get the newly recreated RV and update it with the proper state if is was saved before.*/
+     * This will get the newly recreated RV and update it with the proper state if is was saved before.
+     */
     public void updateRVState() {
 //        checking to see if we have any state saved to be recreated
         if (mRVState != null) {
@@ -160,5 +159,4 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
             this.childMemoryRV.getLayoutManager().onRestoreInstanceState(mRVState);
         }
     }
-
 }

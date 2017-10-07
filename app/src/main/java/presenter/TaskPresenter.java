@@ -15,10 +15,10 @@ import ui.MemoryList_Activity;
 
 public class TaskPresenter extends MemoryListPresenter {
 
-//    IV that will hold the Memory object to related to this particular task
+    //    IV that will hold the Memory object to related to this particular task
     private String memory_text;
 
-//    IV that holds the request number for the add_activity to callback this activity
+    //    IV that holds the request number for the add_activity to callback this activity
     public final int CREATE_MEMORY_REQUEST = 7;
 
     public TaskPresenter(MemoryList_Activity activity) {
@@ -26,9 +26,8 @@ public class TaskPresenter extends MemoryListPresenter {
         super(activity);
     }
 
-    /**
-     * Implemented method of MemoryListPresenter.
-     * This implementation will initiate a new AsyncTask to perform simple tasks.*/
+    // Implemented method of MemoryListPresenter.
+    // This implementation will initiate a new AsyncTask to perform simple tasks.
     @Override
     public void doInWorkerThread() {
 //        initiating a new Task class that will be responsible for the worker Thread
@@ -36,16 +35,29 @@ public class TaskPresenter extends MemoryListPresenter {
         new Task(super.activity, this).execute(this.createUri());
     }
 
-    public void setMemoryText(String memory) {
-//        setting the IV of this class with the memory sent as a parameter
+    /**
+     * sets the IV of this class with the memory sent as a parameter
+     *
+     * @param memory the String with the memory that will be updated into the TextView
+     */
+    void setMemoryText(String memory) {
         this.memory_text = memory;
     }
 
-    public String getMemoryText() {
-//        returning the memory object stored as an IV of this class
+    /**
+     * returns the memory String stored as an IV of this class
+     *
+     * @return the String that contains the memory
+     */
+    String getMemoryText() {
         return this.memory_text;
     }
 
+    /**
+     * This method will be called back by the AsyncTask when the insertion is over
+     *
+     * @param result the int code of the insertion made by the AsyncTask class
+     */
     void taskCallback(int result) {
 //        checking to see if the result is bigger than 0. If not, the insertion went wrong.
         if (result > 0) {
@@ -58,12 +70,18 @@ public class TaskPresenter extends MemoryListPresenter {
             Toast.makeText(super.activity, "Something went wrong...", Toast.LENGTH_SHORT).show();
         }
     }
-    
+
+    /**
+     * Creates the insertion Uri that will be used to insert the new memory into the DB
+     *
+     * @return the insertion Uri
+     */
     private Uri createUri() {
 //        getting the memory ID of the memory that is trying to create a new memory
         int callerID = super.activity.getLoaderPresenter().getAdapter().getCallerMemory().getMemoryID();
 //        building the Uri with the memory caller ID appended to the path
-        return DBContract.MemoryTable.INSERT_MEMORY_URI.buildUpon()
+        return DBContract.MemoryTable.uriInsertMemory().buildUpon()
+//        return DBContract.MemoryTable.INSERT_MEMORY_URI.buildUpon()
                 .appendPath(Integer.toString(callerID)).build();
     }
 
@@ -77,9 +95,14 @@ public class TaskPresenter extends MemoryListPresenter {
         super.activity.startActivityForResult(new_memo_intent, this.CREATE_MEMORY_REQUEST);
     }
 
+    /**
+     * This method will be called after the Add Activity has finished. In here we'll need to grab the new memory data and start the insertion into the DB.
+     *
+     * @param data the Intent sent by the Add Activity containing all the data of the new memory to be inserted
+     */
     public void handleActivityResult(Intent data) {
-	// getting the memory information from the intent
-        String memory_text = data.getStringExtra(DBContract.MemoryTable.COL_MEMORY_TEXT);
+        // getting the memory information from the intent
+        String memory_text = data.getStringExtra(DBContract.MemoryTable.getColMemoryText());
         this.setMemoryText(memory_text);
         this.doInWorkerThread();
     }
