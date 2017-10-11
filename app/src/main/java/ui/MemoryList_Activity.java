@@ -8,7 +8,6 @@ import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.TextView;
 
 import presenter.LoaderPresenter;
 import presenter.TaskPresenter;
@@ -25,9 +24,6 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
     //    IV that will hold the instance for the RecyclerView
     private RecyclerView childMemoryRV;
 
-    //    IV that holds the instance for the textview that holds the parent memory
-    private TextView parentTextView;
-
     //    IV that contains the String that will be the Key to store the RV's state during activity destruction
     private final String RV_STATE_KEY = "RV_STATE_KEY";
     private final String HISTORY_KEY = "HISTORY_KEY";
@@ -41,7 +37,8 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 
 //        binds the views inside the layout to the IVs of this activity
         this.childMemoryRV = (RecyclerView) findViewById(R.id.memory_recycler_view);
-        this.parentTextView = (TextView) findViewById(R.id.parent_memory_textview);
+//        this.parentTextView = (TextView) findViewById(R.id.parent_memory_textview);
+//        this.parentTextView.setVisibility(View.GONE);
 
 //        initiates the loader presenter of this activity sending this activity as a parameter
         this.loaderPresenter = new LoaderPresenter(this);
@@ -86,16 +83,6 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
     @Override
     public android.support.v4.app.LoaderManager getUILoaderManager() {
         return getSupportLoaderManager();
-    }
-
-    /**
-     * Method that returns the Parent Textview so the presenter can update it
-     *
-     * @return the Textview that holds the current memory
-     */
-    public TextView getParentTextView() {
-//        returns the textview
-        return this.parentTextView;
     }
 
     @Override

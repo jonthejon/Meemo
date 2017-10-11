@@ -26,7 +26,6 @@ class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
     private LoaderPresenter presenter;
     // this is the instance of the cardview that holds the current memory
     private CardView cardView;
-//    private CardView cardview;
 
     /**
      * Constructor necessary override some functionalities for this ViewHolder to properly function

@@ -152,8 +152,6 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
 //            calls the activity method to update the state of the RV
             super.activity.updateRVState();
         }
-//        calling the method of this presenter that updates the UI with a new caller memory that we retrieve from the adapter
-        this.updateCallerMemoryUI(this.mAdapter.getCallerMemory());
     }
 
     @Override
@@ -186,15 +184,6 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
         mAdapter.setCallerMemory(memory);
         // initiate the fetching of the connected memories of the new caller memory
         this.doInWorkerThread();
-    }
-
-    /**
-     * Sets the TextView of the activity with the proper data from the caller memory
-     *
-     * @param memory the Memory object that must be inserted as the caller memory
-     */
-    void updateCallerMemoryUI(Memory memory) {
-        super.activity.getParentTextView().setText(memory.getMemoryText());
     }
 
     public ArrayList<Integer> getHistory() {
