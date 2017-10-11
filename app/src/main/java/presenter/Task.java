@@ -35,13 +35,16 @@ class Task extends AsyncTask<Uri, Void, Integer> {
         Uri insertUri = uris[0];
 //        retrieving the column name of the memory table to be inserted
         String textColumn = DBContract.MemoryTable.getColMemoryText();
-//        String textColumn = DBContract.MemoryTable.COL_MEMORY_TEXT;
+//        retrieving the column name of the number of connections of this memory
+//        String connColumn = DBContract.MemoryTable.getColConnNum();
 //        getting the memory text from the Memory of the TaskPresenter
         String textMemory = presenter.getMemoryText();
 //        initiating a new ContentValues object to store the data to be inserted in the db
         ContentValues cv = new ContentValues();
 //        inserting the memory with the proper column name inside the ContentValues
         cv.put(textColumn, textMemory);
+//        registering the first connection of this memory with its caller memory
+//        cv.put(connColumn, 1);
 //        calling the insert method of the ContentResolver and receiving back the Uri of the inserted memory
 //        this will be null if the insertion had failed
         Uri resultUri = userInterface.getUIContentResolver().insert(insertUri, cv);

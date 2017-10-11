@@ -3,6 +3,7 @@ package core;
 import static core.DBUtils.ConnectionTable.COL_MEMORY_A;
 import static core.DBUtils.ConnectionTable.COL_MEMORY_B;
 import static core.DBUtils.MemoryTable.COL_MEMORY_ID;
+import static core.DBUtils.MemoryTable.COL_MEMORY_NUM_CONN;
 import static core.DBUtils.MemoryTable.COL_MEMORY_TEXT;
 
 /**
@@ -15,11 +16,11 @@ public class DBUtils {
     /**
      * this inner class contains all the data that defines the database and data that allows to form the Uri to access the ContentProvider
      */
-    public static final class Database {
+    public static class Database {
         //    IV that holds the database name
         public static final String DATABASE_NAME = "MeemoDatabase.db";
         //    IV that holds the present database version and must be incremented every time a database scheme changes
-        public static final int DATABASE_VERSION = 8;
+        public static final int DATABASE_VERSION = 9;
         //    The authority, which is how your code knows which Content Provider to access
         //    this is defined inside the AndroidManifest file and probably is your package name
         public static final String AUTHORITY = "seasonedblackolives.com.meemo";
@@ -46,6 +47,8 @@ public class DBUtils {
         public static final String COL_MEMORY_TEXT = "memory_text";
         //        inner final IV that holds the file path of the memory file if it exists
         public static final String COL_MEMORY_FILE_PATH = "memory_file_path";
+        // inner final IV that holds the number of connections
+        public static final String COL_MEMORY_NUM_CONN = "memory_num_conn";
         //        inner final IV that holds the time that the memory got created
         public static final String COL_CREATION_TIME = "memory_timestamp";
     }
@@ -85,6 +88,28 @@ public class DBUtils {
     }
 
     /**
+     * returns the SQL statement that will increment the number of connections of the memory defined by the ID
+     *
+     * @param id the ID of the memory that will have its number of connections incremented
+     * @return the SQL statement in a String format ready for execution
+     */
+    public static String sqlUpdateNumConnections(String id) {
+        // UPDATE memory_table SET memory_num_conn = memory_num_conn + 1 WHERE _ID = id;
+        return "UPDATE " +
+                MemoryTable.TABLE_NAME +
+                " SET " +
+                COL_MEMORY_NUM_CONN +
+                " = " +
+                COL_MEMORY_NUM_CONN +
+                " + 1 WHERE " +
+                COL_MEMORY_ID +
+                " = " +
+                id +
+                ";";
+    }
+
+
+    /**
      * Creates and return the SQL statement necessary for retrieving from the DB all the memories that are connected with the memory defined by the sent ID.
      *
      * @param id the ID of the memory from which you want to get all the connected memories
@@ -93,6 +118,7 @@ public class DBUtils {
         // THIS IS THE NEW SQL, MADE FOR THE 1 ROW CONNECTION TABLE ARCHITECTURE
         // be aware of the static imports
         // select memory_table._ID, memory_table.memory from memory_table where (memory_table._ID in(select connection_table.memory_a from connection_table where connection_table.memory_b = 1)) or (memory_table._ID in(select connection_table.memory_b from connection_table where connection_table.memory_a = 1));
+        // select memory_table._ID, memory_table.memory, memory_table.memory_num_conn from memory_table where (memory_table._ID in(select connection_table.memory_a from connection_table where connection_table.memory_b = 1)) or (memory_table._ID in(select connection_table.memory_b from connection_table where connection_table.memory_a = 1));
         return "SELECT " +
                 MemoryTable.TABLE_NAME +
                 "." +
@@ -101,6 +127,10 @@ public class DBUtils {
                 MemoryTable.TABLE_NAME +
                 "." +
                 COL_MEMORY_TEXT +
+                ", " +
+                MemoryTable.TABLE_NAME +
+                "." +
+                COL_MEMORY_NUM_CONN +
                 " FROM " +
                 MemoryTable.TABLE_NAME +
                 " WHERE (" +
@@ -159,6 +189,8 @@ public class DBUtils {
                 " TEXT NOT NULL, " +
                 MemoryTable.COL_MEMORY_FILE_PATH +
                 " VARCHAR(500) DEFAULT 'void', " +
+                MemoryTable.COL_MEMORY_NUM_CONN +
+                " INTEGER DEFAULT 0, " +
                 MemoryTable.COL_CREATION_TIME +
                 " TEXT DEFAULT CURRENT_TIMESTAMP);";
     }
@@ -193,8 +225,8 @@ public class DBUtils {
                 MemoryTable.TABLE_NAME +
                 " (" +
                 MemoryTable.COL_MEMORY_TEXT +
-                ") VALUES(" +
+                ") VALUES('" +
                 memory +
-                ");";
+                "');";
     }
 }

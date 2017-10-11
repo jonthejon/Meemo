@@ -29,7 +29,7 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
         this.presenter = presenter;
 //        creating a DBUtils initial memory that has an ID of 1 (the same of the BRAIN memory)
 //        the memory per se doesn't matter... all we need for the DB call to work is the proper ID of the caller memory set to 1
-        this.callerMemory = new Memory.MemoryBuilder(1, presenter.activity.getString(R.string.dummy_init_memory)).build();
+        this.callerMemory = new Memory.MemoryBuilder(1, presenter.activity.getString(R.string.dummy_init_memory),0).build();
     }
 
     // This method is called everytime we need to create a new ViewHolder to hold memories inside the RV

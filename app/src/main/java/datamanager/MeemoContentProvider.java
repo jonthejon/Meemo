@@ -68,7 +68,7 @@ public class MeemoContentProvider extends ContentProvider {
         return true;
     }
 
-    /**
+    /*
      * Method used by any client that wants to query this Content Provider.
      * It receives at least an Uri as a parameter.
      */
@@ -97,7 +97,7 @@ public class MeemoContentProvider extends ContentProvider {
         return cursor;
     }
 
-    /**
+    /*
      * This method, if correctly implemented must return the type of the data for each URI that this CP receives.
      * In our case, we are returning data from a table.
      * See the proper documentation for more information on MIME-TYPES.
@@ -116,7 +116,7 @@ public class MeemoContentProvider extends ContentProvider {
         return null;
     }
 
-    /**
+    /*
      * This method is used by clients to insert given values into the database.
      * note that you need to insert data in more than one table since every memory is a new child of an older memory.
      */
@@ -135,6 +135,9 @@ public class MeemoContentProvider extends ContentProvider {
                 String id_a = uri.getLastPathSegment();
                 // getting the SQL from DBContract and executing the command into the connection_table
                 db.execSQL(DBUtils.sqlInsertConnection(id_a, Long.toString(id_b)));
+                // getting the SQL from DBUtils that will update the number of connections of each memory and executing it.
+                db.execSQL(DBUtils.sqlUpdateNumConnections(id_a));
+                db.execSQL(DBUtils.sqlUpdateNumConnections(Long.toString(id_b)));
 //                  returns the new Uri that points to the specific memory inside the memory table
                 return DBContract.MemoryTable.uriGetMemory().buildUpon().appendPath(Long.toString(id_b)).build();
         }
@@ -142,7 +145,7 @@ public class MeemoContentProvider extends ContentProvider {
         return null;
     }
 
-    /**
+    /*
      * This method is called when any client wants to delete a particular memory from the database.
      * note that we are checking if the used Uri is in the correct format before doing any operations.
      */
@@ -162,7 +165,7 @@ public class MeemoContentProvider extends ContentProvider {
         return 0;
     }
 
-    /**
+    /*
      * This method is called when any client wants to update a particular memory from the database.
      * note that we are checking if the used Uri is in the correct format before doing any operations.
      */

@@ -12,8 +12,8 @@ public class Memory {
     private String memoryText;
     //    IV that holds the file path of this memory if it exists
     private String filePath;
-//    IV that holds the type of connection this memory has with the memory that called it
-    //private int connection;
+    // IV that holds the number of connections that this memory has
+    private int numConnections;
 
     /**
      * Private constructor of the Memory class.
@@ -25,7 +25,7 @@ public class Memory {
         this.memoryID = builder.memoryID;
         this.memoryText = builder.memoryText;
         this.filePath = builder.filePath;
-        //this.connection = builder.connection;
+        this.numConnections = builder.numConnections;
     }
 
     // This is the inner Builder class that will be responsible for creating new Memory objects using the Builder Pattern.
@@ -34,7 +34,7 @@ public class Memory {
         private int memoryID;
         private String memoryText;
         private String filePath;
-        //private int connection;
+        private int numConnections;
 
         /**
          * This is the constructor of the Builder inner class.
@@ -44,10 +44,11 @@ public class Memory {
          * @param memoryID   the ID of the memory we want to create
          * @param memoryText the actual text that we want to save as memory
          */
-        public MemoryBuilder(int memoryID, String memoryText) {
+        public MemoryBuilder(int memoryID, String memoryText, int numConnections) {
 //            initiating the mandatory IV's of the Memory object into the Builder object for later usage in the Memory constructor
             this.memoryID = memoryID;
             this.memoryText = memoryText;
+            this.numConnections = numConnections;
         }
 
         /**
@@ -87,4 +88,7 @@ public class Memory {
         return filePath;
     }
 
+    public int getNumConnections() {
+        return numConnections;
+    }
 }

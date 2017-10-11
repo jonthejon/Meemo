@@ -65,12 +65,13 @@ public class DataManager implements DataManagerInterface {
 //        getting the indexes of the columns of the memory table in the database
         int idColIndex = data.getColumnIndex(DBContract.MemoryTable.getColId());
         int textColIndex = data.getColumnIndex(DBContract.MemoryTable.getColMemoryText());
+        int connColIndex = data.getColumnIndex(DBContract.MemoryTable.getColConnNum());
 
 //        we will loop inside the cursor
 //        Cursor always starts at -1, se we can start the first loop already calling moveToNext()
         while (data.moveToNext()) {
 //            create a new Memory object with data from the cursor
-            Memory memory = new Memory.MemoryBuilder(data.getInt(idColIndex), data.getString(textColIndex))
+            Memory memory = new Memory.MemoryBuilder(data.getInt(idColIndex), data.getString(textColIndex), data.getInt(connColIndex))
                     .build();
             memoryArrayList.add(memory);
         }

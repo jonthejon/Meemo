@@ -28,8 +28,6 @@ class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
-
 //        executing the creation of the memory table
         db.execSQL(DBUtils.sqlCreateMemoryTable());
 //        executing the creation of the family table

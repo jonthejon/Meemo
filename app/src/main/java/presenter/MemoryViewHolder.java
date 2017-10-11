@@ -16,6 +16,8 @@ class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
 
     //    This IV is the textview that is inside the single memory layout file
     private TextView mTextView;
+    // This IV is the TextView that holds the number of connections of this memory
+    private TextView connTextView;
     //    IV that holds the memory object of this particular child inside the RV
     private Memory memory;
     //    IV that will hold the presenter instance that called this VieHolder
@@ -34,6 +36,7 @@ class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
         this.presenter = presenter;
 //        binding the textview of the given view to the IV that we have
         this.mTextView = (TextView) itemView.findViewById(R.id.single_memory_text);
+        this.connTextView = (TextView) itemView.findViewById(R.id.mem_num_connections);
 //        setting this same class to be a clickListener and respond to user clicks on it
         itemView.setOnClickListener(this);
     }
@@ -49,6 +52,7 @@ class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
         this.memory = memory;
 //        setting the text of the textview with the underlying memory text
         this.mTextView.setText(memory.getMemoryText());
+        this.connTextView.setText(Integer.toString(memory.getNumConnections()));
     }
 
     //    this method is overriden from the View.OnClickListener interface for handling click functionality
