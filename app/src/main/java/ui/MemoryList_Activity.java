@@ -30,6 +30,7 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 
     //    IV that contains the String that will be the Key to store the RV's state during activity destruction
     private final String RV_STATE_KEY = "RV_STATE_KEY";
+    private final String HISTORY_KEY = "HISTORY_KEY";
     //    IV of Parcelable type that will actually store the RV's state
     private Parcelable mRVState = null;
 
@@ -55,6 +56,11 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 //                retrieving the state from the bundle and assigning it to the proper IV
                 this.mRVState = savedInstanceState.getParcelable(RV_STATE_KEY);
             }
+	    // checking to see if we have a history Key in the bundle
+	    if (savedInstanceState.containsKey(HISTORY_KEY)) {
+		    // putting the saved History into the Presenter
+		    loaderPresenter.setHistory(savedInstanceState.getIntegerArrayList(HISTORY_KEY));
+	    }
         }
         //        checking to see if we have any state saved to be recreated
         if (mRVState != null) {
@@ -65,6 +71,7 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 
     /**
      * returns the RecyclerView instance that shows all memories in this activity
+     *
      * @return the RecyclerView that holds all memories
      */
     public RecyclerView getRecyclerView() {
@@ -83,6 +90,7 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 
     /**
      * Method that returns the Parent Textview so the presenter can update it
+     *
      * @return the Textview that holds the current memory
      */
     public TextView getParentTextView() {
@@ -98,6 +106,7 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
     /**
      * This method will be called everytime the FAB button gets clicked.
      * This method call is defined inside the XML layout file.
+     *
      * @param view the view object, in this case the FAB button, that is calling this method.
      */
     public void onFABClick(View view) {
@@ -111,6 +120,7 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 
     /**
      * Overriden method of the Activity that gets called after the called activity returns with data and a result
+     *
      * @param requestCode the request code that you created when calling the ActivityForResult
      * @param resultCode  a constant defined in the Activity superclass that tells us how is the result came back
      * @param data        the intent object that contains the data that the called activity sent us.
@@ -129,6 +139,7 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 
     /**
      * returns the instance of the Loader Presenter of this activity.
+     *
      * @return the instance of the LoaderPresenter class of this activity
      */
     public LoaderPresenter getLoaderPresenter() {
@@ -136,8 +147,8 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
     }
 
 
-     //This method will automatically be called every time the activity is about to be destroyed.
-     //So in it we'll save all the information that we need to properly recreated it later. */
+    //This method will automatically be called every time the activity is about to be destroyed.
+    //So in it we'll save all the information that we need to properly recreated it later. */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
 //        calling the method of the super class of this activity
@@ -146,6 +157,8 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
         this.mRVState = this.childMemoryRV.getLayoutManager().onSaveInstanceState();
 //        putting the parcelable object (RV's state) into the bundle for saving
         outState.putParcelable(RV_STATE_KEY, mRVState);
+        // putting the ArrayList that contains the history into the Bundle
+        outState.putIntegerArrayList(HISTORY_KEY, loaderPresenter.getHistory());
     }
 
     /**
@@ -157,6 +170,23 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
         if (mRVState != null) {
 //            updating the RV with the saved state.
             this.childMemoryRV.getLayoutManager().onRestoreInstanceState(mRVState);
+        }
+    }
+
+//    this method is an override and it's automatically called every time the user presses the back button of the phone.
+    @Override
+    public void onBackPressed() {
+//        getting the memory ID of the most recent memory in history
+        int historyId = loaderPresenter.getLastHistoryId();
+        if (historyId == 0) {
+//            if ID = 0, the there is no history and we should just exit the app
+            super.onBackPressed();
+        } else {
+//            we have a valid ID
+//            deleting the memory from the history
+            loaderPresenter.delMostRecentHistory();
+//            calling for another DB fetch because we have a new caller memory
+            loaderPresenter.doInWorkerThread();
         }
     }
 }

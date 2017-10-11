@@ -29,7 +29,7 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
         this.presenter = presenter;
 //        creating a DBUtils initial memory that has an ID of 1 (the same of the BRAIN memory)
 //        the memory per se doesn't matter... all we need for the DB call to work is the proper ID of the caller memory set to 1
-        this.callerMemory = new Memory.MemoryBuilder(1, presenter.activity.getString(R.string.dummy_init_memory),0).build();
+        this.callerMemory = new Memory.MemoryBuilder(1, presenter.activity.getString(R.string.dummy_init_memory), 0).build();
     }
 
     // This method is called everytime we need to create a new ViewHolder to hold memories inside the RV
@@ -72,8 +72,24 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
      *
      * @return the Arraylist that contains all the memories
      */
-    public ArrayList<Memory> getMemoriesArray() {
+    private ArrayList<Memory> getMemoriesArray() {
         return this.memoriesArr;
+    }
+
+    /**
+     * Returns the corresponding Memory given an ID or null if it does not exists
+     *
+     * @param id the ID of the memory object that you want to fetch
+     * @return the Memory object that corresponds to the ID given
+     */
+    public Memory getMemoryById(int id) {
+        for (Memory memory : memoriesArr) {
+            if (memory.getMemoryID() == id) {
+                return memory;
+            }
+        }
+//        in case we didn't find the memory, we are just returning the null
+        return null;
     }
 
     /**

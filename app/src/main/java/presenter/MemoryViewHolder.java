@@ -1,5 +1,7 @@
 package presenter;
 
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -22,6 +24,9 @@ class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
     private Memory memory;
     //    IV that will hold the presenter instance that called this VieHolder
     private LoaderPresenter presenter;
+    // this is the instance of the cardview that holds the current memory
+    private CardView cardView;
+//    private CardView cardview;
 
     /**
      * Constructor necessary override some functionalities for this ViewHolder to properly function
@@ -37,6 +42,7 @@ class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
 //        binding the textview of the given view to the IV that we have
         this.mTextView = (TextView) itemView.findViewById(R.id.single_memory_text);
         this.connTextView = (TextView) itemView.findViewById(R.id.mem_num_connections);
+        this.cardView = (CardView) itemView.findViewById(R.id.cardview);
 //        setting this same class to be a clickListener and respond to user clicks on it
         itemView.setOnClickListener(this);
     }
@@ -53,13 +59,19 @@ class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
 //        setting the text of the textview with the underlying memory text
         this.mTextView.setText(memory.getMemoryText());
         this.connTextView.setText(Integer.toString(memory.getNumConnections()));
-    }
+//        checking to see if this memory is a caller and if so, tint the background
+        if (presenter.getLastHistoryId() == this.memory.getMemoryID()) {
+            this.cardView.setCardBackgroundColor(ContextCompat.getColor(presenter.getActivityContext(), R.color.colorAccent));
+        } else {
+            this.cardView.setCardBackgroundColor(ContextCompat.getColor(presenter.getActivityContext(), R.color.white));
+        }
+        }
 
-    //    this method is overriden from the View.OnClickListener interface for handling click functionality
+        //    this method is overriden from the View.OnClickListener interface for handling click functionality
 //    don't forget to set the underlying view of this class to have this class as a clicklistener inside your constructor
-    @Override
-    public void onClick(View v) {
+        @Override
+        public void onClick (View v){
 //        calling the callback method of the presenter that holds the RV and sending the memory object that binds this viewholder
-        presenter.handleRVClicks(this.memory);
+            presenter.handleRVClicks(this.memory);
+        }
     }
-}

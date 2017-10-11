@@ -1,5 +1,6 @@
 package presenter;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -19,6 +20,8 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
 
     //    IV that will hold the adapter instance for the recycler view
     private MemoryListAdapter mAdapter;
+    // creating the ArrayList IV that will hold the Caller history
+    private ArrayList<Integer> history;
 
     //    IV that holds the loader ID so to ensure that we are not creating a new Loader every time
     //    if a loader already exists, the same loader will be used
@@ -30,6 +33,8 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
     public LoaderPresenter(MemoryList_Activity activity) {
 //        setting the Superclass IV to hold the instance to the activity
         super(activity);
+        // creating the Arraylist that will hold the history
+        this.history = new ArrayList<>();
 //        creating and setting to the IV a LinearLayout for using in the RV
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(activity);
 //        setting the IV of the adapter with a new instance of your adapter class
@@ -171,7 +176,15 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
      * @param memory the Memory object that is represented by the viewholder that got clicked.
      */
     void handleRVClicks(Memory memory) {
+        if (getLastHistoryId() == memory.getMemoryID()) {
+            activity.onBackPressed();
+            return;
+        }
+        // adding the current caller memory to the history Arraylist
+        this.history.add(mAdapter.getCallerMemory().getMemoryID());
+        // setting the new caller memory inside the adapter so their connected memories can be called
         mAdapter.setCallerMemory(memory);
+        // initiate the fetching of the connected memories of the new caller memory
         this.doInWorkerThread();
     }
 
@@ -182,5 +195,42 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
      */
     void updateCallerMemoryUI(Memory memory) {
         super.activity.getParentTextView().setText(memory.getMemoryText());
+    }
+
+    public ArrayList<Integer> getHistory() {
+        return history;
+    }
+
+    public void setHistory(ArrayList<Integer> history) {
+        this.history = history;
+    }
+
+    /**
+     * Returns the ID of the most recent memory in the History Array. If there is no memory in the history, it returns 0.
+     *
+     * @return Id of the most recent memory of the history Array or 0 if no memory found.
+     */
+    public int getLastHistoryId() {
+        if (history.isEmpty()) {
+            return 0;
+        } else {
+            return this.history.get(history.size() - 1);
+        }
+    }
+
+    /**
+     * pops the most recent memory of the History if exists and updates the caller memory of the adapter
+     */
+    public void delMostRecentHistory() {
+        if (!history.isEmpty()) {
+//            deletes the most recent ID from the history
+            int history_id = history.remove(history.size() - 1);
+//            setting the new caller Memory of the Adapter so we can fetch the connected memories
+            mAdapter.setCallerMemory(mAdapter.getMemoryById(history_id));
+        }
+    }
+
+    public Context getActivityContext() {
+        return this.activity;
     }
 }
