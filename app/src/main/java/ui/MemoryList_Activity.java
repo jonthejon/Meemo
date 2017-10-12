@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.view.View;
 
 import presenter.LoaderPresenter;
@@ -175,5 +176,15 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 //            calling for another DB fetch because we have a new caller memory
             loaderPresenter.doInWorkerThread();
         }
+    }
+
+//    this method is called every time the user clicks in one of the options in the Context Menu defined in the ViewHolder
+//    don't forget that this method is supposed to be declared inside the Activity
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+//        this calls a method in the presenter class that will handle the clicks
+        boolean handleResult = loaderPresenter.handleContextItemSelected(item);
+//        if presenter returns false, then we call the super method
+        return handleResult || super.onContextItemSelected(item);
     }
 }

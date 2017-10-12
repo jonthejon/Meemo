@@ -1,8 +1,10 @@
 package presenter;
 
+import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.View;
 import android.widget.TextView;
 
@@ -14,7 +16,7 @@ import seasonedblackolives.com.meemo.R;
 // this class must extend RecyclerView.ViewHolder in order for it to properly function with recycler view
 // in order for the Items of the recyclerview respond to clicks, this class must implement the View.OnClickListener interface
 
-class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener {
 
     //    This IV is the textview that is inside the single memory layout file
     private TextView mTextView;
@@ -26,6 +28,8 @@ class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
     private LoaderPresenter presenter;
     // this is the instance of the cardview that holds the current memory
     private CardView cardView;
+    //    a context IV for the handling of menu clicking
+    private Context context;
 
     /**
      * Constructor necessary override some functionalities for this ViewHolder to properly function
@@ -38,12 +42,17 @@ class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
         super(itemView);
 //        setting the IV that holds the presenter instance
         this.presenter = presenter;
+//        saving the context of this view
+//        this.context = itemView.getContext();
+        this.context = presenter.getActivityContext();
 //        binding the textview of the given view to the IV that we have
         this.mTextView = (TextView) itemView.findViewById(R.id.single_memory_text);
         this.connTextView = (TextView) itemView.findViewById(R.id.mem_num_connections);
         this.cardView = (CardView) itemView.findViewById(R.id.cardview);
 //        setting this same class to be a clickListener and respond to user clicks on it
         itemView.setOnClickListener(this);
+//        setting this same class to be a clickListener and respond to user clicks on it
+        itemView.setOnCreateContextMenuListener(this);
     }
 
     /**
@@ -64,13 +73,23 @@ class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
         } else {
             this.cardView.setCardBackgroundColor(ContextCompat.getColor(presenter.getActivityContext(), R.color.white));
         }
-        }
-
-        //    this method is overriden from the View.OnClickListener interface for handling click functionality
-//    don't forget to set the underlying view of this class to have this class as a clicklistener inside your constructor
-        @Override
-        public void onClick (View v){
-//        calling the callback method of the presenter that holds the RV and sending the memory object that binds this viewholder
-            presenter.handleRVClicks(this.memory);
-        }
     }
+
+    //    this method is overriden from the View.OnClickListener interface for handling click functionality
+//    don't forget to set the underlying view of this class to have this class as a clicklistener inside your constructor
+    @Override
+    public void onClick(View v) {
+//        calling the callback method of the presenter that holds the RV and sending the memory object that binds this viewholder
+        presenter.handleRVClicks(this.memory);
+    }
+
+    //        this method will be called every time the user long clicks this ViewHolder
+//    the clicks on the menu items must be handled by the Activity's onContextItemSelected() overriden method
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+//        adding the menu options into the menu for displaying
+//        important to notice that we're putting into the options of the menu the position of this ViewHolder in the Adapter so we can retrieve this information later when handling the click functionality
+        menu.add(0, 1, getAdapterPosition(), "update memory");
+        menu.add(0, 2, getAdapterPosition(), "delete memory");
+    }
+}

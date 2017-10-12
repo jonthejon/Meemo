@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Meemo</string>
 
-
     <!--Fake data only for design purposes-->
     <string name="fake_memory">This is a fake memory for design purposes.</string>
     <string name="fake_memory_long">This is a fake memory for design purposes.
@@ -17,4 +16,6 @@
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
     <string name="mind_name">The Mind of Jonathan</string>
+    <string name="float_menu_update">update memory</string>
+    <string name="float_menu_delete">delete memory</string>
 </resources>

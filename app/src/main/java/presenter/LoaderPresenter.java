@@ -7,6 +7,8 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -137,6 +139,28 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
         }
 //        returning the recently created loader
         return loader;
+    }
+
+    /**
+     * Method that will handle the clicks of the Context Menu of the Recycler View of each ViewHolder
+     *
+     * @param item the MenuItem sent by the overriden method onContextItemSelected() of the underlying activity
+     * @return true if we properly handled the click. False if not.
+     */
+    public boolean handleContextItemSelected(MenuItem item) {
+        int option = item.getItemId();
+        Memory memory = mAdapter.getMemoryByPosition(item.getOrder());
+        String memoryText = memory.getMemoryText();
+        switch (option) {
+            case 1:
+                Toast.makeText(getActivityContext(), memoryText, Toast.LENGTH_SHORT).show();
+                return true;
+            case 2:
+                Toast.makeText(getActivityContext(), "delete clicked", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return false;
+        }
     }
 
     // This method is called after the loader has finished its load.

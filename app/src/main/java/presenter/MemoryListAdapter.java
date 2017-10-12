@@ -93,6 +93,20 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
     }
 
     /**
+     * Method that returns the child Memory given a specific position.
+     *
+     * @param position the position of the element that you want to read from the collection
+     * @return returns the Memory that is in the position requested by the caller
+     */
+    public Memory getMemoryByPosition(int position) {
+        if (position > this.memoriesArr.size() - 1) {
+            return null;
+        } else {
+            return this.memoriesArr.get(position);
+        }
+    }
+
+    /**
      * method that return the current parent memory when called.
      *
      * @return the instance of the parent memory (the caller memory)
@@ -111,16 +125,6 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
         this.memoriesArr = memories;
 //        this method is from the RecyclerView.Adapter class and let's the adapter knows that we have new data to show
         notifyDataSetChanged();
-    }
-
-    /**
-     * Method that returns the child Memory given a specific position.
-     *
-     * @param position the position of the element that you want to read from the collection
-     * @return returns the Memory that is in the position requested by the caller
-     */
-    public Memory getMemoryByPosition(int position) {
-        return this.memoriesArr.get(position);
     }
 
     /**
