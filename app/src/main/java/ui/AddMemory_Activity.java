@@ -29,14 +29,15 @@ public class AddMemory_Activity extends AppCompatActivity {
         Intent callerIntent = getIntent();
         if (callerIntent.hasExtra("OLD_MEMORY")) {
             editText.setText(callerIntent.getStringExtra("OLD_MEMORY"));
-	    this.code = this.UPDATE_CODE;
+            this.code = this.UPDATE_CODE;
         } else {
-	    this.code = this.CREATE_CODE;
-	}
+            this.code = this.CREATE_CODE;
+        }
     }
 
     /**
      * this method is defined inside the XML layout file and is triggered if the user clicks the cancel button
+     *
      * @param view the view object that called this function
      */
     public void onCancelClick(View view) {
@@ -46,6 +47,7 @@ public class AddMemory_Activity extends AppCompatActivity {
 
     /**
      * this method is defined inside the XML layout file and is triggered if the user clicks the cancel button
+     *
      * @param view the view object that called this function
      */
     public void onSaveClick(View view) {
@@ -58,8 +60,8 @@ public class AddMemory_Activity extends AppCompatActivity {
         Intent resultIntent = new Intent();
         // putting into the intent the name of the column of the DB that we'll insert and the actual value of the memory to be inserted
         resultIntent.putExtra(DBContract.MemoryTable.getColMemoryText(), memory_text);
-	// putting into the intent the proper code to alert the caller activity of the kind of memory we are sending
-	resultIntent.putExtra(RESULT_TYPE,this.code);
+        // putting into the intent the proper code to alert the caller activity of the kind of memory we are sending
+        resultIntent.putExtra(RESULT_TYPE, this.code);
         // this method creates the Result of this activity that can be accessed by the caller activity
         setResult(RESULT_OK, resultIntent);
         // ending the activity. the result will be accessed later by the caller activity

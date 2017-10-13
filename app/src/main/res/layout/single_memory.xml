@@ -29,23 +29,27 @@
             <TextView
                 android:id="@+id/mem_num_connections"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:fontFamily="monospace"
                 android:scrollHorizontally="false"
                 android:textColor="@android:color/black"
-                card_view:layout_constraintRight_toRightOf="parent"
-                tools:text="3" />
+                card_view:layout_constraintLeft_toLeftOf="parent"
+                card_view:layout_constraintTop_toTopOf="parent"
+                tools:text="3"
+                />
             <TextView
                 android:id="@+id/single_memory_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
                 android:fontFamily="monospace"
                 android:scrollHorizontally="false"
+                android:layout_marginStart="20dp"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
-                card_view:layout_constraintRight_toLeftOf="@id/mem_num_connections"
-                tools:text="this is a fake memory contoinue sit o tehreifi fieifh eifhief ihiih ihfihsifh ihfihfih  hdsifh ihfhis " />
+                card_view:layout_constraintLeft_toRightOf="@+id/mem_num_connections"
+                card_view:layout_constraintTop_toTopOf="parent"
+                tools:text="this is a fake memory contoinue sit o tehreifi fieifh eifhief ihiih ihfihsifh ihfihfih  hdsifh ihfhis "
+                />
 
         </android.support.constraint.ConstraintLayout>
 

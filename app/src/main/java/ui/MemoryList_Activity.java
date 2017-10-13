@@ -54,11 +54,11 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 //                retrieving the state from the bundle and assigning it to the proper IV
                 this.mRVState = savedInstanceState.getParcelable(RV_STATE_KEY);
             }
-	    // checking to see if we have a history Key in the bundle
-	    if (savedInstanceState.containsKey(HISTORY_KEY)) {
-		    // putting the saved History into the Presenter
-		    loaderPresenter.setHistory(savedInstanceState.getIntegerArrayList(HISTORY_KEY));
-	    }
+            // checking to see if we have a history Key in the bundle
+            if (savedInstanceState.containsKey(HISTORY_KEY)) {
+                // putting the saved History into the Presenter
+                loaderPresenter.setHistory(savedInstanceState.getIntegerArrayList(HISTORY_KEY));
+            }
         }
         //        checking to see if we have any state saved to be recreated
         if (mRVState != null) {
@@ -161,7 +161,7 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
         }
     }
 
-//    this method is an override and it's automatically called every time the user presses the back button of the phone.
+    //    this method is an override and it's automatically called every time the user presses the back button of the phone.
     @Override
     public void onBackPressed() {
 //        getting the memory ID of the most recent memory in history
@@ -178,7 +178,7 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
         }
     }
 
-//    this method is called every time the user clicks in one of the options in the Context Menu defined in the ViewHolder
+    //    this method is called every time the user clicks in one of the options in the Context Menu defined in the ViewHolder
 //    don't forget that this method is supposed to be declared inside the Activity
     @Override
     public boolean onContextItemSelected(MenuItem item) {

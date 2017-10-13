@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
+
 import core.DBUtils;
 
 /**
@@ -136,8 +138,8 @@ public class MeemoContentProvider extends ContentProvider {
                 // getting the SQL from DBContract and executing the command into the connection_table
                 db.execSQL(DBUtils.sqlInsertConnection(id_a, Long.toString(id_b)));
                 // getting the SQL from DBUtils that will update the number of connections of each memory and executing it.
-                db.execSQL(DBUtils.sqlUpdateNumConnections(id_a));
-                db.execSQL(DBUtils.sqlUpdateNumConnections(Long.toString(id_b)));
+                db.execSQL(DBUtils.sqlIncrementNumConnections(id_a));
+                db.execSQL(DBUtils.sqlIncrementNumConnections(Long.toString(id_b)));
 //                  returns the new Uri that points to the specific memory inside the memory table
                 return DBContract.MemoryTable.uriGetMemory().buildUpon().appendPath(Long.toString(id_b)).build();
         }
@@ -153,6 +155,7 @@ public class MeemoContentProvider extends ContentProvider {
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
 //        creates a new writable instance of the database for data insertion
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
+        final SQLiteDatabase db_r = dbHelper.getReadableDatabase();
 
 //        checks to see what type of Uri was sent to us by the user
         switch (getUriMatcher().match(uri)) {
@@ -160,7 +163,31 @@ public class MeemoContentProvider extends ContentProvider {
 //                get the last path segment that in the case of this Uri is the memory ID to be deleted
                 String id = uri.getLastPathSegment();
 //                deletes the memory from the DB and returns the number of rows deleted (hopefully 1)
-                return db.delete(DBContract.MemoryTable.getTableName(), "_ID = ?", new String[]{id});
+                int numRows = db.delete(DBContract.MemoryTable.getTableName(), "_ID = ?", new String[]{id});
+                if (numRows != 1) return 0;
+                Cursor connSearch1 = db_r.rawQuery(DBUtils.sqlConnections1(id), null);
+                Cursor connSearch2 = db_r.rawQuery(DBUtils.sqlConnections2(id), null);
+                ArrayList<Integer> connIDs = new ArrayList<>();
+                if (connSearch1 != null && connSearch1.getCount() > 0) {
+                    int mem_a_col = connSearch1.getColumnIndex(DBContract.ConnectionTable.getColMemoryA());
+                    while (connSearch1.moveToNext()) {
+                        connIDs.add(connSearch1.getInt(mem_a_col));
+                    }
+                    connSearch1.close();
+                }
+                if (connSearch2 != null && connSearch2.getCount() > 0) {
+                    int mem_b_col = connSearch2.getColumnIndex(DBContract.ConnectionTable.getColMemoryB());
+                    while (connSearch2.moveToNext()) {
+                        connIDs.add(connSearch2.getInt(mem_b_col));
+                    }
+                    connSearch2.close();
+                }
+                for (Integer it : connIDs) {
+                    db.execSQL(DBUtils.sqlDecrementNumConnections(Integer.toString(it)));
+                }
+                db.delete(DBContract.ConnectionTable.getTableName(), DBUtils.ConnectionTable.COL_MEMORY_A + " = ?", new String[]{id});
+                db.delete(DBContract.ConnectionTable.getTableName(), DBUtils.ConnectionTable.COL_MEMORY_B + " = ?", new String[]{id});
+                return numRows;
         }
         return 0;
     }

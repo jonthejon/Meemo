@@ -156,7 +156,11 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
 		    activity.getTaskPresenter().startUpdateActivity(memory);
                 return true;
             case 2:
-                Toast.makeText(getActivityContext(), "delete clicked", Toast.LENGTH_SHORT).show();
+                if (memory.getMemoryID() == 1 || memory.getMemoryID() == getLastHistoryId()) {
+                    Toast.makeText(activity, "Can't delete caller Memory", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                activity.getTaskPresenter().deleteMemoryFromDB(memory);
                 return true;
             default:
                 return false;

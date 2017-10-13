@@ -43,9 +43,14 @@ public class TaskPresenter extends MemoryListPresenter {
 //        checking to see what kind of Uri should we create
         if (this.uriType == 3) {
 //        initiating a new CreateTask class that will be responsible for the worker Thread
+            Toast.makeText(activity, "Creating", Toast.LENGTH_SHORT).show();
             new CreateTask(super.activity, this).execute(this.createInsertUri());
-        } else {
+        } else if (this.uriType == 5) {
+            Toast.makeText(activity, "Updating", Toast.LENGTH_SHORT).show();
             new UpdateTask(super.activity, this).execute(this.createUpdateUri());
+        } else if (this.uriType == 7) {
+            Toast.makeText(activity, "Deleting", Toast.LENGTH_SHORT).show();
+            new DeleteTask(super.activity, this).execute(this.createDeleteUri());
         }
     }
 
@@ -55,7 +60,7 @@ public class TaskPresenter extends MemoryListPresenter {
      * @return the String that contains the memory
      */
     String getMemoryText() {
-	    return this.memory.getMemoryText();
+        return this.memory.getMemoryText();
         //return this.memory_text;
     }
 
@@ -97,10 +102,31 @@ public class TaskPresenter extends MemoryListPresenter {
      * @return the update Uri
      */
     private Uri createUpdateUri() {
-	    int updateID = this.memory.getMemoryID();
+        int updateID = this.memory.getMemoryID();
         return DBContract.MemoryTable.uriUpdateMemory().buildUpon()
-//        return DBContract.MemoryTable.INSERT_MEMORY_URI.buildUpon()
                 .appendPath(Integer.toString(updateID)).build();
+    }
+
+    /**
+     * creates the delete Uri that will be used to deletea memory from the DB
+     *
+     * @return the delete Uri
+     */
+    private Uri createDeleteUri() {
+        int deleteID = this.memory.getMemoryID();
+        return DBContract.MemoryTable.uriDeleteMemory().buildUpon()
+                .appendPath(Integer.toString(deleteID)).build();
+    }
+
+    /**
+     * This method will take a Memory object and delete it from the DB using a different Thread
+     *
+     * @param memory the memory object that will be deleted
+     */
+    public void deleteMemoryFromDB(Memory memory) {
+        this.memory = memory;
+        this.uriType = 7;
+        this.doInWorkerThread();
     }
 
     /**
@@ -115,16 +141,17 @@ public class TaskPresenter extends MemoryListPresenter {
 
     /**
      * This method will also call a new ActivityForResult, but this time with the intent of updating the current memory given as a parameter.
+     *
      * @param memory the Memory object that must be updated
      */
     public void startUpdateActivity(Memory memory) {
-	    // saving the memory that will be updated into the proper IV of this presenter
-	    this.memory = memory;
-	this.memory.setMemoryID(memory.getMemoryID());
+        // saving the memory that will be updated into the proper IV of this presenter
+        this.memory = memory;
+        //this.memory.setMemoryID(memory.getMemoryID());
         Intent update_memo_intent = new Intent(super.activity, AddMemory_Activity.class);
-	// putting into the Intent the Memory text that must be updated
+        // putting into the Intent the Memory text that must be updated
         update_memo_intent.putExtra(OLD_MEMORY, memory.getMemoryText());
-	// starting the new activity with the constructed intent
+        // starting the new activity with the constructed intent
         super.activity.startActivityForResult(update_memo_intent, this.UPDATE_MEMORY_REQUEST);
     }
 

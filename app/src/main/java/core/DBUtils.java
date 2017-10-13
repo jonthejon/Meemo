@@ -93,7 +93,7 @@ public class DBUtils {
      * @param id the ID of the memory that will have its number of connections incremented
      * @return the SQL statement in a String format ready for execution
      */
-    public static String sqlUpdateNumConnections(String id) {
+    public static String sqlIncrementNumConnections(String id) {
         // UPDATE memory_table SET memory_num_conn = memory_num_conn + 1 WHERE _ID = id;
         return "UPDATE " +
                 MemoryTable.TABLE_NAME +
@@ -102,6 +102,20 @@ public class DBUtils {
                 " = " +
                 COL_MEMORY_NUM_CONN +
                 " + 1 WHERE " +
+                COL_MEMORY_ID +
+                " = " +
+                id +
+                ";";
+    }
+
+    public static String sqlDecrementNumConnections(String id) {
+        return "UPDATE " +
+                MemoryTable.TABLE_NAME +
+                " SET " +
+                COL_MEMORY_NUM_CONN +
+                " = " +
+                COL_MEMORY_NUM_CONN +
+                " - 1 WHERE " +
                 COL_MEMORY_ID +
                 " = " +
                 id +
@@ -166,6 +180,44 @@ public class DBUtils {
                 " = " +
                 id +
                 "));";
+    }
+
+    /**
+     * returns the raw SQL statement that gets all connections for a given ID (half-search)
+     *
+     * @param id the ID that we'll use to return all other connections id
+     * @return the raw sql statement
+     */
+    public static String sqlConnections1 (String id) {
+        return "SELECT " +
+                ConnectionTable.TABLE_NAME +
+                "." +
+                COL_MEMORY_A +
+                " FROM " +
+                ConnectionTable.TABLE_NAME +
+                " WHERE " +
+                ConnectionTable.TABLE_NAME +
+                "." +
+                COL_MEMORY_B +
+                " = " +
+                id +
+                ";";
+    }
+
+    public static String sqlConnections2 (String id) {
+        return "SELECT " +
+                ConnectionTable.TABLE_NAME +
+                "." +
+                COL_MEMORY_B +
+                " FROM " +
+                ConnectionTable.TABLE_NAME +
+                " WHERE " +
+                ConnectionTable.TABLE_NAME +
+                "." +
+                COL_MEMORY_A +
+                " = " +
+                id +
+                ";";
     }
 
     /**
