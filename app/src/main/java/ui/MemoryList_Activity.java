@@ -116,7 +116,7 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        checking to see if the request code is the same of the add activity and if the result code is OK
-        if (requestCode == taskPresenter.CREATE_MEMORY_REQUEST && resultCode == RESULT_OK) {
+        if ((requestCode == taskPresenter.CREATE_MEMORY_REQUEST || requestCode == taskPresenter.UPDATE_MEMORY_REQUEST) && resultCode == RESULT_OK) {
 //            checking to see if the intent sent by the activity is not null
             if (data != null) {
 //                calling the presenter's method that will handle the result for this activity
@@ -186,5 +186,10 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
         boolean handleResult = loaderPresenter.handleContextItemSelected(item);
 //        if presenter returns false, then we call the super method
         return handleResult || super.onContextItemSelected(item);
+    }
+
+    public TaskPresenter getTaskPresenter() {
+        if (this.taskPresenter == null) this.taskPresenter = new TaskPresenter(this);
+        return taskPresenter;
     }
 }

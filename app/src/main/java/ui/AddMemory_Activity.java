@@ -14,12 +14,25 @@ public class AddMemory_Activity extends AppCompatActivity {
 
     //    IV that holds the instance for the EditText with the memory to be inserted
     private EditText editText;
+    // IV that will be the tag for the result intent to tell the caller Activity if this is a new Memory or an updated Memory
+    public final String RESULT_TYPE = "RESULT_TYPE";
+    // codes that tell the caller activity what kind of memory this is: new or update
+    public final int CREATE_CODE = 3;
+    public final int UPDATE_CODE = 5;
+    private int code;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_memory);
         editText = (EditText) findViewById(R.id.new_memory_edit_text);
+        Intent callerIntent = getIntent();
+        if (callerIntent.hasExtra("OLD_MEMORY")) {
+            editText.setText(callerIntent.getStringExtra("OLD_MEMORY"));
+	    this.code = this.UPDATE_CODE;
+        } else {
+	    this.code = this.CREATE_CODE;
+	}
     }
 
     /**
@@ -45,6 +58,8 @@ public class AddMemory_Activity extends AppCompatActivity {
         Intent resultIntent = new Intent();
         // putting into the intent the name of the column of the DB that we'll insert and the actual value of the memory to be inserted
         resultIntent.putExtra(DBContract.MemoryTable.getColMemoryText(), memory_text);
+	// putting into the intent the proper code to alert the caller activity of the kind of memory we are sending
+	resultIntent.putExtra(RESULT_TYPE,this.code);
         // this method creates the Result of this activity that can be accessed by the caller activity
         setResult(RESULT_OK, resultIntent);
         // ending the activity. the result will be accessed later by the caller activity

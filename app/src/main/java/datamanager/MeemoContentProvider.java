@@ -173,7 +173,6 @@ public class MeemoContentProvider extends ContentProvider {
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
 //        creates a new writable instance of the database for data insertion
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
-
 //        checks to see what type of Uri was sent to us by the user
         switch (getUriMatcher().match(uri)) {
             case UPDATE_SINGLE_MEMORY:

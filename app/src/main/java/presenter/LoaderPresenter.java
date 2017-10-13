@@ -150,10 +150,10 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
     public boolean handleContextItemSelected(MenuItem item) {
         int option = item.getItemId();
         Memory memory = mAdapter.getMemoryByPosition(item.getOrder());
-        String memoryText = memory.getMemoryText();
         switch (option) {
             case 1:
-                Toast.makeText(getActivityContext(), memoryText, Toast.LENGTH_SHORT).show();
+		    // sending the memory object to the TaskPresenter so the updating can be handled
+		    activity.getTaskPresenter().startUpdateActivity(memory);
                 return true;
             case 2:
                 Toast.makeText(getActivityContext(), "delete clicked", Toast.LENGTH_SHORT).show();

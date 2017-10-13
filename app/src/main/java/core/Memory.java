@@ -43,6 +43,7 @@ public class Memory {
          *
          * @param memoryID   the ID of the memory we want to create
          * @param memoryText the actual text that we want to save as memory
+	 * @param numConnections the number of connections this memory has
          */
         public MemoryBuilder(int memoryID, String memoryText, int numConnections) {
 //            initiating the mandatory IV's of the Memory object into the Builder object for later usage in the Memory constructor
@@ -80,8 +81,16 @@ public class Memory {
         return memoryID;
     }
 
+    public void setMemoryID(int memoryID) {
+	    this.memoryID = memoryID;
+    }
+
     public String getMemoryText() {
         return memoryText;
+    }
+
+    public void setMemoryText(String memoryText) {
+	    this.memoryText = memoryText;
     }
 
     public String getFilePath() {
