@@ -138,4 +138,8 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
 //        updates the UI so the caller memory get's updated
 //        presenter.updateCallerMemoryUI(callerMemory);
     }
+
+    public ArrayList<Memory> getMemoriesArr() {
+        return memoriesArr;
+    }
 }

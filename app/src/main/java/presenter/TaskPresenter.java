@@ -28,7 +28,8 @@ public class TaskPresenter extends MemoryListPresenter {
     public final String OLD_MEMORY = "OLD_MEMORY";
 
     //    this IV will sign to the doInWorkerThread() method what kind of uri it should create
-    public int uriType = 3;
+    private int uriType = 3;
+    private Uri uri;
 
     public TaskPresenter(MemoryList_Activity activity) {
 //        setting the super class IV with the instance of the underlying activity
@@ -41,18 +42,22 @@ public class TaskPresenter extends MemoryListPresenter {
     @Override
     public void doInWorkerThread() {
 //        checking to see what kind of Uri should we create
-        if (this.uriType == 3) {
+        //if (this.uriType == 3 || this.uriType == 5 || this.uriType == 7) {
 //        initiating a new CreateTask class that will be responsible for the worker Thread
-            Toast.makeText(activity, "Creating", Toast.LENGTH_SHORT).show();
-            new CreateTask(super.activity, this).execute(this.createInsertUri());
-        } else if (this.uriType == 5) {
-            Toast.makeText(activity, "Updating", Toast.LENGTH_SHORT).show();
-            new UpdateTask(super.activity, this).execute(this.createUpdateUri());
-        } else if (this.uriType == 7) {
-            Toast.makeText(activity, "Deleting", Toast.LENGTH_SHORT).show();
-            new DeleteTask(super.activity, this).execute(this.createDeleteUri());
-        }
+        new CreateTask(super.activity, this).execute(uriType);
+        //new CreateTask(super.activity, this).execute(this.createInsertUri());
+        //}
+        //else if (this.uriType == 5) {
+        //new UpdateTask(super.activity, this).execute(this.createUpdateUri());
+        //} 
+        //else if (this.uriType == 7) {
+        //new DeleteTask(super.activity, this).execute(this.createDeleteUri());
+        //} 
+        //else if (this.uriType == 11) {
+        //new AddConnectionTask(super.activity, this).execute(this.createNewConnectionUri());
+        //}
     }
+
 
     /**
      * returns the memory String stored as an IV of this class
@@ -72,10 +77,20 @@ public class TaskPresenter extends MemoryListPresenter {
     void taskCallback(int result) {
 //        checking to see if the result is bigger than 0. If not, the insertion went wrong.
         if (result > 0) {
+//            getting the instance of the LoaderPresenter
+            LoaderPresenter loaderPresenter = super.activity.getLoaderPresenter();
+//            checking to see if we are in connect mode. If so, we should exit it.
+            if (loaderPresenter.isConnectMode()) {
+//                changing the state of the FAB button
+                loaderPresenter.changeFabState(loaderPresenter.isConnectMode());
+//                exiting connection mode
+                loaderPresenter.setConnectMode(!loaderPresenter.isConnectMode());
+            }
 //            getting a new instance to the Loader Presenter that underlies the activity
 //            this is because is an child class of the loader that has access to the RV dataset
 //            and calling the method to call the DB again since we inserted new information inside it
-            super.activity.getLoaderPresenter().doInWorkerThread();
+            loaderPresenter.doInWorkerThread();
+//            super.activity.getLoaderPresenter().doInWorkerThread();
         } else {
 //            something went wrong... let the user know
             Toast.makeText(super.activity, "Something went wrong...", Toast.LENGTH_SHORT).show();
@@ -87,7 +102,7 @@ public class TaskPresenter extends MemoryListPresenter {
      *
      * @return the insertion Uri
      */
-    private Uri createInsertUri() {
+    public Uri createInsertUri() {
 //        getting the memory ID of the memory that is trying to create a new memory
         int callerID = super.activity.getLoaderPresenter().getAdapter().getCallerMemory().getMemoryID();
 //        building the Uri with the memory caller ID appended to the path
@@ -97,11 +112,23 @@ public class TaskPresenter extends MemoryListPresenter {
     }
 
     /**
+     * Creates the new connection Uri that must be used to create a new connection between 2 existing memories
+     *
+     * @return the new connection uri
+     */
+    private Uri createNewConnectionUri(int connectId, int memoryID) {
+	    return DBContract.MemoryTable.uriNewConnection().buildUpon()
+		    .appendPath(Integer.toString(connectId))
+		    .appendPath(Integer.toString(memoryID))
+		    .build();
+    }
+
+    /**
      * creates the update Uri that will be used to update the text of a memory into the DB
      *
      * @return the update Uri
      */
-    private Uri createUpdateUri() {
+    public Uri createUpdateUri() {
         int updateID = this.memory.getMemoryID();
         return DBContract.MemoryTable.uriUpdateMemory().buildUpon()
                 .appendPath(Integer.toString(updateID)).build();
@@ -112,7 +139,7 @@ public class TaskPresenter extends MemoryListPresenter {
      *
      * @return the delete Uri
      */
-    private Uri createDeleteUri() {
+    public Uri createDeleteUri() {
         int deleteID = this.memory.getMemoryID();
         return DBContract.MemoryTable.uriDeleteMemory().buildUpon()
                 .appendPath(Integer.toString(deleteID)).build();
@@ -126,6 +153,7 @@ public class TaskPresenter extends MemoryListPresenter {
     public void deleteMemoryFromDB(Memory memory) {
         this.memory = memory;
         this.uriType = 7;
+        this.uri = createDeleteUri();
         this.doInWorkerThread();
     }
 
@@ -167,6 +195,32 @@ public class TaskPresenter extends MemoryListPresenter {
         this.memory.setMemoryText(memory_text);
         // updating the uriType with the type given by the add_activity
         this.uriType = data.getIntExtra("RESULT_TYPE", 5);
+        if (getUriType() == 3) {
+            this.uri = createInsertUri();
+        } else {
+            this.uri = createUpdateUri();
+        }
         this.doInWorkerThread();
+    }
+
+    /**
+     * Method creates a new Thread so a new connection between the given memories defined by the ids can be made in the DB
+     *
+     * @param connectId the id of the first memory chosen to create the new connection
+     * @param memoryID  the id of the current caller memory that will be the second memory in the new connection
+     */
+    public void createNewConnection(int connectId, int memoryID) {
+        // this will be the code for the new connection Uri
+        this.uriType = 11;
+	this.uri = createNewConnectionUri(connectId, memoryID);
+        this.doInWorkerThread();
+    }
+
+    public int getUriType() {
+        return uriType;
+    }
+
+    public Uri getUri() {
+        return uri;
     }
 }

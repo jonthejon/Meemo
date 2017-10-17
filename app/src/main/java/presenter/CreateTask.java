@@ -11,7 +11,8 @@ import ui.UIInterface;
  * This class that extends AsyncTask will perform simple tasks in a worker thread.
  */
 
-class CreateTask extends AsyncTask<Uri, Void, Integer> {
+//class CreateTask extends AsyncTask<Uri, Void, Integer> {
+class CreateTask extends AsyncTask<Integer, Void, Integer> {
 
     //    IV that will hold an instance of the underlying activity of this presenter
     private UIInterface userInterface;
@@ -26,30 +27,76 @@ class CreateTask extends AsyncTask<Uri, Void, Integer> {
 
     // This method is the one that is actually run in the background
     @Override
-    protected Integer doInBackground(Uri... uris) {
+    //protected Integer doInBackground(Uri... uris) {
+    protected Integer doInBackground(Integer... integers) {
 //        checking to see if the Uri given is valid. If invalid, returning 0 that corresponds to a failed insertion
-        if (uris.length == 0 || uris[0] == null) {
+        //if (uris.length == 0 || uris[0] == null) {
+        //   return 0;
+        //}
+        if (integers.length == 0 || integers[0] == null) {
             return 0;
         }
 //        retrieving the Uri sent as a parameter
-        Uri insertUri = uris[0];
-//        retrieving the column name of the memory table to be inserted
-        String textColumn = DBContract.MemoryTable.getColMemoryText();
-//        getting the memory text from the Memory of the TaskPresenter
-        String textMemory = presenter.getMemoryText();
+        //Uri insertUri = uris[0];
+        int uriType = integers[0];
+        String textColumn;
+        String textMemory;
+        int numRows;
+	// this is the proper Uri that has been set in the presenter class
+	Uri uri = presenter.getUri();
 //        initiating a new ContentValues object to store the data to be inserted in the db
         ContentValues cv = new ContentValues();
+        switch (uriType) {
+            case 3:
+//        retrieving the column name of the memory table to be inserted
+                textColumn = DBContract.MemoryTable.getColMemoryText();
+//        getting the memory text from the Memory of the TaskPresenter
+                textMemory = presenter.getMemoryText();
+                // getting the proper Uri from the presenter
+                //Uri insertUri = presenter.createInsertUri();
 //        inserting the memory with the proper column name inside the ContentValues
-        cv.put(textColumn, textMemory);
+                cv.put(textColumn, textMemory);
 //        calling the insert method of the ContentResolver and receiving back the Uri of the inserted memory
 //        this will be null if the insertion had failed
-        Uri resultUri = userInterface.getUIContentResolver().insert(insertUri, cv);
+                Uri resultUri = userInterface.getUIContentResolver().insert(uri, cv);
 //        checking to see if the insertion happened well
-        if (resultUri != null) {
+                if (resultUri != null) {
 //            retrieving and returning the ID of the memory just created from the Uri sent to us from the ContentResolver
-            return Integer.parseInt(resultUri.getLastPathSegment());
+                    return Integer.parseInt(resultUri.getLastPathSegment());
 //            something went wrong so we will return 0
-        } else return 0;
+                } else return 0;
+            case 5:
+                // getting the proper Uri from the presenter
+                //Uri updateUri = presenter.createUpdateUri();
+//        retrieving the column name of the memory table to be inserted
+                textColumn = DBContract.MemoryTable.getColMemoryText();
+//        getting the memory text from the Memory of the TaskPresenter
+                textMemory = presenter.getMemoryText();
+//        inserting the memory with the proper column name inside the ContentValues
+                cv.put(textColumn, textMemory);
+                numRows = userInterface.getUIContentResolver().update(uri, cv, null, null);
+                if (numRows == 1) {
+                    return numRows;
+//            something went wrong so we will return 0
+                } else return 0;
+            case 7:
+                // getting the proper Uri from the presenter
+                //Uri deleteUri = presenter.createDeleteUri();
+                // calling the delete method of the content provider and having it execute
+                numRows = userInterface.getUIContentResolver().delete(uri, null, null);
+                if (numRows == 1) {
+                    return numRows;
+//            something went wrong so we will return 0
+                } else return 0;
+            case 11:
+		Uri resConnUri = userInterface.getUIContentResolver().insert(uri, null);
+                if (resConnUri != null) {
+                    return 1;
+                }
+                return 0;
+            default:
+                return 0;
+        }
     }
 
     // This method is called after the doInBackground finishes and it receives the return data from doInBackground
@@ -58,4 +105,7 @@ class CreateTask extends AsyncTask<Uri, Void, Integer> {
 //        calling the presenter callback method with the flag telling that the insertion happened well or not
         presenter.taskCallback(integer);
     }
+
+
 }
+

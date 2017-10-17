@@ -87,9 +87,14 @@ class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
 //    the clicks on the menu items must be handled by the Activity's onContextItemSelected() overriden method
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        if (!presenter.isConnectMode()) {
 //        adding the menu options into the menu for displaying
 //        important to notice that we're putting into the options of the menu the position of this ViewHolder in the Adapter so we can retrieve this information later when handling the click functionality
-        menu.add(0, 1, getAdapterPosition(), "update memory");
-        menu.add(0, 2, getAdapterPosition(), "delete memory");
+            menu.add(0, 1, getAdapterPosition(), "update");
+            menu.add(0, 2, getAdapterPosition(), "delete");
+            menu.add(0, 3, getAdapterPosition(), "connect");
+        } else {
+            menu.add(0,4, getAdapterPosition(), "exit mode");
+        }
     }
 }

@@ -1,8 +1,10 @@
 package presenter;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +15,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import core.Memory;
+import seasonedblackolives.com.meemo.R;
 import ui.MemoryList_Activity;
 
 /**
@@ -24,6 +27,10 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
     private MemoryListAdapter mAdapter;
     // creating the ArrayList IV that will hold the Caller history
     private ArrayList<Integer> history;
+    // IV that tells if we are in connect mode or not
+    private boolean connectMode;
+    //    this IV will hold the ID of the memory we signed to connect
+    private int connectId;
 
     //    IV that holds the loader ID so to ensure that we are not creating a new Loader every time
     //    if a loader already exists, the same loader will be used
@@ -37,6 +44,8 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
         super(activity);
         // creating the Arraylist that will hold the history
         this.history = new ArrayList<>();
+        // we don't want to start at connect mode
+        this.connectMode = false;
 //        creating and setting to the IV a LinearLayout for using in the RV
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(activity);
 //        setting the IV of the adapter with a new instance of your adapter class
@@ -93,6 +102,15 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
         super.activity.getRecyclerView().setLayoutManager(layoutManager);
 //        setting the activity's RV with the proper adapter
         super.activity.getRecyclerView().setAdapter(adapter);
+    }
+
+    /**
+     * returns the current caller Memory defined inside the adapter
+     *
+     * @return the current caller Memory
+     */
+    public Memory getAdapterCallerMemory() {
+        return mAdapter.getCallerMemory();
     }
 
     @Override
@@ -152,18 +170,51 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
         Memory memory = mAdapter.getMemoryByPosition(item.getOrder());
         switch (option) {
             case 1:
-		    // sending the memory object to the TaskPresenter so the updating can be handled
-		    activity.getTaskPresenter().startUpdateActivity(memory);
+		// this is the UPDATE case
+                // sending the memory object to the TaskPresenter so the updating can be handled
+                activity.getTaskPresenter().startUpdateActivity(memory);
                 return true;
             case 2:
+		// this is the DELETE case
                 if (memory.getMemoryID() == 1 || memory.getMemoryID() == getLastHistoryId()) {
                     Toast.makeText(activity, "Can't delete caller Memory", Toast.LENGTH_SHORT).show();
                     return true;
                 }
                 activity.getTaskPresenter().deleteMemoryFromDB(memory);
                 return true;
+            case 3:
+		// this is the NEW CONNECT case
+                // changing the state of the FAB given the current mode of the underlying activity
+                changeFabState(isConnectMode());
+//                saving into the IV the id of the memory we want to create a new connection
+                this.connectId = memory.getMemoryID();
+//                reverting the current connect mode
+                this.setConnectMode(!isConnectMode());
+                return true;
+            case 4:
+                this.changeFabState(isConnectMode());
+                this.setConnectMode(!isConnectMode());
+                return true;
             default:
                 return false;
+        }
+    }
+
+    /**
+     * Method that changes the state (color and drawable) of the FAB given the current mode (normal or connect)
+     *
+     * @param mode the current mode that the underlying activity is: normal mode or connection mode
+     */
+    public void changeFabState(boolean mode) {
+//                checking to see if we are in normal mode
+        if (!mode) {
+//                    changing the background color of the FAB corresponding to the connect mode
+            activity.getFab().setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(activity, R.color.fab_connect)));
+//                    changing the drawable that the FAB uses corresponding to the connect mode
+            activity.getFab().setImageDrawable(ContextCompat.getDrawable(getActivityContext(), R.drawable.ic_compare_arrows_black_24dp));
+        } else {
+            activity.getFab().setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(activity, R.color.colorAccent)));
+            activity.getFab().setImageDrawable(ContextCompat.getDrawable(getActivityContext(), R.drawable.ic_add_24dp));
         }
     }
 
@@ -247,7 +298,27 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
         }
     }
 
+    public boolean checkIdIsOnDisplay(int id) {
+        ArrayList<Memory> memories = mAdapter.getMemoriesArr();
+        for (Memory memory : memories) {
+            if (memory.getMemoryID() == id) return true;
+        }
+        return false;
+    }
+
     public Context getActivityContext() {
         return this.activity;
+    }
+
+    public boolean isConnectMode() {
+        return connectMode;
+    }
+
+    public void setConnectMode(boolean connectMode) {
+        this.connectMode = connectMode;
+    }
+
+    public int getConnectId() {
+        return connectId;
     }
 }

@@ -28,6 +28,7 @@ public class DBUtils {
         public static final String INIT_CONTENT = "content://";
         //    Define the possible paths for accessing data in the database
         public static final String PATH_MEMORY = "memory";
+        public static final String PATH_CONNECTION = "connection";
         public static final String PATH_MEMORIES = "memories";
         public static final String PATH_GET = "get";
         public static final String PATH_INSERT = "insert";

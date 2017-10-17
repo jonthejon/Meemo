@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import presenter.LoaderPresenter;
 import presenter.TaskPresenter;
@@ -24,10 +26,12 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 
     //    IV that will hold the instance for the RecyclerView
     private RecyclerView childMemoryRV;
+    private FloatingActionButton fab;
 
     //    IV that contains the String that will be the Key to store the RV's state during activity destruction
     private final String RV_STATE_KEY = "RV_STATE_KEY";
     private final String HISTORY_KEY = "HISTORY_KEY";
+    private final String MODE_KEY = "MODE_KEY";
     //    IV of Parcelable type that will actually store the RV's state
     private Parcelable mRVState = null;
 
@@ -38,8 +42,7 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 
 //        binds the views inside the layout to the IVs of this activity
         this.childMemoryRV = (RecyclerView) findViewById(R.id.memory_recycler_view);
-//        this.parentTextView = (TextView) findViewById(R.id.parent_memory_textview);
-//        this.parentTextView.setVisibility(View.GONE);
+        this.fab = (FloatingActionButton) findViewById(R.id.main_fab);
 
 //        initiates the loader presenter of this activity sending this activity as a parameter
         this.loaderPresenter = new LoaderPresenter(this);
@@ -58,6 +61,13 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
             if (savedInstanceState.containsKey(HISTORY_KEY)) {
                 // putting the saved History into the Presenter
                 loaderPresenter.setHistory(savedInstanceState.getIntegerArrayList(HISTORY_KEY));
+            }
+            if (savedInstanceState.containsKey(MODE_KEY)) {
+                boolean mode = savedInstanceState.getBoolean(MODE_KEY);
+                // updating the presenter with the saved mode
+                loaderPresenter.setConnectMode(mode);
+//                note that we need to invert the mode boolean value in order to maintain the current state from the saved activity
+                loaderPresenter.changeFabState(!mode);
             }
         }
         //        checking to see if we have any state saved to be recreated
@@ -98,12 +108,24 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
      * @param view the view object, in this case the FAB button, that is calling this method.
      */
     public void onFABClick(View view) {
-
 //        if the IV that holds the task presenter is null, initialize it
         if (this.taskPresenter == null) this.taskPresenter = new TaskPresenter(this);
-
+        if (!loaderPresenter.isConnectMode()) {
 //        calling the presenter's method that will create a new Intent and initiate a new activity
-        this.taskPresenter.startAddActivity();
+            this.taskPresenter.startAddActivity();
+        } else {
+            int id_a = loaderPresenter.getConnectId();
+            int id_b = loaderPresenter.getAdapterCallerMemory().getMemoryID();
+            if (id_a == id_b) {
+                Toast.makeText(this, "Can't connect a memory to itself", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (loaderPresenter.checkIdIsOnDisplay(id_a)) {
+                Toast.makeText(this, "Can't duplicate a connection", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            this.taskPresenter.createNewConnection(loaderPresenter.getConnectId(), loaderPresenter.getAdapterCallerMemory().getMemoryID());
+        }
     }
 
     /**
@@ -147,6 +169,9 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
         outState.putParcelable(RV_STATE_KEY, mRVState);
         // putting the ArrayList that contains the history into the Bundle
         outState.putIntegerArrayList(HISTORY_KEY, loaderPresenter.getHistory());
+        // saving the mode of the current activity
+        outState.putBoolean(MODE_KEY, loaderPresenter.isConnectMode());
+//        Toast.makeText(this, Boolean.toString(loaderPresenter.isConnectMode()), Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -191,5 +216,9 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
     public TaskPresenter getTaskPresenter() {
         if (this.taskPresenter == null) this.taskPresenter = new TaskPresenter(this);
         return taskPresenter;
+    }
+
+    public FloatingActionButton getFab() {
+        return fab;
     }
 }

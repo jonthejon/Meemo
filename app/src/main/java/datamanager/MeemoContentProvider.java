@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import core.DBUtils;
 
@@ -31,6 +32,8 @@ public class MeemoContentProvider extends ContentProvider {
     public static final int DELETE_SINGLE_MEMORY = 103;
     public static final int UPDATE_SINGLE_MEMORY = 104;
     public static final int GET_SINGLE_MEMORY_BY_ID = 105;
+    public static final int CONNECTION_TABLE = 200;
+    public static final int INSERT_NEW_CONNECTION = 201;
 
     /**
      * Method that returns a new UriMatcher all the time.
@@ -53,6 +56,7 @@ public class MeemoContentProvider extends ContentProvider {
         uriMatcher.addURI(DBContract.AUTHORITY, DBContract.PATH_MEMORY + "/" + DBContract.PATH_UPDATE + "/#", UPDATE_SINGLE_MEMORY);
 //        Uri for getting  a single memory from the memory table
         uriMatcher.addURI(DBContract.AUTHORITY, DBContract.PATH_MEMORY + "/" + DBContract.PATH_GET + "/#", GET_SINGLE_MEMORY_BY_ID);
+        uriMatcher.addURI(DBContract.AUTHORITY, DBContract.PATH_CONNECTION + "/" + DBContract.PATH_INSERT + "/#" + "/#", INSERT_NEW_CONNECTION);
 
 //        returns the created urimatcher
         return uriMatcher;
@@ -142,6 +146,14 @@ public class MeemoContentProvider extends ContentProvider {
                 db.execSQL(DBUtils.sqlIncrementNumConnections(Long.toString(id_b)));
 //                  returns the new Uri that points to the specific memory inside the memory table
                 return DBContract.MemoryTable.uriGetMemory().buildUpon().appendPath(Long.toString(id_b)).build();
+            case INSERT_NEW_CONNECTION:
+                List<String> paths = uri.getPathSegments();
+                String id_conn_a = paths.get(paths.size() - 1);
+                String id_conn_b = paths.get(paths.size() - 2);
+                db.execSQL(DBUtils.sqlInsertConnection(id_conn_a, id_conn_b));
+                db.execSQL(DBUtils.sqlIncrementNumConnections(id_conn_a));
+                db.execSQL(DBUtils.sqlIncrementNumConnections(id_conn_b));
+                return DBContract.MemoryTable.uriGetMemory().buildUpon().appendPath(id_conn_b).build();
         }
         // if we got here, then the Uri sent to us did not match the insertion Uri so we'll return null
         return null;
