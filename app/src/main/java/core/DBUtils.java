@@ -89,6 +89,28 @@ public class DBUtils {
     }
 
     /**
+     * Returns the SQL statement that deletes a row in the connection_table given 2 distinct IDs
+     *
+     * @param id_a the Id of the first memory
+     * @param id_b the Id of the second memory
+     * @return the SQL statement in a String format ready for execution
+     */
+    public static String sqlDeleteConnection(String id_a, String id_b) {
+        // DELETE FROM connection_table WHERE (memory_a = id_a AND memory_b = id_b);
+        return "DELETE FROM " +
+                ConnectionTable.TABLE_NAME +
+                " WHERE (" +
+                COL_MEMORY_A +
+                " = " +
+                id_a +
+                " AND " +
+                COL_MEMORY_B +
+                " = " +
+                id_b +
+                ");";
+    }
+
+    /**
      * returns the SQL statement that will increment the number of connections of the memory defined by the ID
      *
      * @param id the ID of the memory that will have its number of connections incremented
@@ -189,7 +211,7 @@ public class DBUtils {
      * @param id the ID that we'll use to return all other connections id
      * @return the raw sql statement
      */
-    public static String sqlConnections1 (String id) {
+    public static String sqlConnections1(String id) {
         return "SELECT " +
                 ConnectionTable.TABLE_NAME +
                 "." +
@@ -205,7 +227,7 @@ public class DBUtils {
                 ";";
     }
 
-    public static String sqlConnections2 (String id) {
+    public static String sqlConnections2(String id) {
         return "SELECT " +
                 ConnectionTable.TABLE_NAME +
                 "." +

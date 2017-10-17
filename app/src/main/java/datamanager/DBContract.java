@@ -37,9 +37,6 @@ public class DBContract extends DBUtils.Database {
             return BASE_CONTENT_URI.buildUpon().appendPath(PATH_MEMORY).appendPath(PATH_UPDATE).build();
         }
 
-        public static Uri uriNewConnection() {
-            return BASE_CONTENT_URI.buildUpon().appendPath(PATH_CONNECTION).appendPath(PATH_INSERT).build();
-        }
 
         public static String getTableName() {
             return TABLE_NAME;
@@ -67,7 +64,15 @@ public class DBContract extends DBUtils.Database {
     }
 
     // inner class that holds all necessary data for access info from the ConnectionTable
-    static final class ConnectionTable extends DBUtils.ConnectionTable {
+    public static final class ConnectionTable extends DBUtils.ConnectionTable {
+
+        public static Uri uriNewConnection() {
+            return BASE_CONTENT_URI.buildUpon().appendPath(PATH_CONNECTION).appendPath(PATH_INSERT).build();
+        }
+
+        public static Uri uriDeleteConnection() {
+            return BASE_CONTENT_URI.buildUpon().appendPath(PATH_CONNECTION).appendPath(PATH_DELETE).build();
+        }
 
         public static String getTableName() {
             return TABLE_NAME;

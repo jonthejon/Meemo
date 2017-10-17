@@ -34,6 +34,7 @@ public class MeemoContentProvider extends ContentProvider {
     public static final int GET_SINGLE_MEMORY_BY_ID = 105;
     public static final int CONNECTION_TABLE = 200;
     public static final int INSERT_NEW_CONNECTION = 201;
+    public static final int DELETE_CONNECTION = 202;
 
     /**
      * Method that returns a new UriMatcher all the time.
@@ -57,6 +58,7 @@ public class MeemoContentProvider extends ContentProvider {
 //        Uri for getting  a single memory from the memory table
         uriMatcher.addURI(DBContract.AUTHORITY, DBContract.PATH_MEMORY + "/" + DBContract.PATH_GET + "/#", GET_SINGLE_MEMORY_BY_ID);
         uriMatcher.addURI(DBContract.AUTHORITY, DBContract.PATH_CONNECTION + "/" + DBContract.PATH_INSERT + "/#" + "/#", INSERT_NEW_CONNECTION);
+        uriMatcher.addURI(DBContract.AUTHORITY, DBContract.PATH_CONNECTION + "/" + DBContract.PATH_DELETE + "/#" + "/#", DELETE_CONNECTION);
 
 //        returns the created urimatcher
         return uriMatcher;
@@ -201,6 +203,15 @@ public class MeemoContentProvider extends ContentProvider {
                 db.delete(DBContract.ConnectionTable.getTableName(), DBUtils.ConnectionTable.COL_MEMORY_A + " = ?", new String[]{id});
                 db.delete(DBContract.ConnectionTable.getTableName(), DBUtils.ConnectionTable.COL_MEMORY_B + " = ?", new String[]{id});
                 return numRows;
+            case DELETE_CONNECTION:
+                List<String> paths = uri.getPathSegments();
+                String id_conn_a = paths.get(paths.size() - 1);
+                String id_conn_b = paths.get(paths.size() - 2);
+                db.execSQL(DBUtils.sqlDeleteConnection(id_conn_a, id_conn_b));
+                db.execSQL(DBUtils.sqlDeleteConnection(id_conn_b, id_conn_a));
+                db.execSQL(DBUtils.sqlDecrementNumConnections(id_conn_a));
+                db.execSQL(DBUtils.sqlDecrementNumConnections(id_conn_b));
+                return 1;
         }
         return 0;
     }

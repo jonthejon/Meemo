@@ -83,6 +83,12 @@ class CreateTask extends AsyncTask<Integer, Void, Integer> {
                     return 1;
                 }
                 return 0;
+	    case 13:
+                numRows = userInterface.getUIContentResolver().delete(uri, null, null);
+                if (numRows == 1) {
+                    return numRows;
+//            something went wrong so we will return 0
+                } else return 0;
             default:
                 return 0;
         }

@@ -104,7 +104,7 @@ public class TaskPresenter extends MemoryListPresenter {
      * @return the new connection uri
      */
     private Uri createNewConnectionUri(int connectId, int memoryID) {
-        return DBContract.MemoryTable.uriNewConnection().buildUpon()
+        return DBContract.ConnectionTable.uriNewConnection().buildUpon()
                 .appendPath(Integer.toString(connectId))
                 .appendPath(Integer.toString(memoryID))
                 .build();
@@ -126,10 +126,23 @@ public class TaskPresenter extends MemoryListPresenter {
      *
      * @return the delete Uri
      */
-    public Uri createDeleteUri() {
+    public Uri createDeleteMemoryUri() {
         int deleteID = this.memory.getMemoryID();
         return DBContract.MemoryTable.uriDeleteMemory().buildUpon()
                 .appendPath(Integer.toString(deleteID)).build();
+    }
+
+    /**
+     * Creates the delete Uri of a connection between 2 memories
+     *
+     * @return the delete Uri
+     */
+    public Uri createDeleteConnectionUri() {
+        int deleteID_a = this.memory.getMemoryID();
+        int deleteID_b = super.activity.getLoaderPresenter().getAdapterCallerMemory().getMemoryID();
+        return DBContract.ConnectionTable.uriDeleteConnection().buildUpon()
+                .appendPath(Integer.toString(deleteID_a))
+                .appendPath(Integer.toString(deleteID_b)).build();
     }
 
     /**
@@ -140,7 +153,19 @@ public class TaskPresenter extends MemoryListPresenter {
     public void deleteMemoryFromDB(Memory memory) {
         this.memory = memory;
         this.uriType = 7;
-        this.uri = createDeleteUri();
+        this.uri = createDeleteMemoryUri();
+        this.doInWorkerThread();
+    }
+
+    /**
+     * This method will delete the current connection between the given memory and the current caller memory
+     *
+     * @param memory the Memory object that will be disconnected from the caller memory
+     */
+    public void deleteConnection(Memory memory) {
+        this.memory = memory;
+        this.uriType = 13;
+        this.uri = createDeleteConnectionUri();
         this.doInWorkerThread();
     }
 

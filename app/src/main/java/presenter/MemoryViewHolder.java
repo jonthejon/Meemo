@@ -93,6 +93,7 @@ class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
             menu.add(0, 1, getAdapterPosition(), "update");
             menu.add(0, 2, getAdapterPosition(), "delete");
             menu.add(0, 3, getAdapterPosition(), "connect");
+            menu.add(0, 5, getAdapterPosition(), "disconnect");
         } else {
             menu.add(0, 4, getAdapterPosition(), "exit mode");
         }

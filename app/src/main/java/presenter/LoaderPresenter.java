@@ -195,6 +195,9 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
                 this.changeFabState(isConnectMode());
                 this.setConnectMode(!isConnectMode());
                 return true;
+	    case 5:
+                activity.getTaskPresenter().deleteConnection(memory);
+		return true;
             default:
                 return false;
         }
