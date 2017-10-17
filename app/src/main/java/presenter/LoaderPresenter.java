@@ -170,12 +170,12 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
         Memory memory = mAdapter.getMemoryByPosition(item.getOrder());
         switch (option) {
             case 1:
-		// this is the UPDATE case
+                // this is the UPDATE case
                 // sending the memory object to the TaskPresenter so the updating can be handled
                 activity.getTaskPresenter().startUpdateActivity(memory);
                 return true;
             case 2:
-		// this is the DELETE case
+                // this is the DELETE case
                 if (memory.getMemoryID() == 1 || memory.getMemoryID() == getLastHistoryId()) {
                     Toast.makeText(activity, "Can't delete caller Memory", Toast.LENGTH_SHORT).show();
                     return true;
@@ -183,7 +183,7 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
                 activity.getTaskPresenter().deleteMemoryFromDB(memory);
                 return true;
             case 3:
-		// this is the NEW CONNECT case
+                // this is the NEW CONNECT case
                 // changing the state of the FAB given the current mode of the underlying activity
                 changeFabState(isConnectMode());
 //                saving into the IV the id of the memory we want to create a new connection

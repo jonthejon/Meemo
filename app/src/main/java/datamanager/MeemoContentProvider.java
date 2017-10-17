@@ -153,7 +153,8 @@ public class MeemoContentProvider extends ContentProvider {
                 db.execSQL(DBUtils.sqlInsertConnection(id_conn_a, id_conn_b));
                 db.execSQL(DBUtils.sqlIncrementNumConnections(id_conn_a));
                 db.execSQL(DBUtils.sqlIncrementNumConnections(id_conn_b));
-                return DBContract.MemoryTable.uriGetMemory().buildUpon().appendPath(id_conn_b).build();
+//                returning the Uri of the first memory that got chosen to be connected
+                return DBContract.MemoryTable.uriGetMemory().buildUpon().appendPath(id_conn_a).build();
         }
         // if we got here, then the Uri sent to us did not match the insertion Uri so we'll return null
         return null;

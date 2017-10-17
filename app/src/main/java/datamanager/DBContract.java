@@ -1,6 +1,7 @@
 package datamanager;
 
 import android.net.Uri;
+
 import core.DBUtils;
 
 /**
@@ -9,7 +10,7 @@ import core.DBUtils;
 
 public class DBContract extends DBUtils.Database {
 
-//    The base Uri that will be used to connect to the ContentProvider of this app
+    //    The base Uri that will be used to connect to the ContentProvider of this app
     //private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
     private static final Uri BASE_CONTENT_URI = Uri.parse(DBUtils.Database.INIT_CONTENT + DBUtils.Database.AUTHORITY);
 

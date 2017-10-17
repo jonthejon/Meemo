@@ -29,21 +29,16 @@ class CreateTask extends AsyncTask<Integer, Void, Integer> {
     @Override
     //protected Integer doInBackground(Uri... uris) {
     protected Integer doInBackground(Integer... integers) {
-//        checking to see if the Uri given is valid. If invalid, returning 0 that corresponds to a failed insertion
-        //if (uris.length == 0 || uris[0] == null) {
-        //   return 0;
-        //}
         if (integers.length == 0 || integers[0] == null) {
             return 0;
         }
 //        retrieving the Uri sent as a parameter
-        //Uri insertUri = uris[0];
         int uriType = integers[0];
         String textColumn;
         String textMemory;
         int numRows;
-	// this is the proper Uri that has been set in the presenter class
-	Uri uri = presenter.getUri();
+        // this is the proper Uri that has been set in the presenter class
+        Uri uri = presenter.getUri();
 //        initiating a new ContentValues object to store the data to be inserted in the db
         ContentValues cv = new ContentValues();
         switch (uriType) {
@@ -52,8 +47,6 @@ class CreateTask extends AsyncTask<Integer, Void, Integer> {
                 textColumn = DBContract.MemoryTable.getColMemoryText();
 //        getting the memory text from the Memory of the TaskPresenter
                 textMemory = presenter.getMemoryText();
-                // getting the proper Uri from the presenter
-                //Uri insertUri = presenter.createInsertUri();
 //        inserting the memory with the proper column name inside the ContentValues
                 cv.put(textColumn, textMemory);
 //        calling the insert method of the ContentResolver and receiving back the Uri of the inserted memory
@@ -66,8 +59,6 @@ class CreateTask extends AsyncTask<Integer, Void, Integer> {
 //            something went wrong so we will return 0
                 } else return 0;
             case 5:
-                // getting the proper Uri from the presenter
-                //Uri updateUri = presenter.createUpdateUri();
 //        retrieving the column name of the memory table to be inserted
                 textColumn = DBContract.MemoryTable.getColMemoryText();
 //        getting the memory text from the Memory of the TaskPresenter
@@ -80,8 +71,6 @@ class CreateTask extends AsyncTask<Integer, Void, Integer> {
 //            something went wrong so we will return 0
                 } else return 0;
             case 7:
-                // getting the proper Uri from the presenter
-                //Uri deleteUri = presenter.createDeleteUri();
                 // calling the delete method of the content provider and having it execute
                 numRows = userInterface.getUIContentResolver().delete(uri, null, null);
                 if (numRows == 1) {
@@ -89,7 +78,7 @@ class CreateTask extends AsyncTask<Integer, Void, Integer> {
 //            something went wrong so we will return 0
                 } else return 0;
             case 11:
-		Uri resConnUri = userInterface.getUIContentResolver().insert(uri, null);
+                Uri resConnUri = userInterface.getUIContentResolver().insert(uri, null);
                 if (resConnUri != null) {
                     return 1;
                 }

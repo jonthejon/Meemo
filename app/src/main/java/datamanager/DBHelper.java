@@ -14,6 +14,7 @@ import seasonedblackolives.com.meemo.R;
 class DBHelper extends SQLiteOpenHelper {
 
     private Context context;
+
     /**
      * Constructor for this class that will create or update the DB.
      *

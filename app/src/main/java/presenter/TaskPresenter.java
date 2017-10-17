@@ -41,21 +41,8 @@ public class TaskPresenter extends MemoryListPresenter {
     // This implementation will initiate a new AsyncTask to perform simple tasks.
     @Override
     public void doInWorkerThread() {
-//        checking to see what kind of Uri should we create
-        //if (this.uriType == 3 || this.uriType == 5 || this.uriType == 7) {
 //        initiating a new CreateTask class that will be responsible for the worker Thread
         new CreateTask(super.activity, this).execute(uriType);
-        //new CreateTask(super.activity, this).execute(this.createInsertUri());
-        //}
-        //else if (this.uriType == 5) {
-        //new UpdateTask(super.activity, this).execute(this.createUpdateUri());
-        //} 
-        //else if (this.uriType == 7) {
-        //new DeleteTask(super.activity, this).execute(this.createDeleteUri());
-        //} 
-        //else if (this.uriType == 11) {
-        //new AddConnectionTask(super.activity, this).execute(this.createNewConnectionUri());
-        //}
     }
 
 
@@ -117,10 +104,10 @@ public class TaskPresenter extends MemoryListPresenter {
      * @return the new connection uri
      */
     private Uri createNewConnectionUri(int connectId, int memoryID) {
-	    return DBContract.MemoryTable.uriNewConnection().buildUpon()
-		    .appendPath(Integer.toString(connectId))
-		    .appendPath(Integer.toString(memoryID))
-		    .build();
+        return DBContract.MemoryTable.uriNewConnection().buildUpon()
+                .appendPath(Integer.toString(connectId))
+                .appendPath(Integer.toString(memoryID))
+                .build();
     }
 
     /**
@@ -212,7 +199,7 @@ public class TaskPresenter extends MemoryListPresenter {
     public void createNewConnection(int connectId, int memoryID) {
         // this will be the code for the new connection Uri
         this.uriType = 11;
-	this.uri = createNewConnectionUri(connectId, memoryID);
+        this.uri = createNewConnectionUri(connectId, memoryID);
         this.doInWorkerThread();
     }
 
