@@ -20,7 +20,7 @@ public class DBUtils {
         //    IV that holds the database name
         public static final String DATABASE_NAME = "MeemoDatabase.db";
         //    IV that holds the present database version and must be incremented every time a database scheme changes
-        public static final int DATABASE_VERSION = 9;
+        public static final int DATABASE_VERSION = 11;
         //    The authority, which is how your code knows which Content Provider to access
         //    this is defined inside the AndroidManifest file and probably is your package name
         public static final String AUTHORITY = "seasonedblackolives.com.meemo";
@@ -47,6 +47,8 @@ public class DBUtils {
         public static final String COL_MEMORY_ID = "_ID";
         //        inner final IV that holds the actual memory text
         public static final String COL_MEMORY_TEXT = "memory_text";
+	// inner final IV that holds the collumn title of the memory
+        public static final String COL_MEMORY_TITLE = "memory_title";
         //        inner final IV that holds the file path of the memory file if it exists
         public static final String COL_MEMORY_FILE_PATH = "memory_file_path";
         // inner final IV that holds the number of connections
@@ -261,6 +263,8 @@ public class DBUtils {
                 " (" +
                 MemoryTable.COL_MEMORY_ID +
                 " INTEGER PRIMARY KEY, " +
+                MemoryTable.COL_MEMORY_TITLE +
+                " TEXT DEFAULT 'void', " +
                 MemoryTable.COL_MEMORY_TEXT +
                 " TEXT NOT NULL, " +
                 MemoryTable.COL_MEMORY_FILE_PATH +
