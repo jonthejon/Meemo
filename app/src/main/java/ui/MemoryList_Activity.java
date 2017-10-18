@@ -6,8 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -44,6 +47,11 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 //        binds the views inside the layout to the IVs of this activity
         this.childMemoryRV = (RecyclerView) findViewById(R.id.memory_recycler_view);
         this.fab = (FloatingActionButton) findViewById(R.id.main_fab);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+//        This method sets the toolbar as the app bar for the activity
+        setSupportActionBar(myToolbar);
+        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+        getSupportActionBar().setTitle(R.string.main_title_appbar);
 
 //        initiates the loader presenter of this activity sending this activity as a parameter
         this.loaderPresenter = new LoaderPresenter(this);
@@ -232,6 +240,13 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
         }
     }
 
+//    this inflates the XML menu file for it to be used inside your app bar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.appbar_menu, menu);
+        return true;
+    }
+
     //    this method is called every time the user clicks in one of the options in the Context Menu defined in the ViewHolder
 //    don't forget that this method is supposed to be declared inside the Activity
     @Override
@@ -240,6 +255,18 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
         boolean handleResult = loaderPresenter.handleContextItemSelected(item);
 //        if presenter returns false, then we call the super method
         return handleResult || super.onContextItemSelected(item);
+    }
+
+//    is called every time the user clicks in one of the items in the menu of the app bar
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.search_button:
+                Toast.makeText(this, "clicked the search button!", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public TaskPresenter getTaskPresenter() {

@@ -232,7 +232,7 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
 //                    changing the background color of the FAB corresponding to the connect mode
             activity.getFab().setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(activity, R.color.fab_connect)));
 //                    changing the drawable that the FAB uses corresponding to the connect mode
-            activity.getFab().setImageDrawable(ContextCompat.getDrawable(getActivityContext(), R.drawable.ic_compare_arrows_black_24dp));
+            activity.getFab().setImageDrawable(ContextCompat.getDrawable(getActivityContext(), R.drawable.ic_compare_arrows_white_24dp));
         } else {
             activity.getFab().setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(activity, R.color.colorAccent)));
             activity.getFab().setImageDrawable(ContextCompat.getDrawable(getActivityContext(), R.drawable.ic_add_24dp));

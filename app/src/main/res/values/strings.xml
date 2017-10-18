@@ -18,4 +18,7 @@
     <string name="mind_name">The Mind of Jonathan</string>
     <string name="float_menu_update">update memory</string>
     <string name="float_menu_delete">delete memory</string>
+    <string name="search_appbar">search</string>
+    <string name="main_title_appbar">memories</string>
+    <string name="add_title_appbar">new memory</string>
 </resources>
