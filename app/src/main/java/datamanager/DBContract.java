@@ -37,6 +37,9 @@ public class DBContract extends DBUtils.Database {
             return BASE_CONTENT_URI.buildUpon().appendPath(PATH_MEMORY).appendPath(PATH_UPDATE).build();
         }
 
+        public static Uri uriMoveMemory() {
+            return BASE_CONTENT_URI.buildUpon().appendPath(PATH_MEMORY).appendPath(PATH_MOVE).build();
+        }
 
         public static String getTableName() {
             return TABLE_NAME;

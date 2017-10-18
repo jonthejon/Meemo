@@ -29,8 +29,10 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
     private ArrayList<Integer> history;
     // IV that tells if we are in connect mode or not
     private boolean connectMode;
+    private boolean moveMode;
     //    this IV will hold the ID of the memory we signed to connect
     private int connectId;
+    private int callerMoveId;
 
     //    IV that holds the loader ID so to ensure that we are not creating a new Loader every time
     //    if a loader already exists, the same loader will be used
@@ -192,12 +194,28 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
                 this.setConnectMode(!isConnectMode());
                 return true;
             case 4:
-                this.changeFabState(isConnectMode());
-                this.setConnectMode(!isConnectMode());
+//                this is the EXIT case
+                if (isConnectMode()) {
+                    this.changeFabState(isConnectMode());
+                    this.setConnectMode(!isConnectMode());
+                }
+                if (isMoveMode()) {
+                    this.changeFabState(isMoveMode());
+                    this.setMoveMode(!isMoveMode());
+                }
                 return true;
-	    case 5:
+            case 5:
+//                this is the DISCONNECT case
                 activity.getTaskPresenter().deleteConnection(memory);
-		return true;
+                return true;
+            case 6:
+                // this is the MOVE case
+                changeFabState(isMoveMode());
+                this.connectId = memory.getMemoryID();
+                this.callerMoveId = getAdapter().getCallerMemory().getMemoryID();
+//                reverting the current connect mode
+                this.setMoveMode(!isMoveMode());
+                return true;
             default:
                 return false;
         }
@@ -323,5 +341,17 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
 
     public int getConnectId() {
         return connectId;
+    }
+
+    public int getCallerMoveId() {
+        return callerMoveId;
+    }
+
+    public boolean isMoveMode() {
+        return moveMode;
+    }
+
+    public void setMoveMode(boolean moveMode) {
+        this.moveMode = moveMode;
     }
 }

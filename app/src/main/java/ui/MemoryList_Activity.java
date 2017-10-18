@@ -32,6 +32,7 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
     private final String RV_STATE_KEY = "RV_STATE_KEY";
     private final String HISTORY_KEY = "HISTORY_KEY";
     private final String MODE_KEY = "MODE_KEY";
+    private final String MOVE_KEY = "MOVE_KEY";
     //    IV of Parcelable type that will actually store the RV's state
     private Parcelable mRVState = null;
 
@@ -63,11 +64,18 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
                 loaderPresenter.setHistory(savedInstanceState.getIntegerArrayList(HISTORY_KEY));
             }
             if (savedInstanceState.containsKey(MODE_KEY)) {
-                boolean mode = savedInstanceState.getBoolean(MODE_KEY);
+                boolean conn_mode = savedInstanceState.getBoolean(MODE_KEY);
                 // updating the presenter with the saved mode
-                loaderPresenter.setConnectMode(mode);
+                loaderPresenter.setConnectMode(conn_mode);
 //                note that we need to invert the mode boolean value in order to maintain the current state from the saved activity
-                loaderPresenter.changeFabState(!mode);
+                loaderPresenter.changeFabState(!conn_mode);
+            }
+            if (savedInstanceState.containsKey(MOVE_KEY)) {
+                boolean move_mode = savedInstanceState.getBoolean(MOVE_KEY);
+                // updating the presenter with the saved mode
+                loaderPresenter.setMoveMode(move_mode);
+//                note that we need to invert the mode boolean value in order to maintain the current state from the saved activity
+                loaderPresenter.changeFabState(!move_mode);
             }
         }
         //        checking to see if we have any state saved to be recreated
@@ -110,10 +118,12 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
     public void onFABClick(View view) {
 //        if the IV that holds the task presenter is null, initialize it
         if (this.taskPresenter == null) this.taskPresenter = new TaskPresenter(this);
-        if (!loaderPresenter.isConnectMode()) {
+        if (!loaderPresenter.isConnectMode() && !loaderPresenter.isMoveMode()) {
 //        calling the presenter's method that will create a new Intent and initiate a new activity
             this.taskPresenter.startAddActivity();
-        } else {
+            return;
+        }
+        if (loaderPresenter.isConnectMode()) {
             int id_a = loaderPresenter.getConnectId();
             int id_b = loaderPresenter.getAdapterCallerMemory().getMemoryID();
             if (id_a == id_b) {
@@ -125,6 +135,25 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
                 return;
             }
             this.taskPresenter.createNewConnection(loaderPresenter.getConnectId(), loaderPresenter.getAdapterCallerMemory().getMemoryID());
+            return;
+        }
+        if (loaderPresenter.isMoveMode()) {
+            int toMoveId = loaderPresenter.getConnectId();
+            int oldCallerId = loaderPresenter.getCallerMoveId();
+            int newCallerId = loaderPresenter.getAdapterCallerMemory().getMemoryID();
+            if (oldCallerId == newCallerId) {
+                Toast.makeText(this, "Can't move a memory to the place it already is", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (toMoveId == newCallerId) {
+                Toast.makeText(this, "Can't connect a memory to itself", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (loaderPresenter.checkIdIsOnDisplay(toMoveId)) {
+                Toast.makeText(this, "The memory is already connected to the destination", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            this.taskPresenter.moveMemory(toMoveId, oldCallerId, newCallerId);
         }
     }
 
@@ -171,7 +200,7 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
         outState.putIntegerArrayList(HISTORY_KEY, loaderPresenter.getHistory());
         // saving the mode of the current activity
         outState.putBoolean(MODE_KEY, loaderPresenter.isConnectMode());
-//        Toast.makeText(this, Boolean.toString(loaderPresenter.isConnectMode()), Toast.LENGTH_SHORT).show();
+        outState.putBoolean(MOVE_KEY, loaderPresenter.isMoveMode());
     }
 
     /**

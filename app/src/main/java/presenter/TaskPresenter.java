@@ -73,6 +73,12 @@ public class TaskPresenter extends MemoryListPresenter {
 //                exiting connection mode
                 loaderPresenter.setConnectMode(!loaderPresenter.isConnectMode());
             }
+            if (loaderPresenter.isMoveMode()) {
+//                changing the state of the FAB button
+                loaderPresenter.changeFabState(loaderPresenter.isMoveMode());
+//                exiting move mode
+                loaderPresenter.setMoveMode(!loaderPresenter.isMoveMode());
+            }
 //            getting a new instance to the Loader Presenter that underlies the activity
 //            this is because is an child class of the loader that has access to the RV dataset
 //            and calling the method to call the DB again since we inserted new information inside it
@@ -103,7 +109,7 @@ public class TaskPresenter extends MemoryListPresenter {
      *
      * @return the new connection uri
      */
-    private Uri createNewConnectionUri(int connectId, int memoryID) {
+    public Uri createNewConnectionUri(int connectId, int memoryID) {
         return DBContract.ConnectionTable.uriNewConnection().buildUpon()
                 .appendPath(Integer.toString(connectId))
                 .appendPath(Integer.toString(memoryID))
@@ -133,13 +139,26 @@ public class TaskPresenter extends MemoryListPresenter {
     }
 
     /**
+     * creates the move Uri that will pass all the proper IDs to the working Thread
+     *
+     * @param toMoveId    the Id of the memory that will be moved
+     * @param oldCallerId the Id of the old caller memory that will loose the moved memory
+     * @param newCallerId the Id of the new caller memory that will receive the moved memory
+     */
+    public Uri createMoveMemoryUri(int toMoveId, int oldCallerId, int newCallerId) {
+        return DBContract.MemoryTable.uriMoveMemory().buildUpon()
+                .appendPath(Integer.toString(toMoveId))
+                .appendPath(Integer.toString(oldCallerId))
+                .appendPath(Integer.toString(newCallerId))
+                .build();
+    }
+
+    /**
      * Creates the delete Uri of a connection between 2 memories
      *
      * @return the delete Uri
      */
-    public Uri createDeleteConnectionUri() {
-        int deleteID_a = this.memory.getMemoryID();
-        int deleteID_b = super.activity.getLoaderPresenter().getAdapterCallerMemory().getMemoryID();
+    public Uri createDeleteConnectionUri(int deleteID_a, int deleteID_b) {
         return DBContract.ConnectionTable.uriDeleteConnection().buildUpon()
                 .appendPath(Integer.toString(deleteID_a))
                 .appendPath(Integer.toString(deleteID_b)).build();
@@ -165,7 +184,9 @@ public class TaskPresenter extends MemoryListPresenter {
     public void deleteConnection(Memory memory) {
         this.memory = memory;
         this.uriType = 13;
-        this.uri = createDeleteConnectionUri();
+        int deleteID_a = this.memory.getMemoryID();
+        int deleteID_b = super.activity.getLoaderPresenter().getAdapterCallerMemory().getMemoryID();
+        this.uri = createDeleteConnectionUri(deleteID_a, deleteID_b);
         this.doInWorkerThread();
     }
 
@@ -225,6 +246,20 @@ public class TaskPresenter extends MemoryListPresenter {
         // this will be the code for the new connection Uri
         this.uriType = 11;
         this.uri = createNewConnectionUri(connectId, memoryID);
+        this.doInWorkerThread();
+    }
+
+    /**
+     * Method that creates a new Thread so the memory identified by the toMoveId can be moved from a connection to the old caller to the new caller
+     *
+     * @param toMoveId    the Id of the memory that will be moved
+     * @param oldCallerId the Id of the old caller memory that will loose the moved memory
+     * @param newCallerId the Id of the new caller memory that will receive the moved memory
+     */
+    public void moveMemory(int toMoveId, int oldCallerId, int newCallerId) {
+        // this will be the code for the move Uri
+        this.uriType = 17;
+        this.uri = createMoveMemoryUri(toMoveId, oldCallerId, newCallerId);
         this.doInWorkerThread();
     }
 

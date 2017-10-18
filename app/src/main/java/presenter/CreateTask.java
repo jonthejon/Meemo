@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.net.Uri;
 import android.os.AsyncTask;
 
+import java.util.List;
+
 import datamanager.DBContract;
 import ui.UIInterface;
 
@@ -83,11 +85,29 @@ class CreateTask extends AsyncTask<Integer, Void, Integer> {
                     return 1;
                 }
                 return 0;
-	    case 13:
+            case 13:
                 numRows = userInterface.getUIContentResolver().delete(uri, null, null);
                 if (numRows == 1) {
                     return numRows;
 //            something went wrong so we will return 0
+                } else return 0;
+            case 17:
+                // getting all the Ids from the MoveUri sent by the presenter
+                // important to notice that a move is simply a disconnect followed by a new connection
+                List<String> paths = uri.getPathSegments();
+                String newCallerId = paths.get(paths.size() - 1);
+                String oldCallerId = paths.get(paths.size() - 2);
+                String toMoveId = paths.get(paths.size() - 3);
+                // creating the new connection and the delete connection Uris with the path segments
+                Uri addConnUri = presenter.createNewConnectionUri(Integer.parseInt(toMoveId), Integer.parseInt(newCallerId));
+                Uri delConnUri = presenter.createDeleteConnectionUri(Integer.parseInt(toMoveId), Integer.parseInt(oldCallerId));
+                // deleting the old connection
+                int moveNumRows = userInterface.getUIContentResolver().delete(delConnUri, null, null);
+                // making the new connection
+                Uri moveResUri = userInterface.getUIContentResolver().insert(addConnUri, null);
+                // if everything is cool, lets return a valid value
+                if (moveResUri != null && moveNumRows == 1) {
+                    return moveNumRows;
                 } else return 0;
             default:
                 return 0;

@@ -34,6 +34,7 @@ public class DBUtils {
         public static final String PATH_INSERT = "insert";
         public static final String PATH_DELETE = "delete";
         public static final String PATH_UPDATE = "update";
+        public static final String PATH_MOVE = "move";
     }
 
     /**
