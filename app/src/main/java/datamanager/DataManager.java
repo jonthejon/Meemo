@@ -41,6 +41,14 @@ public class DataManager implements DataManagerInterface {
         return getMemoryListFromCursor(this.cursor);
     }
 
+    @Override
+    public ArrayList<Memory> getMemoriesWithQuery(ContentResolver resolver, String query) {
+        Uri searchUri = DBContract.MemoryTable.uriSearchMemories();
+        resetCursor();
+        this.cursor = resolver.query(searchUri, null, query, null, null);
+        return getMemoryListFromCursor(this.cursor);
+    }
+
     /**
      * resets the cursor for it to be used in another db query
      */

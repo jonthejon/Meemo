@@ -43,4 +43,12 @@ public class Meemo {
 //        returns the call to the method of the data manager that calls the DB and serve back the Memory array
         return dataManager.getMemoriesWithID(userInterface.getUIContentResolver(), id);
     }
+
+    /**
+     * Method responsible for making the bridge between the activity and the datamanager, asking for memories given a search query.
+     * @param query the String that the user wrote to do the search for memories
+     */
+    public ArrayList<Memory> getMemoryListWithQuery(String query) {
+        return dataManager.getMemoriesWithQuery(userInterface.getUIContentResolver(), query);
+    }
 }

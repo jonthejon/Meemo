@@ -20,4 +20,5 @@ public interface DataManagerInterface {
      * @return the Arraylist containing all connected memories to the memory defined by the ID
      */
     ArrayList<Memory> getMemoriesWithID(ContentResolver resolver, int id);
+    ArrayList<Memory> getMemoriesWithQuery(ContentResolver resolver, String query);
 }

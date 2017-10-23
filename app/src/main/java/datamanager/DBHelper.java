@@ -42,6 +42,7 @@ class DBHelper extends SQLiteOpenHelper {
         db.execSQL(DBUtils.sqlCreateMemoryTable());
 //        executing the creation of the family table
         db.execSQL(DBUtils.sqlCreateConnectionTable());
+        db.execSQL(DBUtils.sqlCreateVirtualSearchTable());
 //        inserting the first memory into the DB. This will be the parent of all other memories.
         db.execSQL(DBUtils.sqlInsertMemory(context.getString(R.string.mind_name)));
     }

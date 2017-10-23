@@ -21,4 +21,6 @@
     <string name="search_appbar">search</string>
     <string name="main_title_appbar">memories</string>
     <string name="add_title_appbar">new memory</string>
+    <string name="search_hint">Search memories</string>
+    <string name="search_title_appbar">search results</string>
 </resources>

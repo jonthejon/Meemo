@@ -1,14 +1,15 @@
 package ui;
 
+import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,6 +39,8 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
     private final String MOVE_KEY = "MOVE_KEY";
     //    IV of Parcelable type that will actually store the RV's state
     private Parcelable mRVState = null;
+    private SearchView searchView;
+    private Toolbar myToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,17 +50,14 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 //        binds the views inside the layout to the IVs of this activity
         this.childMemoryRV = (RecyclerView) findViewById(R.id.memory_recycler_view);
         this.fab = (FloatingActionButton) findViewById(R.id.main_fab);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 //        This method sets the toolbar as the app bar for the activity
         setSupportActionBar(myToolbar);
-        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+//        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         getSupportActionBar().setTitle(R.string.main_title_appbar);
 
 //        initiates the loader presenter of this activity sending this activity as a parameter
         this.loaderPresenter = new LoaderPresenter(this);
-
-//        calling the method of the loader to initiate the creation of the Loader
-        this.loaderPresenter.doInWorkerThread();
 
 //        Checking to see if the bundle given to us has some data that needs to be initiated because it got saved
         if (savedInstanceState != null) {
@@ -91,6 +91,49 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
             //            updating the RV with the saved state.
             this.childMemoryRV.getLayoutManager().onRestoreInstanceState(mRVState);
         }
+
+//        sending the intent that called this activity to the method that will handle how to operate on it
+        this.handleIntent();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+//        since this activity has a launchmode:singleTop, only one instance of it will be created
+//        this means that if we call it more than one time, only the intent will be new
+//        the activity has not been restarted, so we need to set the new intent or the getIntent() method will return the same as before
+        setIntent(intent);
+        this.handleIntent();
+    }
+
+    private void handleIntent() {
+        Intent intent = getIntent();
+        // if the intent has 'ACTION_SEARCH' action, it means that a search triggered this activity
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            // setting the title to display 'search results'
+            //getSupportActionBar().setTitle(R.string.search_title_appbar);
+            // getting the query from the intent and calling the method that will handle it
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            if (this.searchView != null) {
+               myToolbar.collapseActionView();
+            }
+            executeSearch(query);
+        } else {
+            // if we got here, it means that this activity was not initiated from a search so we should proceed normally
+            // setting the title to display 'memories'
+            //getSupportActionBar().setTitle(R.string.main_title_appbar);
+//        calling the method of the loader to initiate the creation of the Loader
+            this.loaderPresenter.doInWorkerThread();
+        }
+    }
+
+    /**
+     * Private method that will receive a String query and call the presenter that will execute the search in the DB
+     *
+     * @param query the String query that was created by the user in the search_view
+     */
+    private void executeSearch(String query) {
+        this.loaderPresenter.searchInWorkerThread(query);
+        //Toast.makeText(this, query, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -240,10 +283,13 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
         }
     }
 
-//    this inflates the XML menu file for it to be used inside your app bar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.appbar_menu, menu);
+//        inflate the options menu from the XML
+        getMenuInflater().inflate(R.menu.options_menu, menu);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         return true;
     }
 
@@ -257,13 +303,14 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
         return handleResult || super.onContextItemSelected(item);
     }
 
-//    is called every time the user clicks in one of the items in the menu of the app bar
+    //    is called every time the user clicks in one of the items in the menu of the app bar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.search_button:
-                Toast.makeText(this, "clicked the search button!", Toast.LENGTH_SHORT).show();
-                return true;
+            case R.id.search:
+                return super.onOptionsItemSelected(item);
+            //Toast.makeText(this, "clicked the search button!", Toast.LENGTH_SHORT).show();
+            //return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

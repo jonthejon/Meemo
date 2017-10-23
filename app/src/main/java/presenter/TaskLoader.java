@@ -46,9 +46,19 @@ class TaskLoader extends AsyncTaskLoader<ArrayList<Memory>> {
     public ArrayList<Memory> loadInBackground() {
 //        initiating an instance of the Meemo class which is our core class
         Meemo meemo = new Meemo(this.userInterface);
+        //getting the bundle id so we can properly handle the request
+        int bundleID = bundle.getInt(LoaderPresenter.BUNDLE_ID);
+        switch (bundleID) {
+            case 3:
 //        retrieving the memoryID from the bundle we sent to this loader so we can send it to Meemo
-        int memoryID = bundle.getInt(LoaderPresenter.MEMORY_ID);
+                int memoryID = bundle.getInt(LoaderPresenter.MEMORY_ID);
 //        calling the method of meemo that fetches the data and sending as a parameter the memoryID
-        return meemo.getMemoryListWithID(memoryID);
+                return meemo.getMemoryListWithID(memoryID);
+            case 5:
+                String query = bundle.getString(LoaderPresenter.QUERY);
+                return meemo.getMemoryListWithQuery(query);
+            default:
+                return null;
+        }
     }
 }

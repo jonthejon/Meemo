@@ -112,6 +112,9 @@ class MemoryListAdapter extends RecyclerView.Adapter<MemoryViewHolder> {
      * @return the instance of the parent memory (the caller memory)
      */
     Memory getCallerMemory() {
+        if (this.callerMemory == null) {
+            return new Memory.MemoryBuilder(1,"Dummy",0).build();
+        }
         return this.callerMemory;
     }
 

@@ -20,7 +20,7 @@ public class DBUtils {
         //    IV that holds the database name
         public static final String DATABASE_NAME = "MeemoDatabase.db";
         //    IV that holds the present database version and must be incremented every time a database scheme changes
-        public static final int DATABASE_VERSION = 11;
+        public static final int DATABASE_VERSION = 12;
         //    The authority, which is how your code knows which Content Provider to access
         //    this is defined inside the AndroidManifest file and probably is your package name
         public static final String AUTHORITY = "seasonedblackolives.com.meemo";
@@ -35,6 +35,7 @@ public class DBUtils {
         public static final String PATH_DELETE = "delete";
         public static final String PATH_UPDATE = "update";
         public static final String PATH_MOVE = "move";
+        public static final String PATH_SEARCH = "search";
     }
 
     /**
@@ -47,7 +48,7 @@ public class DBUtils {
         public static final String COL_MEMORY_ID = "_ID";
         //        inner final IV that holds the actual memory text
         public static final String COL_MEMORY_TEXT = "memory_text";
-	// inner final IV that holds the collumn title of the memory
+        // inner final IV that holds the collumn title of the memory
         public static final String COL_MEMORY_TITLE = "memory_title";
         //        inner final IV that holds the file path of the memory file if it exists
         public static final String COL_MEMORY_FILE_PATH = "memory_file_path";
@@ -67,6 +68,10 @@ public class DBUtils {
         public static final String COL_MEMORY_A = "memory_a";
         //        inner final IV that holds the actual memory ID of the second memory of this relation
         public static final String COL_MEMORY_B = "memory_b";
+    }
+
+    public static class SearchVirtualTable {
+        public static final String TABLE_NAME = "search_virtual_table";
     }
 
     /**
@@ -262,7 +267,7 @@ public class DBUtils {
                 MemoryTable.TABLE_NAME +
                 " (" +
                 MemoryTable.COL_MEMORY_ID +
-                " INTEGER PRIMARY KEY, " +
+                " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 MemoryTable.COL_MEMORY_TITLE +
                 " TEXT DEFAULT 'void', " +
                 MemoryTable.COL_MEMORY_TEXT +
@@ -274,6 +279,60 @@ public class DBUtils {
                 MemoryTable.COL_CREATION_TIME +
                 " TEXT DEFAULT CURRENT_TIMESTAMP);";
     }
+
+    /**
+     * Returns the SQL statement that creates the Virtual FTS4 table that will work in the search functionality
+     *
+     * @return the SQL statement
+     */
+    public static String sqlCreateVirtualSearchTable() {
+        return "CREATE VIRTUAL TABLE " +
+                SearchVirtualTable.TABLE_NAME +
+                " USING fts3(" +
+                MemoryTable.COL_MEMORY_TEXT +
+                ");";
+    }
+
+    public static String sqlInsertMemoryVirtualTable(String id, String memory) {
+        return "INSERT INTO " +
+                SearchVirtualTable.TABLE_NAME +
+                " (docid, " +
+                MemoryTable.COL_MEMORY_TEXT +
+                ") VALUES('" +
+                id +
+                "', '" +
+                memory +
+                "');";
+    }
+
+    public static String sqlDeleteMemoryVirtualTable(String id) {
+       return "DELETE FROM " +
+               SearchVirtualTable.TABLE_NAME +
+               " WHERE docid = " +
+               id +
+               ";";
+    }
+
+    public static String sqlSearchMemories(String query) {
+        return "SELECT " +
+                MemoryTable.COL_MEMORY_ID +
+                ", " +
+                MemoryTable.COL_MEMORY_TEXT +
+                ", " +
+                MemoryTable.COL_MEMORY_NUM_CONN +
+                " FROM " +
+                MemoryTable.TABLE_NAME +
+                " WHERE " +
+                MemoryTable.COL_MEMORY_ID +
+                " IN(SELECT docid FROM " +
+                SearchVirtualTable.TABLE_NAME +
+                " WHERE " +
+                MemoryTable.COL_MEMORY_TEXT +
+                " MATCH '" +
+                query +
+                "');";
+    }
+
 
     /**
      * Returns the SQL statement that creates the Connection Table inside the DB

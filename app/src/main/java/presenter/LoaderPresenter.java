@@ -36,10 +36,13 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
 
     //    IV that holds the loader ID so to ensure that we are not creating a new Loader every time
     //    if a loader already exists, the same loader will be used
-    private final int FETCH_LOADER_ID = 3;
+    final int FETCH_LOADER_ID = 3;
+    final int SEARCH_LOADER_ID = 5;
 
     //    IV that will hold the key associated with the memory ID inside the Bundle to be sent to the loader
-    static final String MEMORY_ID = "callerID";
+    public static final String MEMORY_ID = "callerID";
+    public static final String BUNDLE_ID = "bundleID";
+    public static final String QUERY = "query";
 
     public LoaderPresenter(MemoryList_Activity activity) {
 //        setting the Superclass IV to hold the instance to the activity
@@ -99,7 +102,7 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
      */
     private void bindObjectsToRecycler(MemoryListAdapter adapter, LinearLayoutManager layoutManager) {
 //        setting the layout manager to stack the memories from the bottom up
-        layoutManager.setStackFromEnd(true);
+//        layoutManager.setStackFromEnd(true);
 //        setting the activity's RV with the proper layout manager
         super.activity.getRecyclerView().setLayoutManager(layoutManager);
 //        setting the activity's RV with the proper adapter
@@ -122,6 +125,8 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
         LoaderManager loaderManager = super.activity.getUILoaderManager();
 //        starting a new Bundle object that will be used to send data to the loader (in our case the memoryID)
         Bundle bundle = new Bundle();
+        //putting inside the bundle the identification so the TaskLoader class knows how to handle this call
+        bundle.putInt(BUNDLE_ID, this.FETCH_LOADER_ID);
 //      putting inside the Bundle the memoryID with a key that will be used for later retrieval
         bundle.putInt(MEMORY_ID, mAdapter.getCallerMemory().getMemoryID());
 //        initializing a new loader object (with the proper data type) using the loader manager and the loader ID we created
@@ -131,6 +136,27 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
 //            if the loader is new, we are initializing a new one with the loader ID and sending the Bundle with the memoryID along with it
 //            we are also defining this class as the callback class that has implemented the proper callback methods
             loaderManager.initLoader(this.FETCH_LOADER_ID, bundle, this).forceLoad();
+        } else {
+//            if the loader is not new, we are using the same loader to restart it.
+//            this will prevent memory leaks.
+            loaderManager.restartLoader(this.FETCH_LOADER_ID, bundle, this).forceLoad();
+        }
+    }
+
+    /**
+     * This method will receive a string query from the underlying activity and initiate a Loader that will search the DB and update the UI with the correlated memories
+     *
+     * @param query the String query that the user wrote and that will be used to search the DB
+     */
+    public void searchInWorkerThread(String query) {
+        LoaderManager loaderManager = super.activity.getUILoaderManager();
+        Bundle bundle = new Bundle();
+        //putting inside the bundle the identification so the TaskLoader class knows how to handle this call
+        bundle.putInt(BUNDLE_ID, this.SEARCH_LOADER_ID);
+        bundle.putString(QUERY, query);
+        Loader<ArrayList<Memory>> loader = loaderManager.getLoader(this.SEARCH_LOADER_ID);
+        if (loader == null) {
+            loaderManager.initLoader(this.SEARCH_LOADER_ID, bundle, this).forceLoad();
         } else {
 //            if the loader is not new, we are using the same loader to restart it.
 //            this will prevent memory leaks.
@@ -151,6 +177,9 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
 //                we are sending the context of the activity, the bundle with the data, the loader id and the activity itself
                 loader = new TaskLoader(super.activity.getUIContext(), args, super.activity);
 //                make sure we break the statement otherwise this will continue to run
+                break;
+            case 5:
+                loader = new TaskLoader(super.activity.getUIContext(), args, super.activity);
                 break;
             default:
 //                just a default case that so far, it is exactly the same as the case '3'
@@ -246,11 +275,14 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
     public void onLoadFinished(Loader<ArrayList<Memory>> loader, ArrayList<Memory> memories) {
 //        checking to see if the loader that finished is actually the loader that we started before
 //        also checking to see if the memories array has content (if it's not null)
-        if (loader.getId() == this.FETCH_LOADER_ID && memories != null) {
+        int loaderId = loader.getId();
+        if ((loaderId == this.FETCH_LOADER_ID || loaderId == this.SEARCH_LOADER_ID) && memories != null && memories.size() > 0) {
 //            calling the adapter's method that will retrieve the data from the result array.
             this.mAdapter.updateMemories(memories);
 //            calls the activity method to update the state of the RV
             super.activity.updateRVState();
+        } else {
+            Toast.makeText(activity, "no memories to display", Toast.LENGTH_SHORT).show();
         }
     }
 

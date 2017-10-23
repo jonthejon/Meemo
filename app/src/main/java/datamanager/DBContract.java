@@ -25,6 +25,10 @@ public class DBContract extends DBUtils.Database {
             return BASE_CONTENT_URI.buildUpon().appendPath(PATH_MEMORIES).appendPath(PATH_GET).build();
         }
 
+        public static Uri uriSearchMemories() {
+            return BASE_CONTENT_URI.buildUpon().appendPath(PATH_MEMORIES).appendPath(PATH_SEARCH).build();
+        }
+
         public static Uri uriInsertMemory() {
             return BASE_CONTENT_URI.buildUpon().appendPath(PATH_MEMORY).appendPath(PATH_INSERT).build();
         }

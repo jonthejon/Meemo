@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ public class MeemoContentProvider extends ContentProvider {
     public static final int DELETE_SINGLE_MEMORY = 103;
     public static final int UPDATE_SINGLE_MEMORY = 104;
     public static final int GET_SINGLE_MEMORY_BY_ID = 105;
+    public static final int GET_MEMORIES_BY_SEARCH = 106;
     public static final int CONNECTION_TABLE = 200;
     public static final int INSERT_NEW_CONNECTION = 201;
     public static final int DELETE_CONNECTION = 202;
@@ -59,6 +61,7 @@ public class MeemoContentProvider extends ContentProvider {
         uriMatcher.addURI(DBContract.AUTHORITY, DBContract.PATH_MEMORY + "/" + DBContract.PATH_GET + "/#", GET_SINGLE_MEMORY_BY_ID);
         uriMatcher.addURI(DBContract.AUTHORITY, DBContract.PATH_CONNECTION + "/" + DBContract.PATH_INSERT + "/#" + "/#", INSERT_NEW_CONNECTION);
         uriMatcher.addURI(DBContract.AUTHORITY, DBContract.PATH_CONNECTION + "/" + DBContract.PATH_DELETE + "/#" + "/#", DELETE_CONNECTION);
+        uriMatcher.addURI(DBContract.AUTHORITY, DBContract.PATH_MEMORIES + "/" + DBContract.PATH_SEARCH, GET_MEMORIES_BY_SEARCH);
 
 //        returns the created urimatcher
         return uriMatcher;
@@ -95,12 +98,19 @@ public class MeemoContentProvider extends ContentProvider {
                 String id = uri.getLastPathSegment();
                 cursor = db.rawQuery(DBUtils.sqlConnectedMemories(id), null);
                 break;
+            case GET_MEMORIES_BY_SEARCH:
+                String sql = DBUtils.sqlSearchMemories(selection);
+                Log.d("SQL: ", sql);
+                cursor = db.rawQuery(DBUtils.sqlSearchMemories(selection), null);
+                break;
             default:
 //                the uri is not a valid one, so we'll return a null cursor
                 return null;
         }
+        if (cursor != null) {
 //        Register to watch a content URI for changes. This is cool in case your dataset changed and you have a cursor pointing at it.
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+            cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        }
 //        return the created and populated cursor object
         return cursor;
     }
@@ -137,6 +147,8 @@ public class MeemoContentProvider extends ContentProvider {
 //        checks to see what type of Uri was sent to us by the user
         switch (getUriMatcher().match(uri)) {
             case INSERT_SINGLE_MEMORY:
+//                getting the memory text so we can insert it into the virtual search table
+                String memory = values.getAsString(DBContract.MemoryTable.getColMemoryText());
 //                  inserts the content values inside the memory_table
                 long id_b = db.insert(DBContract.MemoryTable.getTableName(), null, values);
 //                retrieves the father memory ID from the Uri
@@ -146,6 +158,11 @@ public class MeemoContentProvider extends ContentProvider {
                 // getting the SQL from DBUtils that will update the number of connections of each memory and executing it.
                 db.execSQL(DBUtils.sqlIncrementNumConnections(id_a));
                 db.execSQL(DBUtils.sqlIncrementNumConnections(Long.toString(id_b)));
+//                syncing the virtual table with the new inserted memory
+                String sql = DBUtils.sqlInsertMemoryVirtualTable(Long.toString(id_b), memory);
+                Log.d("SQL: ", sql);
+                db.execSQL(sql);
+//                db.execSQL(DBUtils.sqlInsertMemoryVirtualTable(Long.toString(id_b), memory));
 //                  returns the new Uri that points to the specific memory inside the memory table
                 return DBContract.MemoryTable.uriGetMemory().buildUpon().appendPath(Long.toString(id_b)).build();
             case INSERT_NEW_CONNECTION:
@@ -202,6 +219,8 @@ public class MeemoContentProvider extends ContentProvider {
                 }
                 db.delete(DBContract.ConnectionTable.getTableName(), DBUtils.ConnectionTable.COL_MEMORY_A + " = ?", new String[]{id});
                 db.delete(DBContract.ConnectionTable.getTableName(), DBUtils.ConnectionTable.COL_MEMORY_B + " = ?", new String[]{id});
+//                updating the virtual table given that we just deleted a memory
+                db.execSQL(DBUtils.sqlDeleteMemoryVirtualTable(id));
                 return numRows;
             case DELETE_CONNECTION:
                 List<String> paths = uri.getPathSegments();
@@ -227,10 +246,17 @@ public class MeemoContentProvider extends ContentProvider {
 //        checks to see what type of Uri was sent to us by the user
         switch (getUriMatcher().match(uri)) {
             case UPDATE_SINGLE_MEMORY:
+                //getting the memory text so we can insert it into the virtual search table
+                String memory = values.getAsString(DBContract.MemoryTable.getColMemoryText());
 //                get the last path segment that in the case of this Uri is the memory ID to be updated
                 String id = uri.getLastPathSegment();
 //                updates the memory in the DB and returns the number of rows updated (hopefully 1, since we are giving a specific ID)
-                return db.update(DBContract.MemoryTable.getTableName(), values, "_ID = ?", new String[]{id});
+                int numRows = db.update(DBContract.MemoryTable.getTableName(), values, "_ID = ?", new String[]{id});
+//                deleting the corresponding memory from the virtual table
+                db.execSQL(DBUtils.sqlDeleteMemoryVirtualTable(id));
+//                inserting the new memory again inside the virtual table
+                db.execSQL(DBUtils.sqlInsertMemoryVirtualTable(id, memory));
+                return numRows;
         }
         return 0;
     }
