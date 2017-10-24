@@ -64,7 +64,8 @@ public class AddMemory_Activity extends AppCompatActivity {
             return;
         }
         // creating the intent that will send back to the activity the information that must be inserted into the DB
-        Intent resultIntent = new Intent();
+//        Intent resultIntent = new Intent();
+        Intent resultIntent = getIntent();
         // putting into the intent the name of the column of the DB that we'll insert and the actual value of the memory to be inserted
         resultIntent.putExtra(DBContract.MemoryTable.getColMemoryText(), memory_text);
         // putting into the intent the proper code to alert the caller activity of the kind of memory we are sending

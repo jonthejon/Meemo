@@ -339,6 +339,10 @@ public class LoaderPresenter extends MemoryListPresenter implements LoaderManage
         }
     }
 
+    public void setDummyCallerMemory(int id) {
+        this.mAdapter.setCallerMemory(new Memory.MemoryBuilder(id, "dummy", 0).build());
+    }
+
     /**
      * pops the most recent memory of the History if exists and updates the caller memory of the adapter
      */

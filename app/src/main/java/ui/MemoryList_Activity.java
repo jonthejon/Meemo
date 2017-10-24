@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,7 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
     //    IV that contains the String that will be the Key to store the RV's state during activity destruction
     private final String RV_STATE_KEY = "RV_STATE_KEY";
     private final String HISTORY_KEY = "HISTORY_KEY";
+    private final String ID_KEY = "ID_KEY";
     private final String MODE_KEY = "MODE_KEY";
     private final String MOVE_KEY = "MOVE_KEY";
     //    IV of Parcelable type that will actually store the RV's state
@@ -58,6 +60,9 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
 
 //        initiates the loader presenter of this activity sending this activity as a parameter
         this.loaderPresenter = new LoaderPresenter(this);
+        this.taskPresenter = new TaskPresenter(this);
+
+        Log.d("onCreate()", "inside on create!");
 
 //        Checking to see if the bundle given to us has some data that needs to be initiated because it got saved
         if (savedInstanceState != null) {
@@ -84,6 +89,10 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
                 loaderPresenter.setMoveMode(move_mode);
 //                note that we need to invert the mode boolean value in order to maintain the current state from the saved activity
                 loaderPresenter.changeFabState(!move_mode);
+            }
+            if (savedInstanceState.containsKey(ID_KEY)) {
+                int id = savedInstanceState.getInt(ID_KEY);
+                loaderPresenter.setDummyCallerMemory(id);
             }
         }
         //        checking to see if we have any state saved to be recreated
@@ -217,12 +226,19 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("onActivityResult()", "before checks");
+        Log.d("onActivityResult()", Integer.toString(requestCode));
+        Log.d("onActivityResult()", Integer.toString(resultCode));
+        if (resultCode == RESULT_OK) Log.d("OK", "inside ok");
+        if (resultCode == RESULT_CANCELED) Log.d("CANCELED", "inside canceled");
+        if (resultCode != RESULT_CANCELED) {
 //        checking to see if the request code is the same of the add activity and if the result code is OK
-        if ((requestCode == taskPresenter.CREATE_MEMORY_REQUEST || requestCode == taskPresenter.UPDATE_MEMORY_REQUEST) && resultCode == RESULT_OK) {
+            if ((requestCode == taskPresenter.CREATE_MEMORY_REQUEST || requestCode == taskPresenter.UPDATE_MEMORY_REQUEST) && resultCode == RESULT_OK) {
 //            checking to see if the intent sent by the activity is not null
-            if (data != null) {
+                if (data != null) {
 //                calling the presenter's method that will handle the result for this activity
-                taskPresenter.handleActivityResult(data);
+                    taskPresenter.handleActivityResult(data);
+                }
             }
         }
     }
@@ -249,6 +265,7 @@ public class MemoryList_Activity extends AppCompatActivity implements UIInterfac
         outState.putParcelable(RV_STATE_KEY, mRVState);
         // putting the ArrayList that contains the history into the Bundle
         outState.putIntegerArrayList(HISTORY_KEY, loaderPresenter.getHistory());
+        outState.putInt(ID_KEY, loaderPresenter.getAdapterCallerMemory().getMemoryID());
         // saving the mode of the current activity
         outState.putBoolean(MODE_KEY, loaderPresenter.isConnectMode());
         outState.putBoolean(MOVE_KEY, loaderPresenter.isMoveMode());
