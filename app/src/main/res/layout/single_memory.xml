@@ -1,58 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/memory_constraint"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:minHeight="70dp">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/cardview"
+<!--    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/memory_constraint"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="70dp">-->
 
-        android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/card_top_bottom_margins"
-        android:layout_marginEnd="@dimen/card_right_left_margins"
-        android:layout_marginStart="@dimen/card_right_left_margins"
-        android:layout_marginTop="@dimen/card_top_bottom_margins"
+    <TextView
+        android:id="@+id/mem_num_connections"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scrollHorizontally="false"
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:layout_marginStart="10dp"
+        card_view:layout_constraintLeft_toLeftOf="parent"
+        card_view:layout_constraintTop_toTopOf="parent"
+        card_view:layout_constraintBottom_toBottomOf="parent"
+        tools:text="3" />
 
-        card_view:cardBackgroundColor="@color/white"
-        card_view:cardCornerRadius="2dp"
-        card_view:cardElevation="@dimen/cardview_default_elevation"
-        card_view:contentPadding="@dimen/card_content_margins">
+    <TextView
+        android:id="@+id/single_memory_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:textAlignment="textStart"
+        android:textColor="@color/dark_text"
+        android:textSize="16sp"
+        card_view:layout_constraintBottom_toBottomOf="parent"
+        card_view:layout_constraintLeft_toLeftOf="@+id/mem_num_connections"
+        card_view:layout_constraintRight_toRightOf="parent"
+        card_view:layout_constraintTop_toTopOf="parent"
+        card_view:layout_constraintVertical_bias="0.5"
+        tools:text="this is a fake memory contoinue sit o tehreifi fieifh eifhief ihiih ihfihsifh ihfihfih  hdsifh ihfhis "
+        card_view:layout_constraintHorizontal_bias="0.5" />
 
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        card_view:layout_constraintBottom_toBottomOf="parent"
+        card_view:layout_constraintLeft_toLeftOf="parent"
+        card_view:layout_constraintRight_toRightOf="parent" />
 
-            <TextView
-                android:id="@+id/mem_num_connections"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:fontFamily="monospace"
-                android:scrollHorizontally="false"
-                android:textColor="@android:color/black"
-                card_view:layout_constraintLeft_toLeftOf="parent"
-                card_view:layout_constraintTop_toTopOf="parent"
-                tools:text="3"
-                />
-            <TextView
-                android:id="@+id/single_memory_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="monospace"
-                android:scrollHorizontally="false"
-                android:layout_marginStart="20dp"
-                android:textColor="@android:color/black"
-                android:textSize="14sp"
-                card_view:layout_constraintLeft_toRightOf="@+id/mem_num_connections"
-                card_view:layout_constraintTop_toTopOf="parent"
-                tools:text="this is a fake memory contoinue sit o tehreifi fieifh eifhief ihiih ihfihsifh ihfihfih  hdsifh ihfhis "
-                />
+<!--    </LinearLayout>-->
 
-        </android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>
 
-    </android.support.v7.widget.CardView>
-
-</LinearLayout>

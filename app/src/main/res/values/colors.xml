@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#616161</color>
+    <color name="colorPrimaryDark">#373737</color>
+    <color name="colorAccent">#4caf50</color>
+    <color name="theme_window_background">#fafafa</color>
 
     <color name="white">#FFFFFF</color>
-    <color name="fab_connect">#0FDC32</color>
+    <color name="fab_connect">#ffb74d</color>
+    <color name="light_text">#fafafa</color>
+    <color name="dark_text">#424242</color>
 </resources>

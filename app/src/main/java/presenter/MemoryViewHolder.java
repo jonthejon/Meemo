@@ -1,6 +1,7 @@
 package presenter;
 
 import android.content.Context;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +29,7 @@ class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
     private LoaderPresenter presenter;
     // this is the instance of the cardview that holds the current memory
     private CardView cardView;
+    private ConstraintLayout constraintLayout;
     //    a context IV for the handling of menu clicking
     private Context context;
 
@@ -49,6 +51,7 @@ class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
         this.mTextView = (TextView) itemView.findViewById(R.id.single_memory_text);
         this.connTextView = (TextView) itemView.findViewById(R.id.mem_num_connections);
         this.cardView = (CardView) itemView.findViewById(R.id.cardview);
+        this.constraintLayout = itemView.findViewById(R.id.memory_constraint);
 //        setting this same class to be a clickListener and respond to user clicks on it
         itemView.setOnClickListener(this);
 //        setting this same class to be a clickListener and respond to user clicks on it
@@ -66,13 +69,38 @@ class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
         this.memory = memory;
 //        setting the text of the textview with the underlying memory text
         this.mTextView.setText(memory.getMemoryText());
-        this.connTextView.setText(Integer.toString(memory.getNumConnections()));
-//        checking to see if this memory is a caller and if so, tint the background
+        int numConn = memory.getNumConnections();
+//        int id = memory.getMemoryID();
+        this.connTextView.setText("0");
+        this.connTextView.setTextColor(ContextCompat.getColor(presenter.getActivityContext(), R.color.colorAccent));
+        this.connTextView.setVisibility(View.INVISIBLE);
+
         if (presenter.getLastHistoryId() == this.memory.getMemoryID()) {
-            this.cardView.setCardBackgroundColor(ContextCompat.getColor(presenter.getActivityContext(), R.color.colorAccent));
-        } else {
-            this.cardView.setCardBackgroundColor(ContextCompat.getColor(presenter.getActivityContext(), R.color.white));
+            this.connTextView.setText("C");
+            this.connTextView.setTextColor(ContextCompat.getColor(presenter.getActivityContext(), R.color.dark_text));
+            this.connTextView.setVisibility(View.VISIBLE);
+            return;
         }
+        if (numConn > 1) {
+            this.connTextView.setText(Integer.toString(numConn));
+            this.connTextView.setTextColor(ContextCompat.getColor(presenter.getActivityContext(), R.color.colorAccent));
+            this.connTextView.setVisibility(View.VISIBLE);
+        }
+//        if (presenter.getLastHistoryId() == this.memory.getMemoryID()) {
+//            this.connTextView.setText("C");
+//            this.connTextView.setTextColor(ContextCompat.getColor(presenter.getActivityContext(), R.color.dark_text));
+//        } else if (numConn > 1) {
+//            this.connTextView.setText(Integer.toString(numConn));
+//            this.connTextView.setTextColor(ContextCompat.getColor(presenter.getActivityContext(), R.color.colorAccent));
+//        }
+//        checking to see if this memory is a caller and if so, tint the background
+//        if (presenter.getLastHistoryId() == this.memory.getMemoryID()) {
+//            this.constraintLayout.setBackgroundColor(ContextCompat.getColor(presenter.getActivityContext(), R.color.colorAccent));
+//            this.cardView.setCardBackgroundColor(ContextCompat.getColor(presenter.getActivityContext(), R.color.colorAccent));
+//        } else {
+//            this.constraintLayout.setBackgroundColor(ContextCompat.getColor(presenter.getActivityContext(), R.color.white));
+//            this.cardView.setCardBackgroundColor(ContextCompat.getColor(presenter.getActivityContext(), R.color.white));
+//        }
     }
 
     //    this method is overriden from the View.OnClickListener interface for handling click functionality
@@ -90,7 +118,7 @@ class MemoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
         if (!presenter.isConnectMode() && !presenter.isMoveMode()) {
 //        adding the menu options into the menu for displaying
 //        important to notice that we're putting into the options of the menu the position of this ViewHolder in the Adapter so we can retrieve this information later when handling the click functionality
-            menu.add(0, 1, getAdapterPosition(), "update");
+            menu.add(0, 1, getAdapterPosition(), "edit");
             menu.add(0, 2, getAdapterPosition(), "delete");
             menu.add(0, 3, getAdapterPosition(), "connect");
             menu.add(0, 5, getAdapterPosition(), "disconnect");
